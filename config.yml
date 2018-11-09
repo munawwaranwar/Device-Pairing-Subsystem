@@ -1,0 +1,48 @@
+
+# DRS global configurations
+global:
+
+  # maimum allowed Secondary pairs with one Primary MSISDN
+  pair_limit: 4
+
+  # Length of pair-Code
+  pc_length: 8
+
+  # No of IMEIs per device
+  imeis_per_device: 5
+
+  # DataBase Parameters
+  dbname: 'DPS_Test'
+  dbusername: 'postgres'
+  dbpassword: 'Pakistan1'
+  dbhost: 'localhost'
+
+
+  # SQL_ALCHEMY Parameters
+  pool_size: 100
+  pool_timeout: 20
+  pool_recycle: 10
+  overflow_size: 275
+
+  # Operators related parameters
+  CC: '92'
+  MNO_1: 'jazz'
+  MNO_2: 'telenor'
+  MNO_3: 'ufone'
+  MNO_4: 'zong'
+  MNO_5: 'warid'
+
+  # URLS
+  kannel_sms: 'http://192.168.100.70:13013/cgi-bin/sendsms'
+
+  # Pair-List generation Path
+  pairlist_path: 'D:\dirbs_intl_dps\pairing_lists'
+
+  # System Paths for files
+  Download_Path: 'D:\dirbs_intl_dps\Downloads\'
+  Upload_Path: 'D:\dirbs_intl_dps\Uploads\'
+
+  #SMS Texts
+  # Additional-Pair Messages
+  sms_pair_limit_breached: 'Pairing limit breached: need to remove any existing pair'
+
