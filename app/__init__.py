@@ -51,12 +51,13 @@ app.config['SQLALCHEMY_POOL_SIZE'] = int(conf['pool_size'])
 app.config['SQLALCHEMY_POOL_RECYCLE'] = int(conf['pool_recycle'])
 app.config['SQLALCHEMY_MAX_OVERFLOW'] = int(conf['overflow_size'])
 app.config['SQLALCHEMY_POOL_TIMEOUT'] = int(conf['pool_timeout'])
-
+app.config['DPS_DOWNLOADS'] = conf['Download_Path']
+app.config['DPS_UPLOADS'] = conf['Upload_Path']
 db = SQLAlchemy()
 db.init_app(app)
 
 
-from app.views import api
+from app.api.v1.views import api
 app.register_blueprint(api, url_prefix='/api/v1')
 
 @app.errorhandler(400)
@@ -65,11 +66,11 @@ def handle_400(err):
 
 @app.errorhandler(405)
 def handle_405(err):
-    return Response(json.dumps({"Error": "Method not Allowed"}), status=405, mimetype='application/json')
+    return Response(json.dumps({"Error": "405 Method not Allowed"}), status=405, mimetype='application/json')
 
 @app.errorhandler(404)
 def handle_405(err):
     return Response(json.dumps({"Error": "404 Not Found"}), status=404, mimetype='application/json')
 
-from app.common.database import connect
+from app.api.v1.common.database import connect
 pg_connt = connect()

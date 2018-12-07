@@ -2,11 +2,11 @@ import sys
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from sqlalchemy import text
-from app.Models.owner import Owner
-from app.Models.devices import Devices
-from app.Models.imeis import Imei
-from app.Models.pairing_codes import Pairing_Codes
-from app.Models.pairings import Pairing
+from app.Models import Owner
+from app.Models import Devices
+from app.Models import Imei
+from app.Models import Pairing_Codes
+from app.Models import Pairing
 from app import app, db
 
 
