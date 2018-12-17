@@ -20,8 +20,10 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from tests._helpers import *
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
+from tests._helpers import *
 import json
 from sqlalchemy import text
 
@@ -29,6 +31,7 @@ MNO_IMSI_UPLOAD = 'api/v1/mno-single-upload'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_happy_case_primary_pair(flask_app, db, session):
     """ Verify that mno-single-imsi api provides IMSI addition for primary pair """
     complete_db_insertion(session, db, 150, '923216778901', 150, 'G3', 'LG', 's5T98JhZx', '2G,3G',
@@ -42,6 +45,7 @@ def test_mno_single_imsi_happy_case_primary_pair(flask_app, db, session):
     assert d1.get('msg') == 'IMSI added successfully'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_happy_case_secondary_pair(flask_app, db, session):
     """ Verify that mno-single-imsi api provides IMSI addition for secondary pair as well"""
     complete_db_insertion(session, db, 151, '923047934553', 151, 'F-9', 'OPPO', 'Fd9kLqwV', '3G,4G',
@@ -57,6 +61,7 @@ def test_mno_single_imsi_happy_case_secondary_pair(flask_app, db, session):
     assert d1.get('msg') == 'IMSI added successfully'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_functionality_imsi_duplication(flask_app, db, session):
     """ Verify that mno-single-imsi api doesn't allow IMSI duplication"""
     complete_db_insertion(session, db, 153, '923051930442', 153, 'F2', 'OPPO', 'Gfs6e3K', '3G,4G',
@@ -76,6 +81,7 @@ def test_mno_single_imsi_functionality_imsi_duplication(flask_app, db, session):
     assert d1.get('Error') == 'IMSI already exists'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_functionality_wrong_mno_and_msisdn(flask_app, db, session):
     """ Verify that mno-single-imsi api doesn't allow IMSI updation for wrong operator name and MSISDN"""
     complete_db_insertion(session, db, 155, '923335888777', 155, 'iphone-8', 'Apple', 'GfT6YhD3', '2G,3G,4G',
@@ -93,6 +99,7 @@ def test_mno_single_imsi_functionality_wrong_mno_and_msisdn(flask_app, db, sessi
     assert d2.get('msg') == 'IMSI addition Failed'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_functionality_unconfirmed_pair(flask_app, db, session):
     """ Verify that mno-single-imsi api doesn't allow IMSI updation for unconfirmed pairs"""
     complete_db_insertion(session, db, 156, '923336646555', 156, 'iphone-8', 'Apple', 'GfT6YhD3', '2G,3G,4G',
@@ -107,6 +114,7 @@ def test_mno_single_imsi_functionality_unconfirmed_pair(flask_app, db, session):
     assert d1.get('msg') == 'IMSI addition Failed'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_functionality_deleted_pair(flask_app, db, session):
     """ Verify that mno-single-imsi api doesn't allow IMSI updation for deleted-pairs"""
     complete_db_insertion(session, db, 157, '923336663444', 157, 'iphone-8', 'Apple', 'GfT6YhD3', '4G',
@@ -121,6 +129,7 @@ def test_mno_single_imsi_functionality_deleted_pair(flask_app, db, session):
     assert d1.get('msg') == 'IMSI addition Failed'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_error_404_wrong_api(flask_app, db):
     """ Verify that mno-single-imsi api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnoooo-singleeee-uploadddd'
@@ -131,6 +140,7 @@ def test_mno_single_imsi_error_404_wrong_api(flask_app, db):
     assert rs.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_error_405_method_not_allowed(flask_app, db):
     """ Verify that mno-single-imsi api prompts when Error-405 is occurred """
     res1 = flask_app.get(MNO_IMSI_UPLOAD)
@@ -143,6 +153,7 @@ def test_mno_single_imsi_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_validations_invalid_counrty_code(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow invalid country-code"""
     country_code = '0971'
@@ -154,6 +165,7 @@ def test_mno_single_validations_invalid_counrty_code(flask_app, db):
     assert d1.get('Error') == 'MSISDN format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_validations_invalid_subscriber_no(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow invalid subscriber-number """
     sn = ['30021619047892364', '30a21D19x4', '30@216!904$']
@@ -166,6 +178,7 @@ def test_mno_single_validations_invalid_subscriber_no(flask_app, db):
         assert d1.get('Error') == 'MSISDN format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_validations_invalid_imsi(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow invalid IMSI """
     imsi = ['4100181', '410048956738902536', '41OO12l6o4z6a9N', '4!00|2l6@4^6#9&']
@@ -178,6 +191,7 @@ def test_mno_single_validations_invalid_imsi(flask_app, db):
         assert d1.get('Error') == 'IMSI format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_validations_operator_names(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow mno names other than mentioned in configuration file"""
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
@@ -196,6 +210,7 @@ def test_mno_single_validations_operator_names(flask_app, db):
         assert f_d1.get('Error') == "Improper Operator-Name provided"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_missing_parameters(flask_app, db):
     """ Verify that mno-single-imsi api prompts when any parameter is missing """
     for cond in range(1, 6):

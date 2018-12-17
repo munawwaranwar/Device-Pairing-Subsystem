@@ -19,13 +19,16 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 
 VFY_PAIRCODE_API = 'api/v1/vfy-paircode'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_validation_invalid_paircodes(flask_app, db):
     """ Verify that vfy-paircode api doesn't accept invalid pair-code """
     pair_codes = ['pqZTDCgE4', 'KliX6', 'pqZ*C3gE']
@@ -36,6 +39,7 @@ def test_vfy_paircode_validation_invalid_paircodes(flask_app, db):
         assert rslt.data == b"Pair-Code format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_validation_invalid_imeis(flask_app, db):
     """ Verify that vfy-paircode api doesn't accept invalid imei """
     imei = ['12345', '123456789098765433', '123456acg789098', '111111@#*111111']
@@ -46,6 +50,7 @@ def test_vfy_paircode_validation_invalid_imeis(flask_app, db):
         assert rslt.data == b"IMEI format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_validation_valid_paircode_and_imei(flask_app, db):
     """ Verify that vfy-paircode api doesn't accept invalid imei """
     url = '{api}?Pair_Code=pqZ4DCgE&IMEI=111111111111111'.format(api=VFY_PAIRCODE_API)
@@ -55,6 +60,7 @@ def test_vfy_paircode_validation_valid_paircode_and_imei(flask_app, db):
     assert not rslt.data == b"IMEI format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_missing_parameters(flask_app, db):
     """ Verify that vfy-paircode api prompts when any parameter is missing """
     url_1 = '{api}?Pair_Code=&IMEI=111111111111111'.format(api=VFY_PAIRCODE_API)
@@ -66,6 +72,7 @@ def test_vfy_paircode_missing_parameters(flask_app, db):
     assert rslt_2.data == b"IMEI is missing in SMS"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_error_404_wrong_api(flask_app, db):
     """ Verify that vfy-paircode api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/vfy-paircodeeee'
@@ -75,6 +82,7 @@ def test_vfy_paircode_error_404_wrong_api(flask_app, db):
     assert rslt.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_error_405_method_not_allowed(flask_app, db):
     """ Verify that vfy-paircode api prompts when Error-405 is occurred """
     url = '{api}?Pair_Code=pqZ4zCgE&IMEI=111111111111111'.format(api=VFY_PAIRCODE_API)
@@ -88,6 +96,7 @@ def test_vfy_paircode_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_happy_case(flask_app, db, session):
     """ Verify that vfy-paircode api provides correct pair-code status """
     pair_code = 'PuPnag6D'
@@ -100,6 +109,7 @@ def test_vfy_paircode_happy_case(flask_app, db, session):
     assert result.data == b"Pair-Code (PuPnag6D) is active & associated with provided IMEI"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_functionality_wrong_paircode(flask_app, db, session):
     """ Verify that vfy-paircode api detects wrong pair-code """
     pair_code = 'Y9DwX2OM'
@@ -112,6 +122,7 @@ def test_vfy_paircode_functionality_wrong_paircode(flask_app, db, session):
     assert result.data == b"Pair-Code (A1B2C3D4) is not valid or not associated with provided IMEI"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_vfy_paircode_functionality_wrong_imei(flask_app, db, session):
     """ Verify that vfy-paircode api detects wrong pair-code """
     pair_code = 'L8vP3haD'

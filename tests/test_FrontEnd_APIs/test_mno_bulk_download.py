@@ -19,15 +19,19 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 import json
+# noinspection PyUnresolvedReferences
 from sqlalchemy import text
 
 MNO_BULK_DOWNLOAD = 'api/v1/mno-bulk-download'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_functionality_no_records(flask_app, db):
     """ to check the response of bulk-download api when there is no record """
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
@@ -40,6 +44,7 @@ def test_bulk_download_functionality_no_records(flask_app, db):
         assert d1.get('Error') == "No File found"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_happy_case_primary_pairs_only(flask_app, db, session):
     """ Verify that bulk-download api downloads the file successfully having only primary pairs"""
     complete_db_insertion(session, db, 251, '923357891879', 251, 'G4', 'LG', 'shfy8JhZx', '2G,3G',
@@ -54,6 +59,7 @@ def test_bulk_download_happy_case_primary_pairs_only(flask_app, db, session):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_happy_case_all_pairs(flask_app, db, session):
     """ Verify that bulk-download api downloads the file successfully having primary & secondary pairs both"""
     complete_db_insertion(session, db, 253, '923354441879', 253, 'G6', 'LG', 'shfHHJhZx', '2G,3G',
@@ -74,6 +80,7 @@ def test_bulk_download_happy_case_all_pairs(flask_app, db, session):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_validations_operator_names(flask_app, db):
     """Verify that bulk-download api doesn't allow mno names other than mentioned in configuration file"""
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
@@ -90,6 +97,7 @@ def test_bulk_download_validations_operator_names(flask_app, db):
         assert f_d1.get('Error') == "Improper Operator-Name provided"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_error_404_wrong_api(flask_app, db):
     """ Verify that bulk-download api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnooo-bulkkk-downloaddd'
@@ -100,6 +108,7 @@ def test_bulk_download_error_404_wrong_api(flask_app, db):
     assert rs.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_error_405_method_not_allowed(flask_app, db):
     """ Verify that bulk-download api prompts when Error-405 is occurred """
     res1 = flask_app.put(MNO_BULK_DOWNLOAD)

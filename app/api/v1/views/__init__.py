@@ -362,8 +362,3 @@ def error_file():
         return Response(json.dumps(data), status=422, mimetype='application/json')
     else:
         return send_file(file_path, as_attachment=True)
-
-
-
-
-

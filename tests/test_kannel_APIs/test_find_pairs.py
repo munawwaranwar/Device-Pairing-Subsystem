@@ -19,13 +19,17 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 
 FIND_PAIRS_API = 'api/v1/find-pairs'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_validation_invalid_sender_no(flask_app, db):
     """ Verify that find-pairs api doesn't accept invalid sender number """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
@@ -36,6 +40,7 @@ def test_find_pairs_validation_invalid_sender_no(flask_app, db):
         assert rslt.data == b"\"Sender MSISDN format is not correct\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_validation_valid_sender_no(flask_app, db):
     """ Verify that find-pairs api only accept valid sender number """
     sender_no = '923002131415'
@@ -45,6 +50,7 @@ def test_find_pairs_validation_valid_sender_no(flask_app, db):
     assert not rslt.data == b"\"Sender MSISDN format is not correct\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_missing_parameter(flask_app, db):
     """ Verify that find-pairs api prompts when any parameter is missing """
     url = '{api}?Sender_No='.format(api=FIND_PAIRS_API)
@@ -53,6 +59,7 @@ def test_find_pairs_missing_parameter(flask_app, db):
     assert rslt.data == b"Sender number is missing in SMS"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_error_404_wrong_api(flask_app, db):
     """ Verify that find-pairs api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/finddd-pairssss'
@@ -62,6 +69,7 @@ def test_find_pairs_error_404_wrong_api(flask_app, db):
     assert rslt.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_error_405_method_not_allowed(flask_app, db):
     """ Verify that find-pairs api prompts when Error-405 is occurred """
     url = '{api}?Sender_No=923367790512'.format(api=FIND_PAIRS_API)
@@ -75,6 +83,7 @@ def test_find_pairs_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_happy_case(flask_app, db, session):
     """ Verify that find-pairs api provides correct details of secondary pairs """
     primary = '923478190264'
@@ -91,6 +100,7 @@ def test_find_pairs_happy_case(flask_app, db, session):
     assert b"Status" in rslt.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_functionality_wrong_primary_no(flask_app, db, session):
     """ Verify that find-pairs api provides detects wrong primary MSISDN in parameters """
     wrong_primary = '923008171615'
@@ -104,6 +114,7 @@ def test_find_pairs_functionality_wrong_primary_no(flask_app, db, session):
     assert rslt.data == b"\"(923008171615) is not registered as Primary-Pair\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_functionality_primary_with_no_sec_pairs(flask_app, db, session):
     """ Verify that find-pairs api provides valid response when primary pair has no secndary pairs """
     complete_db_insertion(session, db, 613, '923057930229', 613, 'MI MIX 2S ', 'XIAOMI', 'SN1i9KpW', '3G,4G',

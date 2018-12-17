@@ -19,15 +19,17 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-
+# noinspection PyUnresolvedReferences
 import json
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
-from io import BytesIO, StringIO
+from io import BytesIO
 
 
 MNO_BULK_UPLOAD = 'api/v1/mno-bulk-upload'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_happy_case_proper_file(flask_app, session):
     """ Verify that bulk-upload api uploads the file successfully"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_proper_file.csv'
@@ -45,6 +47,7 @@ def test_bulk_upload_happy_case_proper_file(flask_app, session):
     assert d1.get('msg') == 'File successfully loaded'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_duplicated_imsis(flask_app, session):
     """ Verify that bulk-upload api detects duplicated IMSIs in the file"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_duplicate_imsi.csv'
@@ -62,6 +65,7 @@ def test_bulk_upload_file_duplicated_imsis(flask_app, session):
     assert d1.get('Error') == 'File contains duplicated IMSIs'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_incorrect_content(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_content_incorrect.csv'
@@ -79,6 +83,7 @@ def test_bulk_upload_file_incorrect_content(flask_app, session):
     assert d1.get('Error') == 'File content is not Correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_with_errors(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_with_errors.csv'
@@ -97,6 +102,7 @@ def test_bulk_upload_file_with_errors(flask_app, session):
     assert not d1.get('link') == ''
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_headers_incorrect(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_without_headers.csv'
@@ -114,6 +120,7 @@ def test_bulk_upload_file_headers_incorrect(flask_app, session):
     assert d1.get('Error') == 'File headers are missing or incorrect'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_type_invalid(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_pdf_csv.pdf.csv'
@@ -131,6 +138,7 @@ def test_bulk_upload_file_type_invalid(flask_app, session):
     assert d1.get('Error') == 'File type is not valid'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_no_file_or_incorrect(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_proper_file.csv'
@@ -148,6 +156,7 @@ def test_bulk_upload_no_file_or_incorrect(flask_app, session):
     assert d1.get('Error') == 'No file or improper file found'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_invalid_mno(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_proper_file.csv'
@@ -165,6 +174,7 @@ def test_bulk_upload_validation_invalid_mno(flask_app, session):
     assert d1.get('Error') == 'improper Operator-name provided'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_txt_file(flask_app, session):
     """ Verify that bulk-upload api can accept .txt files"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_text_file.txt'
@@ -182,6 +192,7 @@ def test_bulk_upload_validation_txt_file(flask_app, session):
     assert d1.get('msg') == 'File successfully loaded'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_wrong_extention_file(flask_app, session):
     """ Verify that bulk-upload api can accept .txt files"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_pdf.pdf'
@@ -199,6 +210,7 @@ def test_bulk_upload_validation_wrong_extention_file(flask_app, session):
     assert d1.get('Error') == 'No file or improper file found'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_wrong_api_parameters(flask_app, session):
     """ Verify that bulk-upload api can accept .txt files"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_proper_file.csv'
@@ -225,6 +237,7 @@ def test_bulk_upload_validation_wrong_api_parameters(flask_app, session):
     assert d2.get('Error') == 'No file or improper file found'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_error__404_wrong_api(flask_app, db):
     """ Verify that bulk-upload api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnooo-bulkkk-uploaddd'
@@ -238,6 +251,7 @@ def test_bulk_upload_error__404_wrong_api(flask_app, db):
     assert rs.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_error__405_method_not_allowed(flask_app, db):
     """ Verify that bulk-upload api prompts when Error-405 is occurred """
     res1 = flask_app.get(MNO_BULK_UPLOAD)

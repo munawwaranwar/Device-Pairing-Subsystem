@@ -20,14 +20,16 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import json
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 
 SIM_CHG_API = 'api/v1/sim-chg'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_validation_wrong_sender_no(flask_app, db):
     """ Verify that sim-chg api doesn't accept invalid primary """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
@@ -37,6 +39,7 @@ def test_sim_change_validation_wrong_sender_no(flask_app, db):
         assert rslt.data == b"Sender MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_validation_valid_sender_no(flask_app, db):
     """ Verify that sim-chg api only accepts valid sender number"""
     sender_no = '923069590281'
@@ -45,6 +48,7 @@ def test_sim_change_validation_valid_sender_no(flask_app, db):
     assert not rslt.data == b"Sender MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_validation_operator_name(flask_app, db):
     """ Verify that sim-chg api accepts only valid operator name """
     mno_1 = 'j@zz'
@@ -61,6 +65,7 @@ def test_sim_change_validation_operator_name(flask_app, db):
     assert not rslt_3.data == b"operator's name is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_missing_parameters(flask_app, db):
     """ Verify that sim-chg api prompts when any parameter is missing """
     payload = [
@@ -77,6 +82,7 @@ def test_sim_change_missing_parameters(flask_app, db):
             assert result.data == b"Operator's name is missing in SMS"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_error_400_bad_request(flask_app, db):
     """ Verify that sim-chg api prompts when Error-400 is occurred """
     payload = {"Sender_No": "923458179437", "Operator": "telenor"}
@@ -85,6 +91,7 @@ def test_sim_change_error_400_bad_request(flask_app, db):
     assert result.status_code == 400
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_error_404_wrong_api(flask_app, db):
     """ Verify that sim-chg api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/simmmm-chgggg'
@@ -94,6 +101,7 @@ def test_sim_change_error_404_wrong_api(flask_app, db):
     assert result.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_error_405_method_not_allowed(flask_app, db):
     """ Verify that sim-chg api prompts when Error-405 is occurred """
     res1 = flask_app.get(SIM_CHG_API)
@@ -106,6 +114,7 @@ def test_sim_change_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_happy_case(flask_app, db, session):
     """ Verify that sim-chg api responds correctly when all parameters are valid """
     complete_db_insertion(session, db, 411, '923036830442', 411, 'Find-X', 'OPPO', '5RT1qazbh', '3G,4G',
@@ -118,6 +127,7 @@ def test_sim_change_happy_case(flask_app, db, session):
     assert result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_functionality_chk_old_and_new_imsis(flask_app, db, session):
     """ Verify that sim-chg api handles old & new IMSIs correctly """
     complete_db_insertion(session, db, 412, '923047930553', 412, 'F-9', 'OPPO', 'Fd9kLqwV', '3G,4G',
@@ -136,6 +146,7 @@ def test_sim_change_functionality_chk_old_and_new_imsis(flask_app, db, session):
     assert qry.imsi is None
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_functionality_wrong_sender_no(flask_app, db, session):
     """ Verify that sim-chg api detects wrong Sender MSISDN """
     complete_db_insertion(session, db, 413, '923057930229', 413, 'MI MIX 2S ', 'XIAOMI', 'SN1i9KpW', '3G,4G',
@@ -147,6 +158,7 @@ def test_sim_change_functionality_wrong_sender_no(flask_app, db, session):
     assert result.data == b"MSISDN (923113306922) is not existed in any pair"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_functionality_request_from_unconfirmed_sec_pair(flask_app, db, session):
     """ Verify that sim-chg api can cater request from confirmed secondary pair as well """
     complete_db_insertion(session, db, 414, '923057930229', 414, 'PocoPhone ', 'XIAOMI', 'Sb9i9]]KpW', '3G,4G',
@@ -159,6 +171,7 @@ def test_sim_change_functionality_request_from_unconfirmed_sec_pair(flask_app, d
     assert result.data == b"MSISDN (923125840917) is not existed in any pair"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_functionality_request_from_confirmed_sec_pair(flask_app, db, session):
     """ Verify that sim-chg api can cater request from confirmed secondary pair as well """
     complete_db_insertion(session, db, 415, '923089923776', 415, 'Nokia-4 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',

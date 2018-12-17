@@ -19,7 +19,10 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 import json
 
@@ -28,6 +31,7 @@ MNO_FIRST_PAGE = 'api/v1/mno-first-page'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_happy_case_multiple_record(flask_app, session, db):
     """ Verify that mno-first-page api provides correct results """
     owner = ['923001111111', '923002222222', '923003333333', '923004444444']
@@ -64,6 +68,7 @@ def test_mno_first_page_happy_case_multiple_record(flask_app, session, db):
     assert rs3.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_happy_case_single_record(flask_app, session, db):
     """ Verify that mno-first-page api provides correct results """
     complete_db_insertion(session, db, 2005, '923089923776', 2005, 'Nokia-8 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
@@ -78,6 +83,7 @@ def test_mno_first_page_happy_case_single_record(flask_app, session, db):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_missing_parameters(flask_app, session):
     """ Verify that mno-first-page api prompts when any parameter is missing """
     url_1 = '{api}?mno=warid&start=1&limit='.format(api=MNO_FIRST_PAGE)
@@ -98,6 +104,7 @@ def test_mno_first_page_missing_parameters(flask_app, session):
     assert d3.get('Error') == 'operator name is missing'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_validations_start_and_limit(flask_app, session):
     """Verify that mno-first-page api doesn't allow invalid start & limit values"""
     url_1 = '{api}?mno=warid&start=1&limit=a'.format(api=MNO_FIRST_PAGE)
@@ -113,6 +120,7 @@ def test_mno_first_page_validations_start_and_limit(flask_app, session):
     assert d2.get('Error') == 'Start or limit is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_validations_operator_name(flask_app, session):
     """Verify that mno-first-page api doesn't allow mno names other than mentioned in configuration file"""
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
@@ -131,6 +139,7 @@ def test_mno_first_page_validations_operator_name(flask_app, session):
         assert f_d1.get('Error') == "improper Operator's name provided"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_functionality_no_records(flask_app, session):
     """Verify that mno-first-page api provides correct response when no operator record found """
     url = '{api}?mno=ufone&start=1&limit=10'.format(api=MNO_FIRST_PAGE)
@@ -140,6 +149,7 @@ def test_mno_first_page_functionality_no_records(flask_app, session):
     assert d1.get('msg') == "no record found"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_error_404_wrong_api(flask_app, session):
     """ Verify that mno-first-page api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnooo-firstttt-pageeee'
@@ -149,6 +159,7 @@ def test_mno_first_page_error_404_wrong_api(flask_app, session):
     assert rs.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_error_405_method_not_allowed(flask_app, session):
     """ Verify that mno-first-page api prompts when Error-405 is occurred """
     url = '{api}?mno=jazz&start=1&limit=10'.format(api=MNO_FIRST_PAGE)

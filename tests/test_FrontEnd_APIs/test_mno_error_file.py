@@ -20,13 +20,17 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
+# noinspection PyUnresolvedReferences
 import json
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyUnresolvedReferences
 from io import BytesIO, StringIO
 
 MNO_ERROR_FILE = 'api/v1/mno-error-file'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_happy_case(flask_app, session):
     """ Verify that error-file api downloads the error-file successfully"""
     link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_ufone_2018-11-26_06-02-47.csv"
@@ -36,6 +40,7 @@ def test_mno_error_file_happy_case(flask_app, session):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_not_found(flask_app, session):
     """ Verify that error-file api prompts when error-file is not found"""
     link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_telenor_0000-00-00_00-00-00.csv"
@@ -47,6 +52,7 @@ def test_mno_error_file_not_found(flask_app, session):
     assert d1.get('Error') == 'File not found'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_missing_url(flask_app, session):
     """ Verify that error-file api prompts when error-file is not found"""
     url = '{api}?url='.format(api=MNO_ERROR_FILE)
@@ -57,16 +63,18 @@ def test_mno_error_file_missing_url(flask_app, session):
     assert d1.get('Error') == 'URL is missing'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_error_404_wrong_api(flask_app, session):
     """ Verify that error-file api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/mnoo-errorrr-fileee'
+    tmp_api = 'api/v1/mnoo-errorrr-fileee'
     link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_warid_2018-11-20_09-04-53.csv"
-    url = '{api}?url={link}'.format(api=tmp_API, link=link)
+    url = '{api}?url={link}'.format(api=tmp_api, link=link)
     rs = flask_app.get(url)
     print(rs.data)
     assert rs.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file__error_405_method_not_allowed(flask_app, session):
     """ Verify that mno-first-page api prompts when Error-405 is occurred """
     link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_warid_2018-11-20_09-04-53.csv"

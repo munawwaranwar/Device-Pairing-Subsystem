@@ -20,8 +20,9 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import json
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 from app import conf
 
@@ -29,6 +30,7 @@ REL_ALL_API = 'api/v1/rel-all'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_validation_wrong_sender_no(flask_app, db):
     """ Verify that rel-all api doesn't accept invalid primary """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
@@ -38,6 +40,7 @@ def test_rel_all_pairs_validation_wrong_sender_no(flask_app, db):
         assert rslt.data == b"Primary MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_validations_valid_sender_no(flask_app, db):
     """ Verify that rel-all api only accepts valid primary & secondary numbers """
     payload = {"Sender_No": "923458179437"}
@@ -45,6 +48,7 @@ def test_rel_all_pairs_validations_valid_sender_no(flask_app, db):
     assert not rslt.data == b"Primary MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_missing_parameters(flask_app, db):
     """ Verify that rel-all api prompts when any parameter is missing """
     payload_1 = {"Sender_No": ""}
@@ -55,6 +59,7 @@ def test_rel_all_pairs_missing_parameters(flask_app, db):
     assert rslt_2.data == b"Sender number is missing in SMS"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_error_400_bad_request(flask_app, db):
     """ Verify that rel-all api prompts when Error-400 is occurred """
     payload = {"Sender_No": "923225782404"}
@@ -63,6 +68,7 @@ def test_rel_all_pairs_error_400_bad_request(flask_app, db):
     assert result.status_code == 400
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_error_404_wrong_api(flask_app, db):
     """ Verify that rel-all api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/relll-@llll'
@@ -72,6 +78,7 @@ def test_rel_all_pairs_error_404_wrong_api(flask_app, db):
     assert result.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_error_405_method_not_allowed(flask_app, db):
     """ Verify that rel-all api prompts when Error-405 is occurred """
     res1 = flask_app.get(REL_ALL_API)
@@ -84,6 +91,7 @@ def test_rel_all_pairs_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_happy_case_without_sec_pairs(flask_app, db, session):
     """ Verify that rel-all api deletes primary-pair incase no secondary pair exists """
     complete_db_insertion(session, db, 311, '923036830442', 311, 'Find-X', 'OPPO', '5RT1qazbh', '3G,4G',
@@ -95,6 +103,7 @@ def test_rel_all_pairs_happy_case_without_sec_pairs(flask_app, db, session):
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair(flask_app, db, session):
     """ Verify that rel-all api deletes primary-pair as well as unconfirmed secondary-pair  """
     complete_db_insertion(session, db, 312, '923047930553', 312, 'F-9', 'OPPO', 'Fd9kLqwV', '3G,4G',
@@ -108,6 +117,7 @@ def test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair(flask_app, db, sessi
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_happy_case_with_confirmed_sec_pair(flask_app, db, session):
     """ Verify that rel-all api deletes primary-pair as well as confirmed secondary-pair  """
     complete_db_insertion(session, db, 313, '923057930229', 313, 'MI MIX 2S ', 'XIAOMI', 'SN1i9KpW', '3G,4G',
@@ -122,6 +132,7 @@ def test_rel_all_pairs_happy_case_with_confirmed_sec_pair(flask_app, db, session
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_happy_case_with_maximum_sec_pairs(flask_app, db, session):
     """ Verify that rel-all api deletes all pairs including primary-pair   """
     complete_db_insertion(session, db, 314, '923057930229', 314, 'PocoPhone ', 'XIAOMI', 'Sb9i9]]KpW', '3G,4G',
@@ -139,6 +150,7 @@ def test_rel_all_pairs_happy_case_with_maximum_sec_pairs(flask_app, db, session)
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_functionality_wrong_primary_msisdn(flask_app, db, session):
     """ Verify that rel-all api detects wrong primary-pair """
     complete_db_insertion(session, db, 315, '923089923776', 315, 'Nokia-4 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
@@ -152,6 +164,7 @@ def test_rel_all_pairs_functionality_wrong_primary_msisdn(flask_app, db, session
     assert result.data == b"Release-All request not made by Primary-MSISDN"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_functionality_repetitive_requests(flask_app, db, session):
     """ Verify that rel-all api detects wrong primary-pair """
     complete_db_insertion(session, db, 316, '923079924476', 316, 'LUMIA ', 'NOKIA', 'S2w434a7hW', '2G,3G',
@@ -173,6 +186,7 @@ def test_rel_all_pairs_functionality_repetitive_requests(flask_app, db, session)
         assert b"Release-All request is already registered" in result.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app, db, session):
     """ Verify that rel-single api inserts correct values of change_type & export_status """
     complete_db_insertion(session, db, 317, '923099924433', 317, 'G5 ', 'LG', 'sDx5ue73M', '2G,3G',
@@ -190,6 +204,7 @@ def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app
     assert qry.export_status is False
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_functionality_chk_db_insertion_with_sec_pair(flask_app, db, session):
     """ Verify that rel-single api inserts correct values of change_type & export_status """
     complete_db_insertion(session, db, 318, '923219925555', 318, 'Z4', 'QMobile', 'Hj7w3p9U', '3G,4G',

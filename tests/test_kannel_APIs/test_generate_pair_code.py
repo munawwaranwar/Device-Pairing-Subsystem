@@ -19,9 +19,12 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_generate_paircode(flask_app, db):
     """ Verify that paircode api generates correct pair-code """
 
@@ -31,6 +34,7 @@ def test_generate_paircode(flask_app, db):
     assert rslt.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_base(flask_app, db):
     """ Verify that paircode api generates correct pair-code """
 

@@ -19,13 +19,18 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 import json
 
 ATHTY_INPUT = 'api/v1/sbmt-dev-info'
 HEADERS = {'Content-Type': "application/json"}
 
+
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_happy_case(flask_app, db):
     """Verify that athty-input api response correctly when all parameters are valid"""
     country_code = '92'
@@ -45,6 +50,7 @@ def test_athty_input_happy_case(flask_app, db):
     assert data.get('Error') == "Device with same Serial number already exists"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_counrty_code(flask_app, db):
     """Verify that athty-input api doesn't allow invalid country-code"""
     country_code = '0971'
@@ -58,6 +64,7 @@ def test_athty_input_validations_invalid_counrty_code(flask_app, db):
     assert data.get('Error') == 'Contact-MSISDN format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_subscriber_no(flask_app, db):
     """Verify that athty-input api doesn't allow invalid subscriber-number (SN)"""
     sn = ['30021619047892364', '30a21D19x4', '30@216!904$']
@@ -72,6 +79,7 @@ def test_athty_input_validations_invalid_subscriber_no(flask_app, db):
         assert data.get('Error') == 'Contact-MSISDN format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_rat_formats(flask_app, db):
     """Verify that athty-input api doesn't allow invalid rat"""
     imei = ["37327433394FBC5", "386735ABC903832"]
@@ -87,6 +95,7 @@ def test_athty_input_validations_invalid_rat_formats(flask_app, db):
         assert data.get('Error') == 'RAT format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_valid_rat_formats(flask_app, db):
     """Verify that athty-input api allows only valid rat"""
     imei = ["37327433394FBC5", "386735ABC903832"]
@@ -102,6 +111,7 @@ def test_athty_input_validations_valid_rat_formats(flask_app, db):
         assert not data.get('Error') == 'RAT format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_valid_mac_formats(flask_app, db):
     """Verify that athty-input api allows only valid mac"""
     imei = ["37327433394FBC5", "386735ABC903832"]
@@ -118,6 +128,7 @@ def test_athty_input_validations_valid_mac_formats(flask_app, db):
         assert data.get('msg') == "Device's information has been successfully loaded"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_mac_formats(flask_app, db):
     """Verify that athty-input api doesn't allow invalid mac"""
     imei = ["37327433394FBC5", "386735ABC903832"]
@@ -133,6 +144,7 @@ def test_athty_input_validations_invalid_mac_formats(flask_app, db):
         assert data.get('Error') == "MAC format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_model_formats(flask_app, db):
     """Verify that athty-input api doesn't allow invalid mac"""
     imei = ["37327433394FBC5", "386735ABC903832"]
@@ -153,6 +165,7 @@ def test_athty_input_validations_model_formats(flask_app, db):
     assert data_2.get('Error') == "Model format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_brand_formats(flask_app, db):
     """Verify that athty-input api doesn't allow invalid mac"""
     imei = ["37327433394FBC5", "386735ABC903832"]
@@ -173,6 +186,7 @@ def test_athty_input_validations_brand_formats(flask_app, db):
     assert not data_2.get('Error') == "Brand format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_imei_formats(flask_app, db):
     """Verify that athty-input api doesn't allow invalid mac"""
     imei = ["313789A", "3100937A6881478C5", "819G63455K18RT6", "31678@8&909*1#6", "7b9f1a7d99c8d3e"]
@@ -184,6 +198,7 @@ def test_athty_input_validations_imei_formats(flask_app, db):
     assert data.get('Error') == "IMEI format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_serial_no(flask_app, db):
     """Verify that athty-input api doesn't allow invalid subscriber-number (SN)"""
     serial = ['T68-FePq', 'K0@2a6!M04$']
@@ -197,6 +212,7 @@ def test_athty_input_validations_invalid_serial_no(flask_app, db):
         assert data.get('Error') == 'Serial-Number format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_error__404_wrong_api(flask_app, db):
     """ Verify that athty-input api prompts when Error-400 is occurred """
     tmp_api = 'api/v1/sbmtttt-devvvv-infoooo'
@@ -208,6 +224,7 @@ def test_athty_input_error__404_wrong_api(flask_app, db):
     assert rsl.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_error_405_method_not_allowed(flask_app, db):
     """ Verify that athty-input api prompts when Error-405 is occurred """
     res1 = flask_app.get(ATHTY_INPUT)
@@ -220,6 +237,7 @@ def test_athty_input_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_missing_parameters(flask_app, db):
     """ Verify that athty-input api prompts when any parameter is missing """
     imei = ["278364974027487", "238409485761298"]
@@ -246,6 +264,7 @@ def test_athty_input_missing_parameters(flask_app, db):
             assert d1.get('Error') == 'IMEI not found'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_missing_mac(flask_app, db):
     """ Verify that athty-input api works correctly when optional mac is missing """
     imei = ["278364974027487", "238409485761298"]
@@ -257,6 +276,7 @@ def test_athty_input_missing_mac(flask_app, db):
     assert d1.get('msg') == "Device's information has been successfully loaded"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_functionality_single_contact_multiple_devices(flask_app, db):
     """ Verify that athty-input api can register multiple devices via single contact number """
     imei = ["278364974027487", "238409485761298"]
@@ -282,6 +302,7 @@ def test_athty_input_functionality_single_contact_multiple_devices(flask_app, db
     assert d3.get('msg') == "Device's information has been successfully loaded"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_functionality_max_imeis_per_device(flask_app, db):
     """Verify that athty-input api allows only 5 IMEIs per device"""
     country_code = '92'

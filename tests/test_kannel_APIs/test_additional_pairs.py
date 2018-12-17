@@ -20,14 +20,16 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import json
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 
 ADD_PAIR_API = 'api/v1/add-pair'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_validations_wrong_sender_no(flask_app, db):
     """ Verify that add-pair api doesn't accept invalid primary number """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
@@ -37,6 +39,7 @@ def test_add_pair_validations_wrong_sender_no(flask_app, db):
         assert rslt.data == b"Primary MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_validations_valid_sender_no(flask_app, db):
     """ Verify that add-pair api only accepts valid primary number """
     sender_no = '923458179437'
@@ -45,6 +48,7 @@ def test_add_pair_validations_valid_sender_no(flask_app, db):
     assert not rslt.data == b"Primary MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_validations_wrong_msisdn(flask_app, db):
     """ Verify that add-pair api doesn't accept invalid primary number """
     msisdn = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
@@ -54,6 +58,7 @@ def test_add_pair_validations_wrong_msisdn(flask_app, db):
         assert rslt.data == b"Secondary MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_validations_valid_msisdn(flask_app, db):
     """ Verify that add-pair api only accepts valid secondary number """
     sender_no = '923458179437'
@@ -62,6 +67,7 @@ def test_add_pair_validations_valid_msisdn(flask_app, db):
     assert not rslt.data == b"Primary MSISDN format is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_missing_parameters(flask_app, db):
     """ Verify that add-pair api prompts when any parameter is missing """
     payload_1 = {"Sender_No": "", "MSISDN": "923003294857"}
@@ -78,6 +84,7 @@ def test_add_pair_missing_parameters(flask_app, db):
     assert result_4.data == b"secondary number is missing in SMS"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_error_400_bad_request(flask_app, db):
     """ Verify that add-pair api prompts when Error-400 is occurred """
     payload = {"Sender_No": "923458179437", "MSISDN": "923003294857"}
@@ -86,6 +93,7 @@ def test_add_pair_error_400_bad_request(flask_app, db):
     assert result.status_code == 400
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_error_404_wrong_api(flask_app, db):
     """ Verify that add-pair api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/adddd-pairrr'
@@ -95,6 +103,7 @@ def test_add_pair_error_404_wrong_api(flask_app, db):
     assert result.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_error_405_method_not_allowed(flask_app, db):
     """ Verify that add-pair api prompts when Error-405 is occurred """
     res1 = flask_app.get(ADD_PAIR_API)
@@ -107,6 +116,7 @@ def test_add_pair_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_happy_case(flask_app, db, session):
     """ Verify that add-pair api responds correctly when all parameters are valid"""
     complete_db_insertion(session, db, 6, '923004171564', 6, 'Note5', 'Samsung', 'abcdefgh', '3G,4G',
@@ -119,6 +129,7 @@ def test_add_pair_happy_case(flask_app, db, session):
     assert rslt.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_wrong_primary_msisdn(flask_app, db, session):
     """ Verify that add-pair api doesn't allow wrong primary MSISDN"""
     payload = {"Sender_No": "923348617409", "MSISDN": "923128649052"}
@@ -127,6 +138,7 @@ def test_add_pair_functionality_wrong_primary_msisdn(flask_app, db, session):
     assert rslt.data == b"Request not made by Primary-Pair or number-to-be-added is Primary number"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_same_primary_and_secondary_msisdn(flask_app, db, session):
     """ Verify that add-pair api api doesn't allow same MSISDN for primary & secondary pairs """
     complete_db_insertion(session, db, 7, '923346181454', 7, 'iphone-max', 'Apple', 'P8go7tdR', '4G',
@@ -139,6 +151,7 @@ def test_add_pair_functionality_same_primary_and_secondary_msisdn(flask_app, db,
     assert rslt.data == b"Request not made by Primary-Pair or number-to-be-added is Primary number"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_already_paired_msisdn(flask_app, db, session):
     """ Verify that add-pair api doesn't allow already paired MSISDN for secondary pair """
     complete_db_insertion(session, db, 8, '923228450691', 8, 'iphone-7', 'Apple', 'ASX0Yh317933', '3G,4G',
@@ -153,6 +166,7 @@ def test_add_pair_functionality_already_paired_msisdn(flask_app, db, session):
     assert rslt_2.data == b"MSISDN (923086190554)already paired with the device"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_pairing_limit(flask_app, db, session):
     """ Verify that add-pair api doesn't allow secondary pairs more than pre-configured limit"""
     complete_db_insertion(session, db, 9, '923238450807', 9, 'REDMI', 'Xiaomi', 'Xr4q9irgTj', '2G,3G,4G',
@@ -173,6 +187,7 @@ def test_add_pair_functionality_pairing_limit(flask_app, db, session):
     assert rslt_2.data == b"Pairing limit breached: need to remove any existing pair"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_single_secondary_msisdn_many_primary_pairs(flask_app, db, session):
     """ Verify that add-pair api allows one secondary-MSISDN to pair with many primary-pairs """
     complete_db_insertion(session, db, 10, '923024455667', 10, 'J7-prime', 'Samsung', 'Xrt7oPa9', '3G,4G',

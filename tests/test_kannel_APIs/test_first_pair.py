@@ -19,14 +19,17 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-import json
+
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 
 FIRST_PAIR_API = 'api/v1/first-pair'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_happy_case(flask_app, db, session):
     """ Verify that first-pair api responds correctly when all parameters are valid"""
     from tests._helpers import complete_db_insertion
@@ -42,6 +45,7 @@ def test_first_pair_happy_case(flask_app, db, session):
     return rslt.data
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_wrong_paircodes(flask_app, db):
     """ Verify that first-pair api accepts only valid pair-code """
     pair_code_1 = 'pqZTDCgE4'
@@ -58,6 +62,7 @@ def test_first_pair_validations_wrong_paircodes(flask_app, db):
     assert result_3.data == b"\"Pair-Code format is not correct\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_valid_paircode(flask_app, db):
     """ Verify that first-pair api responds corectly when pair-code is valid """
     pair_code = 'pqZ5DCgE'
@@ -67,6 +72,7 @@ def test_first_pair_validations_valid_paircode(flask_app, db):
     assert not rslt.data == b"\"Pair-Code format is not correct\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_wrong_sender_no(flask_app, db):
     """ Verify that first-pair api accepts only valid Sender_no """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
@@ -76,6 +82,7 @@ def test_first_pair_validations_wrong_sender_no(flask_app, db):
         assert rslt.data == b"\"Sender MSISDN format is not correct\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_valid_sender_no(flask_app, db):
     """ Verify that first-pair api responds corectly when pair-code is valid """
     sender_no = '923008173629'
@@ -85,6 +92,7 @@ def test_first_pair_validations_valid_sender_no(flask_app, db):
     assert not rslt.data == b"\"Sender MSISDN format is not correct\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_operator_name(flask_app, db):
     """ Verify that first-pair api accepts only valid pair-code """
     mno_1 = 'j@zz'
@@ -99,6 +107,7 @@ def test_first_pair_validations_operator_name(flask_app, db):
     assert not result_2.data == b"\"MNO's name is not in correct format\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_missing_parameters(flask_app, db):
     """ Verify that first-pair api prompts when any parameter is missing """
     payload_1 = {"Sender_No": "923040519543", "Operator": "jazz"}
@@ -112,6 +121,7 @@ def test_first_pair_missing_parameters(flask_app, db):
     assert result_3.data == b"operator name is missing in SMS"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_error_400_bad_request(flask_app, db):
     """ Verify that first-pair api prompts when Error-400 is occurred """
     payload = {"Pair_Co": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "ufone"}
@@ -120,6 +130,7 @@ def test_first_pair_error_400_bad_request(flask_app, db):
     assert result.status_code == 400
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_error_404_wrong_api(flask_app, db):
     """ Verify that first-pair api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/firsttt-pairrrrr'
@@ -129,6 +140,7 @@ def test_first_pair_error_404_wrong_api(flask_app, db):
     assert result.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_error_405_method_not_allowed(flask_app, db):
     """ Verify that first-pair api prompts when Error-405 is occurred """
     res1 = flask_app.get(FIRST_PAIR_API)
@@ -141,6 +153,7 @@ def test_first_pair_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_functionality_msisdn_already_exist(flask_app, db, session):
     """ verifying the first-pair doesn't allow duplicated primary MSISDN """
     complete_db_insertion(session, db, 2, '923004171565', 2, 'Note-8', 'Samsung', 'a1b2c3d4e5', '4G', 'AxT3pGf9', 2,
@@ -157,6 +170,7 @@ def test_first_pair_functionality_msisdn_already_exist(flask_app, db, session):
     assert res_2.data == b"\"MSISDN already exists as Primary-Pair\""
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_functionality_invalid_paircode(flask_app, db, session):
     """ verifying the first-pair doesn't allow duplicated pair-code or paircode not found in DB """
     complete_db_insertion(session, db, 4, '923004171565', 4, 'S-8', 'Samsung', 'a1b2c3d4uu', '3G,4G', 'A1b2C3d4', 4,

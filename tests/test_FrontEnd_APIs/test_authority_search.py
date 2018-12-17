@@ -19,7 +19,10 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
+# noinspection PyProtectedMember
 from tests._helpers import *
 import json
 
@@ -27,6 +30,7 @@ ATHTY_SEARCH = 'api/v1/authority-search'
 HEADERS = {'Content-Type': "application/json"}
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_happy_case(flask_app, db, session):
     """ Verify that athty-serach provides correct search result """
     athty_search_db_insertion(session, db, 701, '923145309696', 701, 'Note5', 'Samsung', '1234GHb4y', '3G,4G',
@@ -38,6 +42,7 @@ def test_athty_search_happy_case(flask_app, db, session):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_missing_parameters(flask_app, db, session):
     """ Verify that athty-serach supports search by any parameter """
     athty_search_db_insertion(session, db, 702, '923145309696', 702, 'F-6', 'OPPO', '1234GHAAA', '4G',
@@ -50,6 +55,7 @@ def test_athty_search_functionality_missing_parameters(flask_app, db, session):
         assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_single_parameter_search(flask_app, db, session):
     """ Verify that athty-serach api supports search by single parameter as well"""
     athty_search_db_insertion(session, db, 703, '923006819263', 703, 'RedMi', 'Xiamo', 'U87Hsr',
@@ -62,6 +68,7 @@ def test_athty_search_functionality_single_parameter_search(flask_app, db, sessi
         assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_no_search_parameter(flask_app, db, session):
     """ to check the response of athty-serach api when no search parameter is provided"""
     athty_search_db_insertion(session, db, 704, '923218965339', 704, 'Nokia-8', 'NOKIA', '0oa36Th7Fe',
@@ -73,6 +80,7 @@ def test_athty_search_functionality_no_search_parameter(flask_app, db, session):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_wrong_search_parameter(flask_app, db, session):
     """ to check the response of athty-serach api when wrong search parameters are provided"""
     athty_search_db_insertion(session, db, 705, '(23457091287', 705, 'Nokia-2', 'NOKIA', 'Kj8sR56h',
@@ -84,6 +92,7 @@ def test_athty_search_functionality_wrong_search_parameter(flask_app, db, sessio
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_grouped_imeis(flask_app, db, session):
     """ Verify that athty-serach api groups IMEIs for single search result"""
     imei = ['555555555555555', '666666666666666']
@@ -96,6 +105,7 @@ def test_athty_search_functionality_grouped_imeis(flask_app, db, session):
     assert rs.status_code == 200
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_mac(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid MAC"""
     mac = ['T~68_F*eP`q', 'K0@2a6!M04$']
@@ -108,6 +118,7 @@ def test_athty_search_validations_invalid_mac(flask_app, db):
         assert d1.get('Error') == 'MAC format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_serial_no(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid serial number"""
     serial = ['$erI@||n<>?b#', 'G&!@6!T04$']
@@ -120,6 +131,7 @@ def test_athty_search_validations_invalid_serial_no(flask_app, db):
         assert d1.get('Error') == 'Serial-Number format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_contact_no(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid contact number"""
     contact = ['30a21D19x4', '30@216!904$']
@@ -132,6 +144,7 @@ def test_athty_search_validations_invalid_contact_no(flask_app, db):
         assert d1.get('Error') == 'Contact-MSISDN format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_imei(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid contact number"""
     imei = ["313789$", "31!937A6%81478C5", "31678@8&909*1#6", "7~b9{f1a7,d|9?c8)3/e"]
@@ -144,6 +157,7 @@ def test_athty_search_validations_invalid_imei(flask_app, db):
         assert d1.get('Error') == 'IMEI format is not correct'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_start_limit(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid contact number"""
     payload = athty_search_payload('F', '$', "123456789098765", "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650")
@@ -154,6 +168,7 @@ def test_athty_search_validations_invalid_start_limit(flask_app, db):
     assert d1.get('Error') == 'Start or Limit is not integer'
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_search_arguments(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid Search Arguments"""
     payload = athty_search_payload(1, 5, "123456789098765", "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650", 10)
@@ -164,6 +179,7 @@ def test_athty_search_validations_invalid_search_arguments(flask_app, db):
     assert d1.get('Error') == "Search Arguments is not correct"
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_error__404_wrong_api(flask_app, db):
     """ Verify that athty-serach api prompts when Error-400 is occurred """
     tmp_api = 'api/v1/authorityyyy-searchhhh'
@@ -174,6 +190,7 @@ def test_athty_search_error__404_wrong_api(flask_app, db):
     assert rs.status_code == 404
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_error_405_method_not_allowed(flask_app, db):
     """ Verify that athty-serach api prompts when Error-405 is occurred """
     res1 = flask_app.get(ATHTY_SEARCH)

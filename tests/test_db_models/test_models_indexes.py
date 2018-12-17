@@ -19,7 +19,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-
+# noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 from app.api.v1.models.pairings import Pairing
 from app.api.v1.models.pairing_codes import Pairing_Codes
@@ -32,6 +32,7 @@ from sqlalchemy import text
 device_index, pc_index, imei_index, owner_index, dev_index = False, False, False, False, False
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_owner_index(db, session):
     """Verify that the Owner model works correctly."""
 
@@ -43,9 +44,11 @@ def test_owner_index(db, session):
         if o.indexrelname == 'owner_contact_index':
             owner_index = True
             print(o.indexrelname)
-    assert owner_index == True
+    # noinspection PyUnboundLocalVariable
+    assert owner_index
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_device_indexes(db, session):
     """Verify that the Devices model works correctly."""
 
@@ -63,9 +66,11 @@ def test_device_indexes(db, session):
         elif d.indexrelname == 'devices_brand_index':
             dev_index = True
         print(d.indexrelname)
-    assert dev_index == True
+    # noinspection PyUnboundLocalVariable
+    assert dev_index
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_pairing_codes_index(db, session):
     """Verify that the Pairing_Codes model works correctly."""
 
@@ -77,9 +82,11 @@ def test_pairing_codes_index(db, session):
         if c.indexrelname == 'devices_paircodes_index':
             pc_index = True
             print(c.indexrelname)
-    assert pc_index == True
+    # noinspection PyUnboundLocalVariable
+    assert pc_index
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_imei_index(db, session):
     """Verify that the IMEI model works correctly."""
 
@@ -91,9 +98,11 @@ def test_imei_index(db, session):
         if i.indexrelname == 'devices_imei_index':
             imei_index = True
             print(i.indexrelname)
-    assert imei_index == True
+    # noinspection PyUnboundLocalVariable
+    assert imei_index
 
 
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_pairing_indexes(db, session):
     """Verify that the Pairing model works correctly."""
 
@@ -113,4 +122,5 @@ def test_pairing_indexes(db, session):
         elif p.indexrelname == 'devices_operator_index':
             device_index = True
         print(p.indexrelname)
-    assert device_index == True
+    # noinspection PyUnboundLocalVariable
+    assert device_index
