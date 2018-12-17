@@ -27,16 +27,17 @@ from tests._helpers import *
 SIM_CHG_API = 'api/v1/sim-chg'
 HEADERS = {'Content-Type': "application/json"}
 
-def test_sim_change_validation_wrong_Sender_No(flask_app, db):
+
+def test_sim_change_validation_wrong_sender_no(flask_app, db):
     """ Verify that sim-chg api doesn't accept invalid primary """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in sender_no:
-        payload = {"Sender_No": val, "Operator" : "telenor"}
+        payload = {"Sender_No": val, "Operator": "telenor"}
         rslt = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
         assert rslt.data == b"Sender MSISDN format is not correct"
 
 
-def test_sim_change_validation_valid_Sender_No(flask_app, db):
+def test_sim_change_validation_valid_sender_no(flask_app, db):
     """ Verify that sim-chg api only accepts valid sender number"""
     sender_no = '923069590281'
     payload = {"Sender_No": sender_no, "Operator": "jazz"}
@@ -67,9 +68,8 @@ def test_sim_change_missing_parameters(flask_app, db):
         {"Operator": "telenor"},
         {"Sender_No": "923468292404", "Operator": ""},
         {"Sender_No": "923468292404"}
-
     ]
-    for val in range(0,4):
+    for val in range(0, 4):
         result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload[val]))
         if val == 0 or val == 1:
             assert result.data == b"Sender number is missing in SMS"
@@ -87,9 +87,9 @@ def test_sim_change_error_400_bad_request(flask_app, db):
 
 def test_sim_change_error_404_wrong_api(flask_app, db):
     """ Verify that sim-chg api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/simmmm-chgggg'
+    tmp_api = 'api/v1/simmmm-chgggg'
     payload = {"Sender_No": "923458179437", "Operator": "telenor"}
-    result = flask_app.delete(tmp_API, headers=HEADERS, data=json.dumps(payload))
+    result = flask_app.delete(tmp_api, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.status_code == 404
 
@@ -115,7 +115,7 @@ def test_sim_change_happy_case(flask_app, db, session):
     payload = {"Sender_No": "923460192939", "Operator": "jazz"}
     result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert  result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+    assert result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
 
 
 def test_sim_change_functionality_chk_old_and_new_imsis(flask_app, db, session):
@@ -128,15 +128,15 @@ def test_sim_change_functionality_chk_old_and_new_imsis(flask_app, db, session):
     payload = {"Sender_No": "923155406922", "Operator": "warid"}
     result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert  result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+    assert result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923155406922'; """)).fetchone()
-    print("old imsi = ",qry.old_imsi)
+    print("old imsi = ", qry.old_imsi)
     print("new imsi = ", qry.imsi)
     assert qry.old_imsi == imsi
-    assert qry.imsi == None
+    assert qry.imsi is None
 
 
-def test_sim_change_functionality_wrong_sender_no(flask_app,db,session):
+def test_sim_change_functionality_wrong_sender_no(flask_app, db, session):
     """ Verify that sim-chg api detects wrong Sender MSISDN """
     complete_db_insertion(session, db, 413, '923057930229', 413, 'MI MIX 2S ', 'XIAOMI', 'SN1i9KpW', '3G,4G',
                           '892jeM42', 413, '910223947111222')
@@ -147,7 +147,7 @@ def test_sim_change_functionality_wrong_sender_no(flask_app,db,session):
     assert result.data == b"MSISDN (923113306922) is not existed in any pair"
 
 
-def test_sim_change_functionality_request_from_unconfirmed_sec_pair(flask_app,db,session):
+def test_sim_change_functionality_request_from_unconfirmed_sec_pair(flask_app, db, session):
     """ Verify that sim-chg api can cater request from confirmed secondary pair as well """
     complete_db_insertion(session, db, 414, '923057930229', 414, 'PocoPhone ', 'XIAOMI', 'Sb9i9]]KpW', '3G,4G',
                           'QFIceP39', 414, '910223947111444')
@@ -159,7 +159,7 @@ def test_sim_change_functionality_request_from_unconfirmed_sec_pair(flask_app,db
     assert result.data == b"MSISDN (923125840917) is not existed in any pair"
 
 
-def test_sim_change_functionality_request_from_confirmed_sec_pair(flask_app,db,session):
+def test_sim_change_functionality_request_from_confirmed_sec_pair(flask_app, db, session):
     """ Verify that sim-chg api can cater request from confirmed secondary pair as well """
     complete_db_insertion(session, db, 415, '923089923776', 415, 'Nokia-4 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
                           'Ox4sTcst', 415, '910223947333344')

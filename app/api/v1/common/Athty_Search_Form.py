@@ -20,14 +20,15 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app.api.v1.views.Pagination import Pagination
+from app.api.v1.views.pagination import Pagination
 from app import db, conf
 import re
 
-class Search_authority():
+
+class Search_authority:
     """ Class to provide search methods for authority to find registered devices  """
 
-    def authority_search(startt,limit,data,para_cnt,para_exists):
+    def authority_search(startt, limit, data, para_cnt, para_exists):
         """ Method to search registered devices """
 
         try:
@@ -35,19 +36,19 @@ class Search_authority():
             chk_mac, chk_serial, chk_contact, chk_imei = False, False, False, False
             fst = False
 
-            if para_exists['mac_exist'] == True :
-                if ( data['MAC'] != None):
+            if para_exists['mac_exist']:
+                if data['MAC'] is not None:
                     if type(data['MAC']) is str:
                         mac_pat_1 = re.compile(r'[A-Za-z0-9:.-]{0,200}')
                         mac_match1 = mac_pat_1.fullmatch(data['MAC'])
 
-                        if (mac_match1):
+                        if mac_match1:
                             chk_mac = True
             else:
                 chk_mac = True
 
-            if para_exists['serial_exist'] == True:
-                if data['Serial_No'] != None:
+            if para_exists['serial_exist']:
+                if data['Serial_No'] is not None:
                     if type(data['Serial_No']) is str:
                         pattern_serial_no = re.compile(r'[a-zA-Z0-9]{0,1000}')
                         match_serial = pattern_serial_no.fullmatch(data['Serial_No'])
@@ -56,8 +57,8 @@ class Search_authority():
             else:
                 chk_serial = True
 
-            if para_exists['contact_exist'] == True:
-                if data['CONTACT'] != None:
+            if para_exists['contact_exist']:
+                if data['CONTACT'] is not None:
                     if type(data['CONTACT']) is str:
                         pattern_contact = re.compile(r'\d{0,200}')
                         match_contact = pattern_contact.fullmatch(data['CONTACT'])
@@ -66,8 +67,8 @@ class Search_authority():
             else:
                 chk_contact = True
 
-            if para_exists['imei_exist'] == True:
-                if data['IMEI'] != None:
+            if para_exists['imei_exist']:
+                if data['IMEI'] is not None:
                     if type(data['IMEI']) is str:
                         pattern_imei = re.compile(r'[A-Za-z0-9]{0,200}')
                         match_imei = pattern_imei.fullmatch(data['IMEI'])
@@ -76,32 +77,36 @@ class Search_authority():
             else:
                 chk_imei = True
 
-            if (type(startt) is int and type(limit) is int and chk_mac == True and chk_serial == True and chk_contact == True and chk_imei == True):
-                qry = "select contact, brand, model, serial_no, string_agg(imei,',') as imei, mac, pair_code, is_active from test_view where "
+            if (type(startt) is int and type(limit) is int and chk_mac and chk_serial
+                    and chk_contact and chk_imei):
+
+                qry = "select contact, brand, model, serial_no, string_agg(imei,',') as imei, mac, " \
+                      "pair_code, is_active " \
+                      "from test_view where "
 
                 if para_cnt > 0:
 
                     for p in data:
                                                             # building the database query
-                        if p == "IMEI" and fst == False:
+                        if p == "IMEI" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
                             fst = True
-                        elif p == "IMEI" and fst == True:
+                        elif p == "IMEI" and fst:
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
-                        elif p == "Serial_No" and fst == False:
+                        elif p == "Serial_No" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
                             fst = True
-                        elif p == "Serial_No" and fst == True:
+                        elif p == "Serial_No" and fst:
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
-                        elif p == "MAC" and fst == False:
+                        elif p == "MAC" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
                             fst = True
-                        elif p == "MAC" and fst == True:
+                        elif p == "MAC" and fst:
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
-                        elif p == "CONTACT" and fst == False:
+                        elif p == "CONTACT" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
                             fst = True
-                        elif p == "CONTACT" and fst == True:
+                        elif p == "CONTACT" and fst:
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
 
                     qry = qry + " group by serial_no, mac,contact, brand, model, pair_code, is_active; "
@@ -142,35 +147,35 @@ class Search_authority():
 
                     return data, 200
 
-            elif chk_mac == False:
+            elif not chk_mac:
 
                 rtn_msg = {
                             "Error": "MAC format is not correct"
                           }
                 return rtn_msg, 422
 
-            elif chk_serial == False:
+            elif not chk_serial:
 
                 rtn_msg = {
                             "Error": "Serial-Number format is not correct"
                           }
                 return rtn_msg, 422
 
-            elif chk_contact == False:
+            elif not chk_contact:
 
                 rtn_msg = {
                             "Error": "Contact-MSISDN format is not correct"
                           }
                 return rtn_msg, 422
 
-            elif chk_imei == False:
+            elif not chk_imei:
 
                 rtn_msg = {
                             "Error": "IMEI format is not correct"
                           }
                 return rtn_msg, 422
 
-            elif (type(startt) is not int or type(limit) is not int):
+            elif type(startt) is not int or type(limit) is not int:
 
                 rtn_msg = {
                             "Error": "Start or Limit is not integer"

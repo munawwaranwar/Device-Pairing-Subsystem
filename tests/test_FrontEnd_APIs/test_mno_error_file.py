@@ -30,7 +30,7 @@ MNO_ERROR_FILE = 'api/v1/mno-error-file'
 def test_mno_error_file_happy_case(flask_app, session):
     """ Verify that error-file api downloads the error-file successfully"""
     link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_ufone_2018-11-26_06-02-47.csv"
-    url = '{api}?url={link}'.format(api=MNO_ERROR_FILE,link=link)
+    url = '{api}?url={link}'.format(api=MNO_ERROR_FILE, link=link)
     rs = flask_app.get(url)
     print(rs.data)
     assert rs.status_code == 200
@@ -39,7 +39,7 @@ def test_mno_error_file_happy_case(flask_app, session):
 def test_mno_error_file_not_found(flask_app, session):
     """ Verify that error-file api prompts when error-file is not found"""
     link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_telenor_0000-00-00_00-00-00.csv"
-    url = '{api}?url={link}'.format(api=MNO_ERROR_FILE,link=link)
+    url = '{api}?url={link}'.format(api=MNO_ERROR_FILE, link=link)
     rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)

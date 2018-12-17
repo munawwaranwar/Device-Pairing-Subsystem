@@ -24,6 +24,7 @@ import json
 from tests._fixtures import *
 from io import BytesIO, StringIO
 
+
 MNO_BULK_UPLOAD = 'api/v1/mno-bulk-upload'
 
 
@@ -42,7 +43,6 @@ def test_bulk_upload_happy_case_proper_file(flask_app, session):
     assert rs.status_code == 200
     d1 = json.loads(rs.data.decode('utf-8'))
     assert d1.get('msg') == 'File successfully loaded'
-
 
 
 def test_bulk_upload_file_duplicated_imsis(flask_app, session):
@@ -165,7 +165,6 @@ def test_bulk_upload_validation_invalid_mno(flask_app, session):
     assert d1.get('Error') == 'improper Operator-name provided'
 
 
-
 def test_bulk_upload_validation_txt_file(flask_app, session):
     """ Verify that bulk-upload api can accept .txt files"""
     file_path = '/var/www/html/dirbs-dps-api-1.0.0/tests/unittest_data/sample_files/sample_text_file.txt'
@@ -228,12 +227,12 @@ def test_bulk_upload_validation_wrong_api_parameters(flask_app, session):
 
 def test_bulk_upload_error__404_wrong_api(flask_app, db):
     """ Verify that bulk-upload api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/mnooo-bulkkk-uploaddd'
+    tmp_api = 'api/v1/mnooo-bulkkk-uploaddd'
     data = {
         'mno': 'zong',
         'file': (BytesIO(b'test'), 'sample_proper_file.csv')
     }
-    rs = flask_app.post(tmp_API, buffered=True, content_type='multipart/form-data', data=data)
+    rs = flask_app.post(tmp_api, buffered=True, content_type='multipart/form-data', data=data)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     assert rs.status_code == 404

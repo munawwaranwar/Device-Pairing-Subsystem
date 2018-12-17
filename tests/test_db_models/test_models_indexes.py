@@ -80,8 +80,6 @@ def test_pairing_codes_index(db, session):
     assert pc_index == True
 
 
-
-
 def test_imei_index(db, session):
     """Verify that the IMEI model works correctly."""
 
@@ -94,7 +92,6 @@ def test_imei_index(db, session):
             imei_index = True
             print(i.indexrelname)
     assert imei_index == True
-
 
 
 def test_pairing_indexes(db, session):
@@ -117,13 +114,3 @@ def test_pairing_indexes(db, session):
             device_index = True
         print(p.indexrelname)
     assert device_index == True
-
-
-
-
-
-
-
-
-
-

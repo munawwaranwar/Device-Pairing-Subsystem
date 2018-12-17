@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Pair-List Generation package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -21,17 +21,17 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 """
 
 import psycopg2 as pg
-import os
 from time import strftime
 
 LIST_PATH = r'D:\dirbs_intl_dps\Pairing_Lists'
+
 
 def pair_list_creation():
     """ Function to generate pair-list for DIRBS CORE"""
 
     global con
+
     try:
-        pairs = []
         con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
         # con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
 
@@ -75,7 +75,6 @@ def pair_list_creation():
             file2.close()
 
         else:
-            path = os.path.dirname(os.path.dirname(__file__)) + r'\app' + '\Pair_Lists'
             filename = LIST_PATH + '\PairList_ERROR_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
 
             file = open(filename, 'w')

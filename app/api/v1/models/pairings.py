@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Pairing Model package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -23,15 +23,16 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 from app import db
 from time import strftime
 
+
 class Pairing(db.Model):
     """ Class to create Db Table pairing """
 
-    id = db.Column(db.BigInteger, primary_key = True, autoincrement=False)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=False)
     primary_id = db.Column(db.BigInteger)
     msisdn = db.Column(db.String(20))
     imsi = db.Column(db.String(20))
     is_primary = db.Column(db.Boolean)
-    creation_date = db.Column(db.DateTime, default = strftime("%Y-%m-%d %H:%M:%S"))
+    creation_date = db.Column(db.DateTime, default=strftime("%Y-%m-%d %H:%M:%S"))
     end_date = db.Column(db.Date)
     updated_at = db.Column(db.DateTime)
     operator_name = db.Column(db.String(20))
@@ -42,11 +43,8 @@ class Pairing(db.Model):
 
     imei_id = db.Column(db.BigInteger, db.ForeignKey('imei.id'))
 
-
     def __repr__(self):
-        return "<Pairing ({} ,{}, {})>".format(self.id,self.msisdn, self.imsi)
-
-
+        return "<Pairing ({} ,{}, {})>".format(self.id, self.msisdn, self.imsi)
 
     @classmethod
     def create_index(cls, engine):
@@ -66,4 +64,3 @@ class Pairing(db.Model):
 
         devices_operator_name = db.Index('devices_operator_index', cls.operator_name, postgresql_concurrently=True)
         devices_operator_name.create(bind=engine)
-

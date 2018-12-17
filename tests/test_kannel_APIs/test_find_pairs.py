@@ -25,11 +25,12 @@ from tests._helpers import *
 FIND_PAIRS_API = 'api/v1/find-pairs'
 HEADERS = {'Content-Type': "application/json"}
 
+
 def test_find_pairs_validation_invalid_sender_no(flask_app, db):
     """ Verify that find-pairs api doesn't accept invalid sender number """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in sender_no:
-        url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API,msisdn=val)
+        url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API, msisdn=val)
         rslt = flask_app.get(url)
         print(rslt.data, val)
         assert rslt.data == b"\"Sender MSISDN format is not correct\""
@@ -38,10 +39,11 @@ def test_find_pairs_validation_invalid_sender_no(flask_app, db):
 def test_find_pairs_validation_valid_sender_no(flask_app, db):
     """ Verify that find-pairs api only accept valid sender number """
     sender_no = '923002131415'
-    url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API,msisdn=sender_no)
+    url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API, msisdn=sender_no)
     rslt = flask_app.get(url)
     print(rslt.data)
     assert not rslt.data == b"\"Sender MSISDN format is not correct\""
+
 
 def test_find_pairs_missing_parameter(flask_app, db):
     """ Verify that find-pairs api prompts when any parameter is missing """
@@ -53,8 +55,8 @@ def test_find_pairs_missing_parameter(flask_app, db):
 
 def test_find_pairs_error_404_wrong_api(flask_app, db):
     """ Verify that find-pairs api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/finddd-pairssss'
-    url = '{api}?Sender_No=923367790512'.format(api=tmp_API)
+    tmp_api = 'api/v1/finddd-pairssss'
+    url = '{api}?Sender_No=923367790512'.format(api=tmp_api)
     rslt = flask_app.get(url)
     print(rslt.data)
     assert rslt.status_code == 404

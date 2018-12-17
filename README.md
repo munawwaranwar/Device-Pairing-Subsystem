@@ -8,9 +8,7 @@ This repository contains code for **DPS** part of the **DIRBS**. It contains
 * ``mock/`` -- Sample data files etc which are used in app to be reside here
 * ``scripts/`` -- Pair-Deletion script, pair-list generation script etc
 * ``tests/`` -- Unit test scripts and Data
-* ``Downloads/`` -- contains files for MNOs having bulk MSISDNs, Also contains Error reports for MNOs
-* ``Uploads/`` -- contains IMSI-MSISDN pair files that are uploaded by MNOs
-* ``Pairing_Lists/`` -- contains pairing-lists for DIRBS-CORE
+* ``Documentation/`` -- Installation guide for DPS
 
 #### Prerequisites
 In order to run a development environment, [Python 3.0+](https://www.python.org/download/releases/3.0/) and

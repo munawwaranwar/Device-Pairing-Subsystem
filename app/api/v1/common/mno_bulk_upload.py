@@ -31,14 +31,14 @@ import magic
 from app.api.v1.common.database import connect
 
 
-ALLOWED_EXTENSIONS = set(['csv', 'txt'])
+ALLOWED_EXTENSIONS = {'csv', 'txt'}
 UPLOAD_FOLDER = app.config['DPS_UPLOADS']
 DOWNLOAD_FOLDER = app.config['DPS_DOWNLOADS']
+
 
 class bulk_upload:
 
     @staticmethod
-
     def bulk_imsis():
 
         try:
@@ -143,14 +143,19 @@ class bulk_upload:
                         f = open(filename1)
                         cur.copy_from(f, 'test_mno', sep=",")
 
-                        cur.execute(""" select msisdn, imsi, t_msisdn, t_imsi, change_type, export_status, old_imsi from pairing 
-                                        inner join test_mno on (pairing.msisdn = test_mno.t_msisdn) and (pairing.end_date is null)
-                                        and (pairing.add_pair_status = true) and (pairing.operator_name = '{}'); """.format(mno))
+                        cur.execute(""" select msisdn, imsi, t_msisdn, t_imsi, change_type, export_status, old_imsi 
+                                        from pairing 
+                                        inner join test_mno 
+                                        on (pairing.msisdn = test_mno.t_msisdn) and (pairing.end_date is null)
+                                        and (pairing.add_pair_status = true) 
+                                        and (pairing.operator_name = '{}'); """.format(mno))
 
                         cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'ADD', export_status = false, 
-                                        updated_at = date_trunc('second', NOW()) from test_mno where pairing.msisdn = test_mno.t_msisdn 
-                                        and pairing.end_date is null and pairing.add_pair_status = true and 
-                                        pairing.operator_name = '{}'; """.format(mno))
+                                        updated_at = date_trunc('second', NOW()) 
+                                        from test_mno 
+                                        where pairing.msisdn = test_mno.t_msisdn 
+                                        and pairing.end_date is null and pairing.add_pair_status = true 
+                                        and pairing.operator_name = '{}'; """.format(mno))
 
                         cur.execute(""" drop table if exists test_mno; """)
 
@@ -159,7 +164,7 @@ class bulk_upload:
                         con.close()
                         f.close()
 
-                        if del_rec > 0:
+                        if del_rec:
                             error_file = "Error-Records_" + mno + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
                             download_path = os.path.join(DOWNLOAD_FOLDER, error_file)
                             file.save(download_path)

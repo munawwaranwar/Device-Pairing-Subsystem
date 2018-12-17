@@ -28,6 +28,7 @@ from app.api.v1.models.pairings import Pairing
 import requests
 import re
 
+
 def add_pair(add_msisdn, sender_num):
     """ Function to create additional/secondary pairs for a particular device """
     try:
@@ -38,7 +39,7 @@ def add_pair(add_msisdn, sender_num):
         match_primary = pattern_msisdn.fullmatch(sender_num)
         match_secondary = pattern_msisdn.fullmatch(add_msisdn)
 
-        if (match_primary and match_secondary):
+        if match_primary and match_secondary:
 
             chk_primary = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(sender_num),
                                                        Pairing.is_primary == True,
@@ -50,7 +51,7 @@ def add_pair(add_msisdn, sender_num):
                 chk_1 = True
                 max_pair_id = db.session.query(func.max(Pairing.id)).scalar()  # query to get maximum Pairing_id
 
-                if max_pair_id == None:
+                if max_pair_id is None:
                     max_pair_id = 1
 
                 else:
@@ -72,23 +73,22 @@ def add_pair(add_msisdn, sender_num):
 
                                 else:
                                     chk_3 = False
-                                    #return  "Pairing limit breached: need to remove any existing pair"
-                                    return  conf['sms_pair_limit_breached']
-
+                                    return conf['sms_pair_limit_breached']
 
                             else:
                                 chk_2 = False
                                 return "MSISDN ({})already paired with the device".format(add_msisdn)
 
-                        if (chk_1 == True and chk_2 == True and chk_3 == True):
+                        if chk_1 and chk_2 and chk_3:
 
-                            adding1 = Pairing(id = max_pair_id,    # adding secondary pair incase one or more secondary pairs already exists
-                                              primary_id = q.id,
-                                              msisdn = add_msisdn,
-                                              is_primary = False,
-                                              creation_date =strftime("%Y-%m-%d %H:%M:%S"),
-                                              add_pair_status = False,
-                                              imei_id = q.imei_id)
+                            adding1 = Pairing(id=max_pair_id,
+                                              primary_id=q.id,
+                                              msisdn=add_msisdn,
+                                              is_primary=False,
+                                              creation_date=strftime("%Y-%m-%d %H:%M:%S"),
+                                              add_pair_status=False,
+                                              imei_id=q.imei_id)
+                            # adding secondary pair incase one or more secondary pairs already exists
 
                             db.session.add(adding1)
                             db.session.commit()
@@ -97,7 +97,8 @@ def add_pair(add_msisdn, sender_num):
 
                             cnfm_sms = True
 
-                            rtn_msg = "Secondary pair is added by ({}). Confirmation is awaited from ({})".format(sender_num,add_msisdn)
+                            rtn_msg = "Secondary pair is added by ({}). Confirmation is awaited from ({})".\
+                                format(sender_num, add_msisdn)
 
                     else:
                         adding2 = Pairing(id=max_pair_id,       # adding secondary pair for first time
@@ -115,7 +116,8 @@ def add_pair(add_msisdn, sender_num):
 
                         cnfm_sms = True
 
-                        rtn_msg = "Secondary pair is added by ({}). Confirmation is awaited from ({})".format(sender_num,add_msisdn)
+                        rtn_msg = "Secondary pair is added by ({}). Confirmation is awaited from ({})".\
+                            format(sender_num, add_msisdn)
 
             else:
 
@@ -123,11 +125,11 @@ def add_pair(add_msisdn, sender_num):
 
                 chk_1 = False
 
-            if cnfm_sms == True:
+            if cnfm_sms:
 
                 chg_msisdn = '0' + add_msisdn[2:]
 
-                message = "CONFIRM [{}]\nPlease reply with Yes/No space {}".format(sender_num,sender_num)
+                message = "CONFIRM [{}]\nPlease reply with Yes/No space {}".format(sender_num, sender_num)
 
                 payload = {'username': 'tester', 'password': 'foobar', 'smsc': 'at', 'from': '7787',
                            'to': chg_msisdn, 'text': message}

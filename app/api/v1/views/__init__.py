@@ -20,30 +20,29 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from flask import Blueprint, Response, request, make_response,send_file
+from flask import Blueprint, Response, request, make_response, send_file
 import json
 from app import conf
 from app.api.v1.common.Athty_Search_Form import Search_authority
-from app.api.v1.common.generate_PairCode import gen_paircode
+from app.api.v1.common.generate_paircode import gen_paircode
 from app.api.v1.common.additional_pair import add_pair
 from app.api.v1.common.add_pair_confirmation import add_pair_cnfrm
-from app.api.v1.common.Rel_Sngle_Pair import rel_single
-from app.api.v1.common.Rel_All_Pairs import rel_all
-from app.api.v1.common.SIM_Change import sim_chg
-from app.api.v1.common.Verify_PairCode import vfy_paircode
-from app.api.v1.common.Find_Pairs import find_pairs
+from app.api.v1.common.rel_single_pair import rel_single
+from app.api.v1.common.rel_all_pairs import rel_all
+from app.api.v1.common.sim_change import sim_chg
+from app.api.v1.common.verify_paircode import vfy_paircode
+from app.api.v1.common.find_pairs import find_pairs
 from app.api.v1.common.first_pair import first_pair
-from app.api.v1.common.Athty_Inpt_Form import authority_input
-from app.api.v1.common.MNO_first_page import fetch_msisdns
-from app.api.v1.common.MNO_bulk_download import bulk_msisdns
-from app.api.v1.common.MNO_bulk_upload import bulk_upload
-from app.api.v1.common.MNO_sngl_upload import sngl_imsi
-from app.api.v1.common.MNO_error_file import error_url
-
-#_______________________________________________________________________
+from app.api.v1.common.atrhty_inpt_form import authority_input
+from app.api.v1.common.mno_first_page import fetch_msisdns
+from app.api.v1.common.mno_bulk_download import bulk_msisdns
+from app.api.v1.common.mno_bulk_upload import bulk_upload
+from app.api.v1.common.mno_sngl_upload import sngl_imsi
+from app.api.v1.common.mno_error_file import error_url
 
 
 api = Blueprint('v1', __name__.split('.')[0])
+
 
 @api.route('/base', methods=['GET'])
 def base_api():
@@ -53,17 +52,16 @@ def base_api():
     return Response(json.dumps(data), status=200, mimetype='application/json')
 
 
-@api.route('/paircode', methods = ['GET'])
+@api.route('/paircode', methods=['GET'])
 def gen_paircode2():
     pc1 = gen_paircode()
     data = {
-        "Pair-Code" : pc1
+        "Pair-Code": pc1
     }
-    return  Response(json.dumps(data), status=200, mimetype='application/json')
+    return Response(json.dumps(data), status=200, mimetype='application/json')
 
 
-
-@api.route('/first-pair', methods = ['POST'])
+@api.route('/first-pair', methods=['POST'])
 def fst_pair():
     req_data = request.get_json()
     pair_code = req_data.get('Pair_Code')
@@ -80,8 +78,7 @@ def fst_pair():
     return Response(json.dumps(message), status=stat, mimetype='text/html')
 
 
-
-@api.route('/add-pair', methods = ['POST'])
+@api.route('/add-pair', methods=['POST'])
 def add_pairs():
     req_data = request.get_json()
     sender_no = req_data.get('Sender_No')
@@ -95,8 +92,7 @@ def add_pairs():
     return message
 
 
-
-@api.route('/add-cnfrm', methods = ['PUT'])
+@api.route('/add-cnfrm', methods=['PUT'])
 def add_cnfrm():
     req_data = request.get_json()
     header = req_data.get('Confirm')
@@ -116,23 +112,21 @@ def add_cnfrm():
     return message
 
 
-
-@api.route('/rel-single', methods = ['DELETE'])
+@api.route('/rel-single', methods=['DELETE'])
 def rel_sngl():
     req_data = request.get_json()
-    del_MSISDN = req_data.get('MSISDN')
+    del_msisdn = req_data.get('MSISDN')
     sender_no = req_data.get('Sender_No')
     if not sender_no:
         return "Sender number is missing in SMS"
-    if not del_MSISDN:
+    if not del_msisdn:
         return "Secondary number is missing in SMS"
 
-    message = rel_single(del_MSISDN, sender_no)
+    message = rel_single(del_msisdn, sender_no)
     return message
 
 
-
-@api.route('/rel-all', methods = ['DELETE'])
+@api.route('/rel-all', methods=['DELETE'])
 def release_all():
     req_data = request.get_json()
     sender_no = req_data.get('Sender_No')
@@ -143,8 +137,7 @@ def release_all():
     return message
 
 
-
-@api.route('/sim-chg', methods = ['DELETE'])
+@api.route('/sim-chg', methods=['DELETE'])
 def sim_change():
     req_data = request.get_json()
     sender_no = req_data.get('Sender_No')
@@ -154,12 +147,11 @@ def sim_change():
     if not mno:
         return "Operator's name is missing in SMS"
 
-    message = sim_chg(sender_no,mno)
+    message = sim_chg(sender_no, mno)
     return message
 
 
-
-@api.route('/vfy-paircode' , methods = ['GET'])
+@api.route('/vfy-paircode', methods=['GET'])
 def vrfy_paircode():
     paircode = request.args.get('Pair_Code')
     sms_imei = request.args.get('IMEI')
@@ -172,7 +164,7 @@ def vrfy_paircode():
     return message
 
 
-@api.route('/find-pairs', methods = ['GET'])
+@api.route('/find-pairs', methods=['GET'])
 def find_pair():
     sender_no = request.args.get('Sender_No')
     if not sender_no:
@@ -181,14 +173,12 @@ def find_pair():
     message = find_pairs(sender_no)
     if message == []:
         message = "No Pair is associated with ({})".format(sender_no)
-    #return Response(json.dumps(message), status=200, mimetype='application/json')
     return Response(json.dumps(message), status=200, mimetype='text/html')
 
 
-@api.route('/sbmt-dev-info', methods = ['POST'])
+@api.route('/sbmt-dev-info', methods=['POST'])
 def sbmt_dev_info():
-
-    args = ['CONTACT','MODEL','BRAND','Serial_No','RAT','IMEI']
+    args = ['CONTACT', 'MODEL', 'BRAND', 'Serial_No', 'RAT', 'IMEI']
     mac = None
     req_data = request.get_json()
     for key in args:
@@ -201,12 +191,12 @@ def sbmt_dev_info():
     for k in req_data:
         if k == 'CONTACT':
             contact = req_data.get('CONTACT')
-            if 'CC' in  contact:
+            if 'CC' in contact:
                 cc = contact.get("CC")
             else:
                 data = {"Error": "Country-Code not found"}
                 return Response(json.dumps(data), status=422, mimetype='application/json')
-            if 'SN' in  contact:
+            if 'SN' in contact:
                 sn = contact.get("SN")
             else:
                 data = {"Error": "Subscriber-Number not found"}
@@ -228,7 +218,7 @@ def sbmt_dev_info():
         mac = None
 
     if imei and len(imei) <= conf['imeis_per_device']:
-        message, stat = authority_input(contact,model,brand,serial_no,mac,rat,imei)
+        message, stat = authority_input(contact, model, brand, serial_no, mac, rat, imei)
         return Response(json.dumps(message), status=stat, mimetype='application/json')
     else:
         data = {
@@ -237,9 +227,9 @@ def sbmt_dev_info():
         return Response(json.dumps(data), status=422, mimetype='application/json')
 
 
-@api.route('/authority-search', methods = ['POST'])
+@api.route('/authority-search', methods=['POST'])
 def athrty_search():
-    Existance = {"mac_exist": False, "serial_exist": False, "contact_exist": False, "imei_exist": False}
+    existance = {"mac_exist": False, "serial_exist": False, "contact_exist": False, "imei_exist": False}
     args = request.get_json()
     limit = args.get("limit")
     start = args.get("start")
@@ -250,21 +240,20 @@ def athrty_search():
         return Response(json.dumps(data), status=422, mimetype='application/json')
     for key in req_data:
         if key == 'MAC':
-            Existance['mac_exist'] = True
+            existance['mac_exist'] = True
         elif key == 'CONTACT':
-            Existance['contact_exist'] = True
+            existance['contact_exist'] = True
         elif key == 'Serial_No':
-            Existance['serial_exist'] = True
+            existance['serial_exist'] = True
         elif key == 'IMEI':
-            Existance['imei_exist'] = True
+            existance['imei_exist'] = True
 
     count = len(req_data)
-    msg, stat = Search_authority.authority_search(start, limit, req_data, count, Existance)
+    msg, stat = Search_authority.authority_search(start, limit, req_data, count, existance)
     return Response(json.dumps(msg), status=stat, mimetype='application/json')
 
 
-
-@api.route('/mno-first-page', methods = ['GET'])  # from MNO's Portal to get MSISDN list for IMSIs (when page loading)
+@api.route('/mno-first-page', methods=['GET'])  # from MNO's Portal to get MSISDN list for IMSIs (when page loading)
 def get_pair():
     mno = request.args.get('mno')
     st = request.args.get('start')
@@ -275,24 +264,23 @@ def get_pair():
         }
         return Response(json.dumps(data), status=422, mimetype='application/json')
 
-    if not st :
+    if not st:
         data = {
             "Error": "start is missing"
         }
         return Response(json.dumps(data), status=422, mimetype='application/json')
 
-    if not lt :
+    if not lt:
         data = {
             "Error": "limit is missing"
         }
         return Response(json.dumps(data), status=422, mimetype='application/json')
 
-    msg, stat = fetch_msisdns(mno,st,lt)
+    msg, stat = fetch_msisdns(mno, st, lt)
     return Response(json.dumps(msg), status=stat, mimetype='application/json')
 
 
-
-@api.route('/mno-bulk-download', methods = ['GET'])
+@api.route('/mno-bulk-download', methods=['GET'])
 def bulk_downloads():
     mno = request.args.get('mno')
     cmplt_path = bulk_msisdns(mno)
@@ -310,7 +298,7 @@ def bulk_downloads():
         response = make_response(send_file(cmplt_path, as_attachment=True))
         response.headers['Cache-Control'] = 'no-store'
         return response
-    #return send_from_directory(directory=complete_path, filename=file_name)
+            #return send_from_directory(directory=complete_path, filename=file_name)
             # in this case we need two parameters, directory and file name separately
 
 
@@ -350,14 +338,13 @@ def sngl_uploads():
     return Response(json.dumps(msg), status=stat, mimetype='application/json')
 
 
-
-@api.route('/mno-bulk-upload', methods = ['POST'])
+@api.route('/mno-bulk-upload', methods=['POST'])
 def bulk_uploads():
     msg, stat = bulk_upload.bulk_imsis()
     return Response(json.dumps(msg), status=stat, mimetype='application/json')
 
 
-@api.route('/mno-error-file', methods = ['GET'])
+@api.route('/mno-error-file', methods=['GET'])
 def error_file():
     url = request.args.get('url')
     if not url:
@@ -375,3 +362,8 @@ def error_file():
         return Response(json.dumps(data), status=422, mimetype='application/json')
     else:
         return send_file(file_path, as_attachment=True)
+
+
+
+
+

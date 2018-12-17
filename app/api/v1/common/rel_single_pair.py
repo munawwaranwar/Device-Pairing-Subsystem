@@ -25,7 +25,8 @@ from app import db
 from app.api.v1.models.pairings import Pairing
 import re
 
-def rel_single(del_msisdn,sender_no):
+
+def rel_single(del_msisdn, sender_no):
     """ Function to remove secondary/additonal pairs """
 
     try:
@@ -56,13 +57,14 @@ def rel_single(del_msisdn,sender_no):
 
                         num_exist.end_date = strftime("%Y-%m-%d")
 
-                        if num_exist.imsi != None and num_exist.add_pair_status == True:
+                        if num_exist.imsi is not None and num_exist.add_pair_status:
                             num_exist.change_type = 'REMOVE'
                             num_exist.export_status = False
 
                         db.session.commit()
 
-                        rtn_msg = "Deletion request is successfully registered. Pair will be removed in next 24 to 48 hours"
+                        rtn_msg = "Deletion request is successfully registered. " \
+                                  "Pair will be removed in next 24 to 48 hours"
 
                     else:
 

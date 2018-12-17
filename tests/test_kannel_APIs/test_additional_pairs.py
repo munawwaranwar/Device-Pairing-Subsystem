@@ -28,7 +28,7 @@ ADD_PAIR_API = 'api/v1/add-pair'
 HEADERS = {'Content-Type': "application/json"}
 
 
-def test_add_pair_validations_wrong_Sender_No(flask_app, db):
+def test_add_pair_validations_wrong_sender_no(flask_app, db):
     """ Verify that add-pair api doesn't accept invalid primary number """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in sender_no:
@@ -37,7 +37,7 @@ def test_add_pair_validations_wrong_Sender_No(flask_app, db):
         assert rslt.data == b"Primary MSISDN format is not correct"
 
 
-def test_add_pair_validations_valid_Sender_No(flask_app, db):
+def test_add_pair_validations_valid_sender_no(flask_app, db):
     """ Verify that add-pair api only accepts valid primary number """
     sender_no = '923458179437'
     payload = {"Sender_No": sender_no, "MSISDN": "923003294857"}
@@ -45,7 +45,7 @@ def test_add_pair_validations_valid_Sender_No(flask_app, db):
     assert not rslt.data == b"Primary MSISDN format is not correct"
 
 
-def test_add_pair_validations_wrong_MSISDN(flask_app, db):
+def test_add_pair_validations_wrong_msisdn(flask_app, db):
     """ Verify that add-pair api doesn't accept invalid primary number """
     msisdn = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in msisdn:
@@ -53,7 +53,8 @@ def test_add_pair_validations_wrong_MSISDN(flask_app, db):
         rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
         assert rslt.data == b"Secondary MSISDN format is not correct"
 
-def test_add_pair_validations_valid_MSISDN(flask_app, db):
+
+def test_add_pair_validations_valid_msisdn(flask_app, db):
     """ Verify that add-pair api only accepts valid secondary number """
     sender_no = '923458179437'
     payload = {"Sender_No": "923003294857", "MSISDN": sender_no}
@@ -87,9 +88,9 @@ def test_add_pair_error_400_bad_request(flask_app, db):
 
 def test_add_pair_error_404_wrong_api(flask_app, db):
     """ Verify that add-pair api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/adddd-pairrr'
+    tmp_api = 'api/v1/adddd-pairrr'
     payload = {"Sender_No": "923458179437", "MSISDN": "923003294857"}
-    result = flask_app.post(tmp_API, headers=HEADERS, data=json.dumps(payload))
+    result = flask_app.post(tmp_api, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.status_code == 404
 
@@ -110,13 +111,12 @@ def test_add_pair_happy_case(flask_app, db, session):
     """ Verify that add-pair api responds correctly when all parameters are valid"""
     complete_db_insertion(session, db, 6, '923004171564', 6, 'Note5', 'Samsung', 'abcdefgh', '3G,4G',
                           'O1G64pGf', 6, '123456789098765')
-    first_pair_db_insertion(session,db,7,'923459146387','telenor',6)
+    first_pair_db_insertion(session, db, 7, '923459146387', 'telenor', 6)
 
     payload = {"Sender_No": "923459146387", "MSISDN": "923117658111"}
-    rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data= json.dumps(payload))
+    rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
     print(rslt.data)
     assert rslt.status_code == 200
-
 
 
 def test_add_pair_functionality_wrong_primary_msisdn(flask_app, db, session):
@@ -131,9 +131,10 @@ def test_add_pair_functionality_same_primary_and_secondary_msisdn(flask_app, db,
     """ Verify that add-pair api api doesn't allow same MSISDN for primary & secondary pairs """
     complete_db_insertion(session, db, 7, '923346181454', 7, 'iphone-max', 'Apple', 'P8go7tdR', '4G',
                           'CuYg4fzD', 7, '987654321012333')
-    first_pair_db_insertion(session, db, 9, '923086190554', 'jazz', 7) # here 3 is pairing-id because 2 is already used for secondary pair in happy case
+    first_pair_db_insertion(session, db, 9, '923086190554', 'jazz', 7)
+    # here 3 is pairing-id because 2 is already used for secondary pair in happy case
     payload = {"Sender_No": "923086190554", "MSISDN": "923086190554"}
-    rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data= json.dumps(payload))
+    rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
     print(rslt.data)
     assert rslt.data == b"Request not made by Primary-Pair or number-to-be-added is Primary number"
 
@@ -152,7 +153,7 @@ def test_add_pair_functionality_already_paired_msisdn(flask_app, db, session):
     assert rslt_2.data == b"MSISDN (923086190554)already paired with the device"
 
 
-def test_add_pair_functionality_pairing_limit(flask_app, db,session):
+def test_add_pair_functionality_pairing_limit(flask_app, db, session):
     """ Verify that add-pair api doesn't allow secondary pairs more than pre-configured limit"""
     complete_db_insertion(session, db, 9, '923238450807', 9, 'REDMI', 'Xiaomi', 'Xr4q9irgTj', '2G,3G,4G',
                           '3Bdzs1sx', 9, '809762846310927')
@@ -172,7 +173,7 @@ def test_add_pair_functionality_pairing_limit(flask_app, db,session):
     assert rslt_2.data == b"Pairing limit breached: need to remove any existing pair"
 
 
-def test_add_pair_functionality_single_secondary_msisdn_many_primary_pairs(flask_app, db,session):
+def test_add_pair_functionality_single_secondary_msisdn_many_primary_pairs(flask_app, db, session):
     """ Verify that add-pair api allows one secondary-MSISDN to pair with many primary-pairs """
     complete_db_insertion(session, db, 10, '923024455667', 10, 'J7-prime', 'Samsung', 'Xrt7oPa9', '3G,4G',
                           'DvY5wPZb', 10, '547190887376107')

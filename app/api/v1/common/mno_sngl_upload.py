@@ -40,17 +40,16 @@ def sngl_imsi(mno, msisdn, imsi):
                 f_msisdn = msisdn['CC'] + msisdn['SN']
                 chk_msisdn = True
 
-
         pattern_imsi = re.compile(r'\d{15}')
         match_imsi = pattern_imsi.fullmatch(imsi)
 
-        if (chk_msisdn and match_imsi):
+        if chk_msisdn and match_imsi:
 
-            for key,val in conf.items():
+            for key, val in conf.items():
                 if mno == val:
                     chk_mno = True
 
-            if chk_mno == True:
+            if chk_mno:
                 chk_imsi = Pairing.query.filter(Pairing.imsi == '{}'.format(imsi)).first()
 
                 if chk_imsi:
@@ -92,8 +91,7 @@ def sngl_imsi(mno, msisdn, imsi):
         db.session.close()
 
 
-
-def sngl_imsi_update(mno,msisdn,imsi):
+def sngl_imsi_update(mno, msisdn, imsi):
     """ Method to upload Single-IMSI against provided MSISDN """
 
     try:
@@ -111,10 +109,10 @@ def sngl_imsi_update(mno,msisdn,imsi):
                 m.change_type = 'ADD'
                 m.export_status = False
             db.session.commit()
-            rtn_msg =   "IMSI added successfully"
+            rtn_msg = "IMSI added successfully"
 
         else:
-            rtn_msg =   "IMSI addition Failed"
+            rtn_msg = "IMSI addition Failed"
 
         return rtn_msg
 

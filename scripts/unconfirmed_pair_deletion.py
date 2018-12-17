@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Unconfirmed Pair Deletion package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -43,9 +43,9 @@ def uncnfrmd_pair_deletion():
 
         for index, i in enumerate(rslt):
 
-            d1 = datetime.strptime((crnt_date),fmt)
+            d1 = datetime.strptime(crnt_date, fmt)
 
-            d2 = datetime.strptime(str(rslt[index][0]),fmt)
+            d2 = datetime.strptime(str(rslt[index][0]), fmt)
             time_diff = d1-d2
 
             seconds = int(time_diff.total_seconds())
@@ -72,9 +72,7 @@ def uncnfrmd_pair_deletion():
         return
 
     except Exception as e:
-
         con.close()
-        return
 
     finally:
         con.close()

@@ -23,12 +23,11 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 import psycopg2 as pg
 from app import conf
 
+
 def connect():
     """ Function to provide connectivity with database """
 
     con = pg.connect("dbname = '{0}' user = '{1}' password = '{2}' host = '{3}'"
-                     .format(conf['dbname'],conf['dbusername'],conf['dbpassword'],conf['dbhost']))
-
-    #con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
+                     .format(conf['dbname'], conf['dbusername'], conf['dbpassword'], conf['dbhost']))
 
     return con

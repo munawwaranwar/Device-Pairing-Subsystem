@@ -28,7 +28,8 @@ from app import conf
 REL_ALL_API = 'api/v1/rel-all'
 HEADERS = {'Content-Type': "application/json"}
 
-def test_rel_all_pairs_validation_wrong_Sender_No(flask_app, db):
+
+def test_rel_all_pairs_validation_wrong_sender_no(flask_app, db):
     """ Verify that rel-all api doesn't accept invalid primary """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in sender_no:
@@ -37,7 +38,7 @@ def test_rel_all_pairs_validation_wrong_Sender_No(flask_app, db):
         assert rslt.data == b"Primary MSISDN format is not correct"
 
 
-def test_rel_all_pairs_validations_valid_Sender_No(flask_app, db):
+def test_rel_all_pairs_validations_valid_sender_no(flask_app, db):
     """ Verify that rel-all api only accepts valid primary & secondary numbers """
     payload = {"Sender_No": "923458179437"}
     rslt = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
@@ -64,9 +65,9 @@ def test_rel_all_pairs_error_400_bad_request(flask_app, db):
 
 def test_rel_all_pairs_error_404_wrong_api(flask_app, db):
     """ Verify that rel-all api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/relll-@llll'
+    tmp_api = 'api/v1/relll-@llll'
     payload = {"Sender_No": "923225782404"}
-    result = flask_app.delete(tmp_API, headers=HEADERS, data=json.dumps(payload))
+    result = flask_app.delete(tmp_api, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.status_code == 404
 
@@ -83,19 +84,18 @@ def test_rel_all_pairs_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
-def test_rel_all_pairs_happy_case_without_sec_pairs(flask_app,db, session):
+def test_rel_all_pairs_happy_case_without_sec_pairs(flask_app, db, session):
     """ Verify that rel-all api deletes primary-pair incase no secondary pair exists """
     complete_db_insertion(session, db, 311, '923036830442', 311, 'Find-X', 'OPPO', '5RT1qazbh', '3G,4G',
                           'EiBuagYD', 311, '889270911982467')
     first_pair_db_insertion(session, db, 312, '923460192939', 'telenor', 311)
-
     payload = {"Sender_No": "923460192939"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in  result.data
+    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
-def test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair(flask_app,db, session):
+def test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair(flask_app, db, session):
     """ Verify that rel-all api deletes primary-pair as well as unconfirmed secondary-pair  """
     complete_db_insertion(session, db, 312, '923047930553', 312, 'F-9', 'OPPO', 'Fd9kLqwV', '3G,4G',
                           'gc8nXsL4', 312, '910223945867106')
@@ -105,10 +105,10 @@ def test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair(flask_app,db, sessio
     payload = {"Sender_No": "923145406911"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in  result.data
+    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
-def test_rel_all_pairs_happy_case_with_confirmed_sec_pair(flask_app,db, session):
+def test_rel_all_pairs_happy_case_with_confirmed_sec_pair(flask_app, db, session):
     """ Verify that rel-all api deletes primary-pair as well as confirmed secondary-pair  """
     complete_db_insertion(session, db, 313, '923057930229', 313, 'MI MIX 2S ', 'XIAOMI', 'SN1i9KpW', '3G,4G',
                           'X92jXN42', 313, '910223947111222')
@@ -122,14 +122,14 @@ def test_rel_all_pairs_happy_case_with_confirmed_sec_pair(flask_app,db, session)
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
-def test_rel_all_pairs_happy_case_with_maximum_sec_pairs(flask_app,db, session):
+def test_rel_all_pairs_happy_case_with_maximum_sec_pairs(flask_app, db, session):
     """ Verify that rel-all api deletes all pairs including primary-pair   """
     complete_db_insertion(session, db, 314, '923057930229', 314, 'PocoPhone ', 'XIAOMI', 'Sb9i9]]KpW', '3G,4G',
                           'QKxc9P39', 314, '910223947111444')
     first_pair_db_insertion(session, db, 317, '923338791465', 'ufone', 314)
     sec_pairs = ['923115798111', '923125798222', '923135798333', '923145798444']
     sec_id = 318
-    for msisdn in range(0,conf['pair_limit']):
+    for msisdn in range(0, conf['pair_limit']):
         add_pair_db_insertion(session, db, sec_id, 317, sec_pairs[msisdn], 314)
         sec_id += 1
 
@@ -139,7 +139,7 @@ def test_rel_all_pairs_happy_case_with_maximum_sec_pairs(flask_app,db, session):
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
 
-def test_rel_all_pairs_functionality_wrong_primary_msisdn(flask_app,db, session):
+def test_rel_all_pairs_functionality_wrong_primary_msisdn(flask_app, db, session):
     """ Verify that rel-all api detects wrong primary-pair """
     complete_db_insertion(session, db, 315, '923089923776', 315, 'Nokia-4 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
                           'BiaJTc5t', 315, '910223947333344')
@@ -152,7 +152,7 @@ def test_rel_all_pairs_functionality_wrong_primary_msisdn(flask_app,db, session)
     assert result.data == b"Release-All request not made by Primary-MSISDN"
 
 
-def test_rel_all_pairs_functionality_repetitive_requests(flask_app,db, session):
+def test_rel_all_pairs_functionality_repetitive_requests(flask_app, db, session):
     """ Verify that rel-all api detects wrong primary-pair """
     complete_db_insertion(session, db, 316, '923079924476', 316, 'LUMIA ', 'NOKIA', 'S2w434a7hW', '2G,3G',
                           '4eue5SaB', 316, '871022394555554')
@@ -167,13 +167,13 @@ def test_rel_all_pairs_functionality_repetitive_requests(flask_app,db, session):
     print(result.data)
     assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
 
-    for i in range(0,3):
+    for i in range(0, 3):
         result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
         print(result.data)
         assert b"Release-All request is already registered" in result.data
 
 
-def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app,db,session):
+def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app, db, session):
     """ Verify that rel-single api inserts correct values of change_type & export_status """
     complete_db_insertion(session, db, 317, '923099924433', 317, 'G5 ', 'LG', 'sDx5ue73M', '2G,3G',
                           'X4fwY8ia', 317, '871024444488794')
@@ -187,7 +187,7 @@ def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923155432109'; """)).fetchone()
     print(qry.change_type, qry.export_status)
     assert qry.change_type == 'REMOVE'
-    assert qry.export_status == False
+    assert qry.export_status is False
 
 
 def test_rel_all_pairs_functionality_chk_db_insertion_with_sec_pair(flask_app, db, session):
@@ -197,7 +197,8 @@ def test_rel_all_pairs_functionality_chk_db_insertion_with_sec_pair(flask_app, d
     first_pair_db_insertion(session, db, 336, '923457819043', 'telenor', 318)
     add_pair_db_insertion(session, db, 337, 336, '923028432506', 318)
 
-    session.execute(text("""UPDATE public.pairing SET imsi = '410019876543210', add_pair_status = true WHERE msisdn = '923028432506';"""))
+    session.execute(text("""UPDATE public.pairing SET imsi = '410019876543210',
+                            add_pair_status = true WHERE msisdn = '923028432506';"""))
     payload = {"Sender_No": "923457819043"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
@@ -205,4 +206,4 @@ def test_rel_all_pairs_functionality_chk_db_insertion_with_sec_pair(flask_app, d
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923028432506'; """)).fetchone()
     print(qry.change_type, qry.export_status)
     assert qry.change_type == 'REMOVE'
-    assert qry.export_status == False
+    assert qry.export_status is False

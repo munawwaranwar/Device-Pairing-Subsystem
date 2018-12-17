@@ -46,7 +46,7 @@ def first_pair(sms_paircode, sender_num, mno):
         pattern_mno = re.compile(r'[a-zA-Z0-9]{1,20}')
         match_mno = pattern_mno.fullmatch(mno)
 
-        if (match_sender_no and match_paircode and match_mno):
+        if match_sender_no and match_paircode and match_mno:
             chk_pc = Pairing_Codes.query.filter(Pairing_Codes.pair_code == '{}'.format(sms_paircode),
                                                 Pairing_Codes.is_active == True).first()
 
@@ -60,26 +60,24 @@ def first_pair(sms_paircode, sender_num, mno):
 
                     max_pair_count = db.session.query(func.max(Pairing.id)).scalar()  # query to get maximum Pairing_id
 
-                    if max_pair_count == None:
-
+                    if max_pair_count is None:
                         max_pair_count = 1
 
                     else:
-
-                        max_pair_count = max_pair_count + 1
+                        max_pair_count += 1
 
                     chk_imei = Imei.query.filter(Imei.device_id == '{}'.format(chk_pc.device_id)).all()
 
                     for q in chk_imei:
 
-                        first_add = Pairing(id = (max_pair_count),        # Inserting Primary-Pair in pairing table
-                                            primary_id = 0,
-                                            msisdn = sender_num,
-                                            is_primary = True,
-                                            creation_date =strftime("%Y-%m-%d %H:%M:%S"),
-                                            operator_name = mno,
-                                            add_pair_status = True,
-                                            imei_id = q.id)
+                        first_add = Pairing(id=max_pair_count,   # Inserting Primary-Pair in pairing table
+                                            primary_id=0,
+                                            msisdn=sender_num,
+                                            is_primary=True,
+                                            creation_date=strftime("%Y-%m-%d %H:%M:%S"),
+                                            operator_name=mno,
+                                            add_pair_status=True,
+                                            imei_id=q.id)
 
                         db.session.add(first_add)
 
@@ -91,7 +89,8 @@ def first_pair(sms_paircode, sender_num, mno):
 
                     db.session.commit()
 
-                    return "PairCode ({}) is valid and your pair will be added in next 24 to 48 hours".format(sms_paircode), 200
+                    return "PairCode ({}) is valid and your pair will be " \
+                           "added in next 24 to 48 hours".format(sms_paircode), 200
 
                 else:
                     return "MSISDN already exists as Primary-Pair", 422

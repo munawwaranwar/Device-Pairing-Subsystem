@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Devices Model package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -26,7 +26,7 @@ from app import db
 class Devices(db.Model):
     """ Class to create Db Table devices """
 
-    id = db.Column(db.BigInteger, primary_key = True)
+    id = db.Column(db.BigInteger, primary_key=True)
     model = db.Column(db.String(1000))
     brand = db.Column(db.String(1000))
     serial_no = db.Column(db.String(1000))
@@ -35,14 +35,11 @@ class Devices(db.Model):
 
     owner_id = db.Column(db.BigInteger, db.ForeignKey('owner.id'))
 
-    pairing_codes = db.relationship('Pairing_Codes', backref = 'devices', lazy = 'dynamic')
-    imeis = db.relationship('Imei', backref = 'devices', lazy = 'dynamic')
-
+    pairing_codes = db.relationship('Pairing_Codes', backref='devices', lazy='dynamic')
+    imeis = db.relationship('Imei', backref='devices', lazy='dynamic')
 
     def __repr__(self):
-        return "<Devices ({} ,{}, {})>".format(self.id,self.model,self.brand)
-
-
+        return "<Devices ({} ,{}, {})>".format(self.id, self.model, self.brand)
 
     @classmethod
     def create_index(cls, engine):
@@ -59,4 +56,3 @@ class Devices(db.Model):
 
         devices_brand = db.Index('devices_brand_index', cls.brand, postgresql_concurrently=True)
         devices_brand.create(bind=engine)
-

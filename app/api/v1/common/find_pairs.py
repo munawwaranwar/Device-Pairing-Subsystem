@@ -24,6 +24,7 @@ from app import db
 from app.api.v1.models.pairings import Pairing
 import re
 
+
 def find_pairs(sender_no):
     """ Function to verify number of pairs associated with any mobile device"""
     try:
@@ -50,14 +51,11 @@ def find_pairs(sender_no):
 
                     msisdn_list.append(m.msisdn)
 
-                    if m.add_pair_status == True:
-
+                    if m.add_pair_status:
                         status_list.append('Confirmed Pair')
 
                     else:
-
                         status_list.append('Un-confirmed Pair')
-
 
                 for r in range(len(msisdn_list)):
 

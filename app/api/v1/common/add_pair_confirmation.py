@@ -27,7 +27,8 @@ import requests
 import re
 from app import conf
 
-def add_pair_cnfrm(confirm,primary_msisdn,sender_no,mno):
+
+def add_pair_cnfrm(confirm, primary_msisdn, sender_no, mno):
     """ Function to verify confirmations from secondary pairs """
     try:
         rtn_msg = ""
@@ -43,7 +44,7 @@ def add_pair_cnfrm(confirm,primary_msisdn,sender_no,mno):
         pattern_confirm = re.compile(r'(YES|Yes|yes|NO|No|no){1}')
         match_confirm = pattern_confirm.fullmatch(confirm)
 
-        if (match_sender and match_primary and match_mno and match_confirm):
+        if match_sender and match_primary and match_mno and match_confirm:
 
             chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(primary_msisdn))\
                                        .filter(Pairing.is_primary == True)\
@@ -82,11 +83,13 @@ def add_pair_cnfrm(confirm,primary_msisdn,sender_no,mno):
 
                         if othr_chks:
 
-                            othr_chks.add_pair_status  = True
+                            othr_chks.add_pair_status = True
                             othr_chks.operator_name = mno
                             othr_chks.updated_at = '{}'.format(strftime("%Y-%m-%d %H:%M:%S"))
                             db.session.commit()
-                            rtn_msg = "Request of additional pair from ({}) is accepted by ({})".format(primary_msisdn,sender_no)
+                            rtn_msg = "Request of additional pair from ({}) is accepted by ({})".\
+                                format(primary_msisdn, sender_no)
+
                             cnfm_sms = True
 
                         else:
@@ -96,7 +99,7 @@ def add_pair_cnfrm(confirm,primary_msisdn,sender_no,mno):
             else:
                 rtn_msg = "Wrong Primary number mentioned in SMS"
 
-            if cnfm_sms == True:
+            if cnfm_sms:
 
                 chg_msisdn = '0' + primary_msisdn[2:]
 

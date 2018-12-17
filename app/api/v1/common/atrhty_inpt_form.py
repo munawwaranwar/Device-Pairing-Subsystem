@@ -21,7 +21,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 """
 
 from sqlalchemy import func
-from app.api.v1.common.generate_PairCode import gen_paircode
+from app.api.v1.common.generate_paircode import gen_paircode
 from app.api.v1.models.owner import Owner
 from app.api.v1.models.devices import Devices
 from app.api.v1.models.imeis import Imei
@@ -32,8 +32,7 @@ import requests
 from app import conf
 
 
-
-def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
+def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
     """ Function to register device parameters from Authority's portal and assigns pair-code """
     try:
 
@@ -47,12 +46,13 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
             mac_pat_2 = re.compile(r'[A-F0-9]{3}[:.-][A-F0-9]{3}[:.-][A-F0-9]{3}[:.-][A-F0-9]{3}')
             mac_match2 = mac_pat_2.fullmatch(mac)
             mac_pat_3 = re.compile(
-                r'[A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}')
+                r'[A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}[:.-]'
+                r'[A-F0-9]{2}[:.-][A-F0-9]{2}[:.-][A-F0-9]{2}')
             mac_match3 = mac_pat_3.fullmatch(mac)
             mac_pat_4 = re.compile(r'[A-F0-9]{4}[:.-][A-F0-9]{4}[:.-][A-F0-9]{4}[:.-][A-F0-9]{4}')
             mac_match4 = mac_pat_4.fullmatch(mac)
 
-            if (mac_match1 or mac_match2 or mac_match3 or mac_match4):
+            if mac_match1 or mac_match2 or mac_match3 or mac_match4:
                 chk_mac = True
         else:
             chk_mac = True
@@ -84,8 +84,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
                 chk_imei = False
                 break
 
-        if (match_model and match_brand and match_serial and match_rat and chk_mac == True and chk_imei == True and chk_contact == True):
-
+        if match_model and match_brand and match_serial and match_rat and chk_mac and chk_imei and chk_contact:
             chk_duplicate = Devices.query.filter(Devices.serial_no == '{}'.format(serial_no)).first()
                                         # to check if device is not already registered
             if chk_duplicate:
@@ -101,7 +100,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
 
                     max_owner_id = db.session.query(func.max(Owner.id)).scalar()  # query to get maximum owner_id
 
-                    if max_owner_id == None:
+                    if not max_owner_id:
                         max_owner_id = 1
 
                     else:
@@ -119,7 +118,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
 
                 max_dev_id = db.session.query(func.max(Devices.id)).scalar()  # query to get maximum device_id
 
-                if max_dev_id == None:
+                if not max_dev_id:
                     max_dev_id = 1
 
                 else:
@@ -137,7 +136,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
 
                 max_imei_id = db.session.query(func.max(Imei.id)).scalar()  # query to get maximum IMEI_id
 
-                if max_imei_id == None:
+                if not max_imei_id:
                     max_imei_id = 1
 
                 else:
@@ -175,7 +174,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
 
                 return rtn_msg, 200
 
-        elif chk_contact == False:
+        elif not chk_contact:
 
             rtn_msg = {
                 "Error": "Contact-MSISDN format is not correct"
@@ -210,14 +209,14 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
             }
             return rtn_msg, 422
 
-        elif chk_mac == False:
+        elif not chk_mac:
 
             rtn_msg = {
                 "Error": "MAC format is not correct"
             }
             return rtn_msg, 422
 
-        elif chk_imei == False:
+        elif not chk_imei:
 
             rtn_msg = {
                 "Error": "IMEI format is not correct"
@@ -229,4 +228,3 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat,imei):
 
     finally:
         db.session.close()
-

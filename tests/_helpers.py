@@ -22,11 +22,11 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 """
 from sqlalchemy import text
 from time import strftime
-from app.Models import Owner
-from app.Models import Devices
-from app.Models import Imei
-from app.Models import Pairing
-from app.Models import Pairing_Codes
+from app.api.v1.models.owner import Owner
+from app.api.v1.models.devices import Devices
+from app.api.v1.models.imeis import Imei
+from app.api.v1.models.pairings import Pairing
+from app.api.v1.models.pairing_codes import Pairing_Codes
 
 
 def create_view(db):
@@ -53,19 +53,22 @@ def create_view(db):
         db.session.close()
 
 
-def complete_db_insertion(session, db, t_owner_id,t_contact,t_device_id,t_model,t_brand,t_serial,t_rat,t_paircode,t_imei_id,t_imei,t_mac=None):
-    owner_add = Owner(id=t_owner_id, contact= t_contact)
+def complete_db_insertion(session, db, t_owner_id, t_contact, t_device_id, t_model, t_brand, t_serial, t_rat,
+                          t_paircode, t_imei_id, t_imei, t_mac=None):
+
+    owner_add = Owner(id=t_owner_id, contact=t_contact)
     session.add(owner_add)
-    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial,rat=t_rat,owner_id=t_owner_id,mac=t_mac)
+    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial, rat=t_rat,
+                         owner_id=t_owner_id, mac=t_mac)
     session.add(device_add)
-    paircode_add = Pairing_Codes(pair_code = t_paircode, is_active=True, device_id=t_device_id)
+    paircode_add = Pairing_Codes(pair_code=t_paircode, is_active=True, device_id=t_device_id)
     session.add(paircode_add)
     imei_add = Imei(id=t_imei_id, imei=t_imei, device_id=t_device_id)
     session.add(imei_add)
     db.session.commit()
 
 
-def first_pair_db_insertion(session,db,t_pair_id,t_msisdn,t_mno,t_imei_id):
+def first_pair_db_insertion(session, db, t_pair_id, t_msisdn, t_mno, t_imei_id):
 
     primary_add = Pairing(id=t_pair_id,
                           primary_id=0,
@@ -91,7 +94,7 @@ def add_pair_db_insertion(session, db, t_sec_id, t_primary_id, t_sec_msisdn, t_i
     db.session.commit()
 
 
-def add_pair_confrm_db_insertion(session,db,t_sec_no,t_primary_id,t_mno):
+def add_pair_confrm_db_insertion(session, db, t_sec_no, t_primary_id, t_mno):
     chks = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(t_sec_no),
                                              Pairing.is_primary == False,
                                              Pairing.primary_id == '{}'.format(t_primary_id),
@@ -104,19 +107,19 @@ def add_pair_confrm_db_insertion(session,db,t_sec_no,t_primary_id,t_mno):
         db.session.commit()
 
 
-def athty_input_payload(cc,sn,model,brand,serial_no,rat,imei,mac=None,cond=0):
+def athty_input_payload(cc, sn, model, brand, serial_no, rat, imei, mac=None, cond=0):
     if cond == 0:
         data = {
-            "CONTACT" : {
+            "CONTACT": {
                         "CC": cc,
                         "SN": sn
                     },
-                "MODEL": model,
-                "BRAND": brand,
-                "Serial_No": serial_no,
-                "MAC": mac,
-                "RAT": rat,
-                "IMEI": imei
+            "MODEL": model,
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
             }
     elif cond == 1:
         data = {
@@ -205,12 +208,16 @@ def athty_input_payload(cc,sn,model,brand,serial_no,rat,imei,mac=None,cond=0):
     return data
 
 
-def athty_search_db_insertion(session, db, t_owner_id,t_contact,t_device_id,t_model,t_brand,t_serial,t_rat,t_paircode,t_imei_id,t_imei,t_mac=None):
-    owner_add = Owner(id=t_owner_id, contact= t_contact)
+def athty_search_db_insertion(session, db, t_owner_id, t_contact, t_device_id, t_model, t_brand, t_serial,
+                              t_rat, t_paircode, t_imei_id, t_imei, t_mac=None):
+
+    owner_add = Owner(id=t_owner_id, contact=t_contact)
     session.add(owner_add)
-    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial,rat=t_rat,owner_id=t_owner_id,mac=t_mac)
+    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial,
+                         rat=t_rat, owner_id=t_owner_id, mac=t_mac)
+
     session.add(device_add)
-    paircode_add = Pairing_Codes(pair_code = t_paircode, is_active=True, device_id=t_device_id)
+    paircode_add = Pairing_Codes(pair_code=t_paircode, is_active=True, device_id=t_device_id)
     session.add(paircode_add)
     imei_id = t_imei_id
     for val in t_imei:
@@ -220,7 +227,7 @@ def athty_search_db_insertion(session, db, t_owner_id,t_contact,t_device_id,t_mo
     db.session.commit()
 
 
-def athty_search_payload(start,limit,t_imei, t_mac, t_serial,t_contact,cond=0):
+def athty_search_payload(start, limit, t_imei, t_mac, t_serial, t_contact, cond=0):
     if cond == 0:
         data = {
             "start": start,
@@ -325,10 +332,10 @@ def athty_search_payload(start,limit,t_imei, t_mac, t_serial,t_contact,cond=0):
     return data
 
 
-def mno_imsi_upload(cc,sn,mno,imsi,cond=0):
+def mno_imsi_upload(cc, sn, mno, imsi, cond=0):
     if cond == 0:
         data = {
-            "MSISDN" : {
+            "MSISDN": {
                         "CC": cc,
                         "SN": sn
                     },
@@ -337,7 +344,7 @@ def mno_imsi_upload(cc,sn,mno,imsi,cond=0):
             }
     elif cond == 1:
         data = {
-            "MSISDN" : {
+            "MSISDN": {
                         "SN": sn
                     },
             "mno": mno,
@@ -345,7 +352,7 @@ def mno_imsi_upload(cc,sn,mno,imsi,cond=0):
             }
     elif cond == 2:
         data = {
-            "MSISDN" : {
+            "MSISDN": {
                         "CC": cc
                     },
             "mno": mno,
@@ -372,8 +379,8 @@ def mno_imsi_upload(cc,sn,mno,imsi,cond=0):
             "": {
                 "CC": cc,
                 "SN": sn
-        },
-        "mno": mno,
-        "IMSI": imsi
+            },
+            "mno": mno,
+            "IMSI": imsi
         }
     return data

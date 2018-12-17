@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS IMEIs Model package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -22,20 +22,19 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 
 from app import db
 
+
 class Imei(db.Model):
     """ Class to create Db Table imei """
 
-    id = db.Column(db.BigInteger, primary_key = True)
+    id = db.Column(db.BigInteger, primary_key=True)
     imei = db.Column(db.String(20))
 
     device_id = db.Column(db.BigInteger, db.ForeignKey('devices.id'))
 
-    pairs = db.relationship('Pairing', backref = 'imei')
-
+    pairs = db.relationship('Pairing', backref='imei')
 
     def __repr__(self):
-        return "<Imei ({} ,{})>".format(self.id,self.imei)
-
+        return "<Imei ({} ,{})>".format(self.id, self.imei)
 
     @classmethod
     def create_index(cls, engine):

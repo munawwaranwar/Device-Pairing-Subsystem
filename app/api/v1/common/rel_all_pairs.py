@@ -21,7 +21,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 """
 
 from time import strftime
-from app.api.v1.common.generate_PairCode import gen_paircode
+from app.api.v1.common.generate_paircode import gen_paircode
 from app.api.v1.models.pairing_codes import Pairing_Codes
 from app.api.v1.models.imeis import Imei
 from app.api.v1.models.pairings import Pairing
@@ -48,13 +48,11 @@ def rel_all(sender_no):
 
                 for q1 in chk_primary:
 
-                    if q1.end_date == None:
-
+                    if q1.end_date is None:
                         rel_all_cond = 1
-
                         q1.end_date = '{}'.format(strftime("%Y-%m-%d"))
 
-                        if q1.imsi != None and q1.add_pair_status == True:
+                        if q1.imsi is not None and q1.add_pair_status:
 
                             q1.change_type = 'REMOVE'
                             q1.export_status = False
@@ -69,7 +67,7 @@ def rel_all(sender_no):
 
                                 q2.end_date = '{}'.format(strftime("%Y-%m-%d"))
 
-                                if q2.imsi != None and q2.add_pair_status == True:
+                                if q2.imsi is not None and q2.add_pair_status:
                                     q2.change_type = 'REMOVE'
                                     q2.export_status = False
 
@@ -85,13 +83,13 @@ def rel_all(sender_no):
 
             if rel_all_cond == 1:
 
-                paircode = gen_paircode()       # generating new pair-code & assigning it to the particular mobile device
+                paircode = gen_paircode()  # generating new pair-code & assigning it to the particular mobile device
 
                 chk_dev_id = Imei.query.filter(Imei.id == q1.imei_id).first()
 
-                add_pc = Pairing_Codes(pair_code = paircode,
-                                       is_active = True,
-                                       device_id = chk_dev_id.device_id)
+                add_pc = Pairing_Codes(pair_code=paircode,
+                                       is_active=True,
+                                       device_id=chk_dev_id.device_id)
 
                 db.session.add(add_pc)
                 db.session.commit()

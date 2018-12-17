@@ -26,6 +26,7 @@ from tests._helpers import *
 FIRST_PAIR_API = 'api/v1/first-pair'
 HEADERS = {'Content-Type': "application/json"}
 
+
 def test_first_pair_happy_case(flask_app, db, session):
     """ Verify that first-pair api responds correctly when all parameters are valid"""
     from tests._helpers import complete_db_insertion
@@ -34,24 +35,24 @@ def test_first_pair_happy_case(flask_app, db, session):
     complete_db_insertion(session, db, 1, '923004171564', 1, 'Note5', 'Samsung', 'abcdefgh', '4G',
                           'OvfT4pGf', 1, '123456789098765')
 
-    payload = {"Pair_Code" : 'OvfT4pGf', "Sender_No" : "923040519777", "Operator" : "jazz"}
-    rslt = flask_app.post(FIRST_PAIR_API, headers = HEADERS, data = json.dumps(payload))
+    payload = {"Pair_Code": 'OvfT4pGf', "Sender_No": "923040519777", "Operator": "jazz"}
+    rslt = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload))
     print(rslt.data)
     assert rslt.status_code == 200
-    return  rslt.data
+    return rslt.data
 
 
-def test_first_pair_validations_wrong_PairCodes(flask_app, db):
+def test_first_pair_validations_wrong_paircodes(flask_app, db):
     """ Verify that first-pair api accepts only valid pair-code """
     pair_code_1 = 'pqZTDCgE4'
     pair_code_2 = 'KliX6'
     pair_code_3 = 'pqZ*DCgE'
-    payload_1 = {"Pair_Code" : pair_code_1, "Sender_No" : "923040519543", "Operator" : "jazz"}
-    payload_2 = {"Pair_Code" : pair_code_2, "Sender_No" : "923040519543", "Operator" : "jazz"}
+    payload_1 = {"Pair_Code": pair_code_1, "Sender_No": "923040519543", "Operator": "jazz"}
+    payload_2 = {"Pair_Code": pair_code_2, "Sender_No": "923040519543", "Operator": "jazz"}
     payload_3 = {"Pair_Code": pair_code_3, "Sender_No": "923040519543", "Operator": "jazz"}
-    result_1 = flask_app.post(FIRST_PAIR_API, headers = HEADERS, data = json.dumps(payload_1))
+    result_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     result_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
-    result_3 = flask_app.post(FIRST_PAIR_API, headers = HEADERS, data = json.dumps(payload_3))
+    result_3 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_3))
     assert result_1.status_code == 422
     assert result_2.data == b"\"Pair-Code format is not correct\""
     assert result_3.data == b"\"Pair-Code format is not correct\""
@@ -66,7 +67,7 @@ def test_first_pair_validations_valid_paircode(flask_app, db):
     assert not rslt.data == b"\"Pair-Code format is not correct\""
 
 
-def test_first_pair_validations_wrong_Sender_No(flask_app, db):
+def test_first_pair_validations_wrong_sender_no(flask_app, db):
     """ Verify that first-pair api accepts only valid Sender_no """
     sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in sender_no:
@@ -75,7 +76,7 @@ def test_first_pair_validations_wrong_Sender_No(flask_app, db):
         assert rslt.data == b"\"Sender MSISDN format is not correct\""
 
 
-def test_first_pair_validations_valid_Sender_No(flask_app, db):
+def test_first_pair_validations_valid_sender_no(flask_app, db):
     """ Verify that first-pair api responds corectly when pair-code is valid """
     sender_no = '923008173629'
     payload = {"Pair_Code": "pqZ5DCgE", "Sender_No": sender_no, "Operator": "jazz"}
@@ -88,10 +89,10 @@ def test_first_pair_validations_operator_name(flask_app, db):
     """ Verify that first-pair api accepts only valid pair-code """
     mno_1 = 'j@zz'
     mno_2 = 'telenor'
-    payload_1 = {"Pair_Code" : "pqZ5DCgE", "Sender_No" : "923040519543", "Operator" : mno_1}
+    payload_1 = {"Pair_Code": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": mno_1}
     payload_2 = {"Pair_Code": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": mno_2}
-    result_1 = flask_app.post(FIRST_PAIR_API, headers = HEADERS, data = json.dumps(payload_1))
-    result_2 = flask_app.post(FIRST_PAIR_API, headers = HEADERS, data = json.dumps(payload_2))
+    result_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
+    result_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
     print(result_1.data)
     print(result_2.data)
     assert result_1.data == b"\"MNO's name is not in correct format\""
@@ -113,7 +114,7 @@ def test_first_pair_missing_parameters(flask_app, db):
 
 def test_first_pair_error_400_bad_request(flask_app, db):
     """ Verify that first-pair api prompts when Error-400 is occurred """
-    payload = {"Pair_Co" : "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "ufone"}
+    payload = {"Pair_Co": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "ufone"}
     result = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=payload)
     print(result.data)
     assert result.status_code == 400
@@ -121,9 +122,9 @@ def test_first_pair_error_400_bad_request(flask_app, db):
 
 def test_first_pair_error_404_wrong_api(flask_app, db):
     """ Verify that first-pair api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/firsttt-pairrrrr'
-    payload = {"Pair_Co" : "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "telenor"}
-    result = flask_app.post(tmp_API, headers=HEADERS, data=payload)
+    tmp_api = 'api/v1/firsttt-pairrrrr'
+    payload = {"Pair_Co": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "telenor"}
+    result = flask_app.post(tmp_api, headers=HEADERS, data=payload)
     print(result.data)
     assert result.status_code == 404
 
@@ -140,9 +141,9 @@ def test_first_pair_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
-def test_first_pair_functionality_MSISDN_already_exist(flask_app, db,session):
+def test_first_pair_functionality_msisdn_already_exist(flask_app, db, session):
     """ verifying the first-pair doesn't allow duplicated primary MSISDN """
-    complete_db_insertion(session, db, 2, '923004171565', 2, 'Note-8', 'Samsung', 'a1b2c3d4e5', '4G','AxT3pGf9', 2,
+    complete_db_insertion(session, db, 2, '923004171565', 2, 'Note-8', 'Samsung', 'a1b2c3d4e5', '4G', 'AxT3pGf9', 2,
                           '310987923089461')
     complete_db_insertion(session, db, 3, '923458209871', 3, 'Note-9', 'Samsung', 'AaBbCcDdEe', '4G', 'GMiQ0D3w', 3,
                           '310987923089462')
@@ -156,9 +157,9 @@ def test_first_pair_functionality_MSISDN_already_exist(flask_app, db,session):
     assert res_2.data == b"\"MSISDN already exists as Primary-Pair\""
 
 
-def test_first_pair_functionality_invalid_paircode(flask_app, db,session):
+def test_first_pair_functionality_invalid_paircode(flask_app, db, session):
     """ verifying the first-pair doesn't allow duplicated pair-code or paircode not found in DB """
-    complete_db_insertion(session, db, 4, '923004171565', 4, 'S-8', 'Samsung', 'a1b2c3d4uu', '3G,4G','A1b2C3d4', 4,
+    complete_db_insertion(session, db, 4, '923004171565', 4, 'S-8', 'Samsung', 'a1b2c3d4uu', '3G,4G', 'A1b2C3d4', 4,
                           '310987923083344')
     complete_db_insertion(session, db, 5, '923458209871', 5, 'S-9', 'Samsung', 'AaBbCcDdvv', '3G,4G', 'GMiCTD3w', 5,
                           '310987923086789')

@@ -32,7 +32,7 @@ def test_bulk_download_functionality_no_records(flask_app, db):
     """ to check the response of bulk-download api when there is no record """
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
     for val in mno:
-        url = "{api}?mno={opr}".format(api=MNO_BULK_DOWNLOAD,opr=val)
+        url = "{api}?mno={opr}".format(api=MNO_BULK_DOWNLOAD, opr=val)
         rs = flask_app.get(url)
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
@@ -40,7 +40,7 @@ def test_bulk_download_functionality_no_records(flask_app, db):
         assert d1.get('Error') == "No File found"
 
 
-def test_bulk_download_happy_case_primary_pairs_only(flask_app,db,session):
+def test_bulk_download_happy_case_primary_pairs_only(flask_app, db, session):
     """ Verify that bulk-download api downloads the file successfully having only primary pairs"""
     complete_db_insertion(session, db, 251, '923357891879', 251, 'G4', 'LG', 'shfy8JhZx', '2G,3G',
                           'Z45aWf6l', 251, '112233445566778')
@@ -54,8 +54,7 @@ def test_bulk_download_happy_case_primary_pairs_only(flask_app,db,session):
     assert rs.status_code == 200
 
 
-
-def test_bulk_download_happy_case_all_pairs(flask_app,db,session):
+def test_bulk_download_happy_case_all_pairs(flask_app, db, session):
     """ Verify that bulk-download api downloads the file successfully having primary & secondary pairs both"""
     complete_db_insertion(session, db, 253, '923354441879', 253, 'G6', 'LG', 'shfHHJhZx', '2G,3G',
                           '9i8Pbr5T', 253, '112233445566778')
@@ -80,7 +79,7 @@ def test_bulk_download_validations_operator_names(flask_app, db):
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
     f_mno = ['j@zz', 'Vodafone', 'T-Mobile', 'Orange', 'wariid']
     for val in mno:
-        url = "{api}?mno={opr}".format(api=MNO_BULK_DOWNLOAD,opr=val)
+        url = "{api}?mno={opr}".format(api=MNO_BULK_DOWNLOAD, opr=val)
         flask_app.get(url)
         print('correct operator name: ', val)
     for v in f_mno:
@@ -93,8 +92,8 @@ def test_bulk_download_validations_operator_names(flask_app, db):
 
 def test_bulk_download_error_404_wrong_api(flask_app, db):
     """ Verify that bulk-download api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/mnooo-bulkkk-downloaddd'
-    url = "{api}?mno=telenor".format(api=tmp_API)
+    tmp_api = 'api/v1/mnooo-bulkkk-downloaddd'
+    url = "{api}?mno=telenor".format(api=tmp_api)
     rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)

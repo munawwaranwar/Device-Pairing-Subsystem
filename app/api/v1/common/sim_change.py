@@ -20,70 +20,51 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app import db, conf, app
-from flask import send_from_directory
 from app.api.v1.models.pairings import Pairing
-import os
-from time import strftime
+from app import db
+import re
 
 
-def bulk_msisdns(mno):
-    """ Function that leads to a method that provides MSISDNs for MNOs to provide IMSIs"""
-
-    chk_mno = False
-
-    for key, val in conf.items():  # checking valid MNOs
-        if mno == val:
-            chk_mno = True
-
-    if chk_mno:
-        c_path = mno_all_data(mno)
-
-    else:
-        rtn_msg = "wrong mno"
-        return rtn_msg
-
-    return c_path
-
-
-def mno_all_data(mno):
-    """ Method to provide actual file containing all MSISDNs for MNOs to provide IMSIs"""
+def sim_chg(sender_num, mno):
+    """ Function to delete IMSI for SIM replacement """
     try:
+        rtn_msg = ""
 
-        msisdn_list = []
+        pattern_mno = re.compile(r'[a-zA-Z0-9]{1,20}')
+        match_mno = pattern_mno.fullmatch(mno)
 
-        DOWNLOAD_FOLDER = app.config['DPS_DOWNLOADS']
+        pattern_sender_no = re.compile(r'923\d{9,12}')
+        match_sender_no = pattern_sender_no.fullmatch(sender_num)
 
-        chk_imsi = Pairing.query.filter(Pairing.operator_name == '{}'.format(mno)) \
-                                .filter(Pairing.imsi == None) \
-                                .filter(Pairing.add_pair_status == True) \
-                                .filter(Pairing.end_date == None).all()
-                            # to check which MSISDNs require IMSI from MNO
-        if chk_imsi:
+        if match_mno and match_sender_no:  # if validations are passed
 
-            filename = "MSISDNs-List_" + mno + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
-            download_path = os.path.join(DOWNLOAD_FOLDER, filename)
+            chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_num))\
+                                         .filter(Pairing.end_date == None)\
+                                         .filter(Pairing.add_pair_status == True).all()
 
-            file = open(download_path, 'w')
+                                    # checking conditions for SIM replacement
+            if chk_all:
 
-            for c in chk_imsi:
-                msisdn_list.append(c.msisdn)
+                for q in chk_all:
 
-            msisdn_list = set(msisdn_list)
-            msisdn_list = list(msisdn_list)
+                    q.old_imsi = q.imsi
+                    q.imsi = None
+                    q.operator_name = '{}'.format(mno)
+                    db.session.commit()
 
-            file.write('MSISDN,IMSI\n')
+                    rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
 
-            for ml in msisdn_list:
-                file.write(ml + ',\n')
+            else:
 
-            file.close()
+                rtn_msg = "MSISDN ({}) is not existed in any pair".format(sender_num)
 
-            return download_path
-            # send_from_directory(directory=path, filename=filename)
+            return rtn_msg
 
-        else:
-            return "No File found"
+        elif not match_sender_no:
+            return "Sender MSISDN format is not correct"
+
+        elif not match_mno:
+            return "operator's name is not correct"
 
     except Exception as e:
         db.session.rollback()

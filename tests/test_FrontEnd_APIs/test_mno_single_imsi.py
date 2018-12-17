@@ -86,7 +86,7 @@ def test_mno_single_imsi_functionality_wrong_mno_and_msisdn(flask_app, db, sessi
     assert rs_1.status_code == 422
     d1 = json.loads(rs_1.data.decode('utf-8'))
     assert d1.get('msg') == 'IMSI addition Failed'
-    pl_2 = mno_imsi_upload('92', '3341111111', 'ufone', '410031111444466') # wrong
+    pl_2 = mno_imsi_upload('92', '3341111111', 'ufone', '410031111444466')  # wrong
     rs_2 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_2))
     assert rs_2.status_code == 422
     d2 = json.loads(rs_2.data.decode('utf-8'))
@@ -123,9 +123,9 @@ def test_mno_single_imsi_functionality_deleted_pair(flask_app, db, session):
 
 def test_mno_single_imsi_error_404_wrong_api(flask_app, db):
     """ Verify that mno-single-imsi api prompts when Error-404 is occurred """
-    tmp_API = 'api/v1/mnoooo-singleeee-uploadddd'
+    tmp_api = 'api/v1/mnoooo-singleeee-uploadddd'
     pl = mno_imsi_upload('92', '3226510989', 'warid', '410054443332221')
-    rs = flask_app.put(tmp_API, headers=HEADERS, data=json.dumps(pl))
+    rs = flask_app.put(tmp_api, headers=HEADERS, data=json.dumps(pl))
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     assert rs.status_code == 404
@@ -162,7 +162,7 @@ def test_mno_single_validations_invalid_subscriber_no(flask_app, db):
         rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
-        print(d1,val)
+        print(d1, val)
         assert d1.get('Error') == 'MSISDN format is not correct'
 
 
@@ -174,7 +174,7 @@ def test_mno_single_validations_invalid_imsi(flask_app, db):
         rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
-        print(d1,val)
+        print(d1, val)
         assert d1.get('Error') == 'IMSI format is not correct'
 
 
@@ -186,7 +186,7 @@ def test_mno_single_validations_operator_names(flask_app, db):
         pl = mno_imsi_upload('92', '3226510989', val, '410054443332221')
         rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         d1 = json.loads(rs.data.decode('utf-8'))
-        print('correct operator name: ' ,val)
+        print('correct operator name: ', val)
         assert not d1.get('Error') == "Improper Operator-Name provided"
     for v in f_mno:
         pl = mno_imsi_upload('92', '3226510989', v, '410054443332221')
@@ -198,8 +198,8 @@ def test_mno_single_validations_operator_names(flask_app, db):
 
 def test_mno_single_missing_parameters(flask_app, db):
     """ Verify that mno-single-imsi api prompts when any parameter is missing """
-    for cond in range(1,6):
-        pl_1 = mno_imsi_upload('92', '3226510989', 'telenor', '410054443332221',cond)
+    for cond in range(1, 6):
+        pl_1 = mno_imsi_upload('92', '3226510989', 'telenor', '410054443332221', cond)
         rs_1 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_1))
         assert rs_1.status_code == 422
         d1 = json.loads(rs_1.data.decode('utf-8'))

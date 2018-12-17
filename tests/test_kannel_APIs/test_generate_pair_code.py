@@ -21,7 +21,8 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 """
 from tests._fixtures import *
 
-def test_generate_paircode(flask_app,db):
+
+def test_generate_paircode(flask_app, db):
     """ Verify that paircode api generates correct pair-code """
 
     url = 'api/v1/paircode'
@@ -30,7 +31,7 @@ def test_generate_paircode(flask_app,db):
     assert rslt.status_code == 200
 
 
-def test_base(flask_app,db):
+def test_base(flask_app, db):
     """ Verify that paircode api generates correct pair-code """
 
     url = 'api/v1/base'

@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Pairing_Codes Model package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -22,24 +22,23 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 
 from app import db
 
+
 class Pairing_Codes(db.Model):
     """ Class to create Db Table pairing_codes """
 
     __tablename__ = 'pairing_codes'
-    pair_code = db.Column(db.String(8), primary_key = True, autoincrement=False)
+    pair_code = db.Column(db.String(8), primary_key=True, autoincrement=False)
     is_active = db.Column(db.Boolean)
 
     device_id = db.Column(db.BigInteger, db.ForeignKey('devices.id'))
 
-    def __init__(self,pair_code,is_active,device_id):
+    def __init__(self, pair_code, is_active, device_id):
         self.pair_code = pair_code
         self.is_active = is_active
         self.device_id = device_id
 
-
     def __repr__(self):
-        return "<Pairing_Codes ({} , {})>" .format(self.pair_code,self.is_active)
-
+        return "<Pairing_Codes ({} , {})>" .format(self.pair_code, self.is_active)
 
     @classmethod
     def create_index(cls, engine):
@@ -47,5 +46,3 @@ class Pairing_Codes(db.Model):
 
         devices_paircodes = db.Index('devices_paircodes_index', cls.pair_code, postgresql_concurrently=True)
         devices_paircodes.create(bind=engine)
-
-

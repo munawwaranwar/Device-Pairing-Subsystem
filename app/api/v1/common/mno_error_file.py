@@ -31,5 +31,3 @@ def error_url(url):
         return "no file found"
     else:
         return url
-
-

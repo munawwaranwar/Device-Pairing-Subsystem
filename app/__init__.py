@@ -44,8 +44,9 @@ except Exception as e:
 conf = global_config['global']
 
 
-app.config['SQLALCHEMY_DATABASE_URI']= '''postgresql://{}:{}@{}/{}'''.format(conf['dbusername'],conf['dbpassword'],
-                                                                             conf['dbhost'],conf['dbname'])
+app.config['SQLALCHEMY_DATABASE_URI'] = '''postgresql://{}:{}@{}/{}'''.format(conf['dbusername'], conf['dbpassword'],
+                                                                              conf['dbhost'], conf['dbname'])
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_POOL_SIZE'] = int(conf['pool_size'])
 app.config['SQLALCHEMY_POOL_RECYCLE'] = int(conf['pool_recycle'])
@@ -60,17 +61,21 @@ db.init_app(app)
 from app.api.v1.views import api
 app.register_blueprint(api, url_prefix='/api/v1')
 
+
 @app.errorhandler(400)
 def handle_400(err):
-    return Response(json.dumps({"Error": "400 Bad Request"}), status=400, mimetype='application/json')
+    return Response(json.dumps({"Error": "Bad Request"}), status=400, mimetype='application/json')
+
 
 @app.errorhandler(405)
 def handle_405(err):
-    return Response(json.dumps({"Error": "405 Method not Allowed"}), status=405, mimetype='application/json')
+    return Response(json.dumps({"Error": "Method not Allowed"}), status=405, mimetype='application/json')
+
 
 @app.errorhandler(404)
 def handle_405(err):
-    return Response(json.dumps({"Error": "404 Not Found"}), status=404, mimetype='application/json')
+    return Response(json.dumps({"Error": "Not Found"}), status=404, mimetype='application/json')
+
 
 from app.api.v1.common.database import connect
 pg_connt = connect()

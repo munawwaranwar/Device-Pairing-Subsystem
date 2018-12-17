@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Owner Model package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -26,15 +26,13 @@ from app import db
 class Owner(db.Model):
     """ Class to create Db Table owner """
 
-    id = db.Column(db.BigInteger, primary_key = True)
+    id = db.Column(db.BigInteger, primary_key=True)
     contact = db.Column(db.String(20))
 
-    devices = db.relationship('Devices', backref = 'owner', lazy = 'dynamic')
+    devices = db.relationship('Devices', backref='owner', lazy='dynamic')
 
     def __repr__(self):
-        return "<Owner({},{})>".format(self.id,self.contact)
-
-
+        return "<Owner({},{})>".format(self.id, self.contact)
 
     @classmethod
     def create_index(cls, engine):
@@ -42,4 +40,3 @@ class Owner(db.Model):
 
         owner_contact = db.Index('owner_contact_index', cls.contact, postgresql_concurrently=True)
         owner_contact.create(bind=engine)
-

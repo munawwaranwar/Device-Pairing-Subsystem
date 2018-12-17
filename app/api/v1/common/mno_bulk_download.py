@@ -20,71 +20,49 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import string
-import re
-from random import choice
+from app import db, conf, app
 from app.api.v1.models.pairings import Pairing
-from app import conf, db
-from app.api.v1.views.Pagination import Pagination
+import os
+from time import strftime
 
 
-def fetch_msisdns(mno,st,lt):
-    """ Function leads to method that fetches MSISDNs for MNOs """
+def bulk_msisdns(mno):
+    """ Function that leads to a method that provides MSISDNs for MNOs to provide IMSIs"""
 
+    chk_mno = False
+
+    for key, val in conf.items():  # checking valid MNOs
+        if mno == val:
+            chk_mno = True
+
+    if chk_mno:
+        c_path = mno_all_data(mno)
+
+    else:
+        rtn_msg = "wrong mno"
+        return rtn_msg
+
+    return c_path
+
+
+def mno_all_data(mno):
+    """ Method to provide actual file containing all MSISDNs for MNOs to provide IMSIs"""
     try:
-        cases = []
-        chk_mno = False
 
-        pattern_start_limit = re.compile(r'\d+')
-
-        match_start = pattern_start_limit.fullmatch(st)
-        match_limit = pattern_start_limit.fullmatch(lt)
-
-        if (match_start and match_limit):
-
-            start = int(st)
-            limit = int(lt)
-
-            for key,val in conf.items():
-                if mno == val:
-                    chk_mno = True
-
-            if chk_mno == True:
-                cases = mno_records(mno, start, limit)
-            else:
-                data = {
-                        "Error": "improper Operator's name provided"
-                       }
-                return data, 422
-
-            return cases
-
-        else:
-            data = {
-                     "Error": "Start or limit is not correct"
-                   }
-            return data, 422
-
-
-    except Exception as e:
-        db.session.rollback()
-
-    finally:
-        db.session.close()
-
-def mno_records(mno,start,limit):
-    """ Function to fetch MSISDNs from database which need IMSIs from MNO and provide paginated view to MNO's portal """
-
-    try:
-        mno_info = []
         msisdn_list = []
+        DOWNLOAD_FOLDER = app.config['DPS_DOWNLOADS']
 
         chk_imsi = Pairing.query.filter(Pairing.operator_name == '{}'.format(mno)) \
                                 .filter(Pairing.imsi == None) \
                                 .filter(Pairing.add_pair_status == True) \
                                 .filter(Pairing.end_date == None).all()
-
+                            # to check which MSISDNs require IMSI from MNO
         if chk_imsi:
+
+            filename = "MSISDNs-List_" + mno + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
+            download_path = os.path.join(DOWNLOAD_FOLDER, filename)
+
+            file = open(download_path, 'w')
 
             for c in chk_imsi:
                 msisdn_list.append(c.msisdn)
@@ -92,40 +70,21 @@ def mno_records(mno,start,limit):
             msisdn_list = set(msisdn_list)
             msisdn_list = list(msisdn_list)
 
-            for r in msisdn_list:
-                a = gen_req_id()
-                data = {
-                    "Req_id": a,
-                    "MSISDN": r
-                }
-                mno_info.append(data)
+            file.write('MSISDN,IMSI\n')
 
-            if mno_info:
-                paginated_data = Pagination.get_paginated_list(mno_info,'/get-pairs',start = start,limit = limit)
+            for ml in msisdn_list:
+                file.write(ml + ',\n')
 
-                if paginated_data:
-                    return paginated_data, 200
-                # else:
-                #     data = {
-                #             "msg": "no data found"
-                #            }
-                #     return data, 200
+            file.close()
+
+            return download_path
+            # send_from_directory(directory=path, filename=filename)
+
         else:
-            data = {
-                "msg" : "no record found"
-            }
-
-            return data, 200
+            return "No File found"
 
     except Exception as e:
         db.session.rollback()
 
     finally:
         db.session.close()
-
-
-def gen_req_id():
-
-    all_char = string.ascii_letters + string.digits
-    req_id = "".join(choice(all_char) for x in range(8))
-    return req_id
