@@ -7,6 +7,7 @@ flask_script
 flask_migrate
 flask_cors
 python-magic
+sqlalchemy
 pydash
 apispec==0.39.0
 flask_apispec==0.7.0

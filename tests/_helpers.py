@@ -1,5 +1,5 @@
 """
-DRS Unit Test helper module.
+DPS Unit Test helper module.
 
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
@@ -20,12 +20,14 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-from app.Models.owner import Owner
-from app.Models.devices import Devices
-from app.Models.imeis import Imei
-from app.Models.pairings import Pairing
-from app.Models.pairing_codes import Pairing_Codes
 from sqlalchemy import text
+from time import strftime
+from app.api.v1.models.owner import Owner
+from app.api.v1.models.devices import Devices
+from app.api.v1.models.imeis import Imei
+from app.api.v1.models.pairings import Pairing
+from app.api.v1.models.pairing_codes import Pairing_Codes
+
 
 def create_view(db):
     try:
@@ -37,10 +39,10 @@ def create_view(db):
         devices.mac,
         pairing_codes.pair_code,
         pairing_codes.is_active
-        FROM owner
-        JOIN devices ON devices.owner_id = owner.id
-        JOIN imei ON imei.device_id = devices.id
-        JOIN pairing_codes ON pairing_codes.device_id = devices.id;""")
+       FROM owner
+         JOIN devices ON devices.owner_id = owner.id
+         JOIN imei ON imei.device_id = devices.id
+         JOIN pairing_codes ON pairing_codes.device_id = devices.id;""")
 
         db.engine.execute(query)
 
@@ -51,29 +53,334 @@ def create_view(db):
         db.session.close()
 
 
-def complete_db_insertion(session,db,t_owner_id,t_contact,t_device_id,t_model,t_brand,t_serial,t_rat,t_paircode,t_imei_id,t_imei):
-    owner_add = Owner(id=t_owner_id, contact= t_contact)
+def complete_db_insertion(session, db, t_owner_id, t_contact, t_device_id, t_model, t_brand, t_serial, t_rat,
+                          t_paircode, t_imei_id, t_imei, t_mac=None):
+
+    owner_add = Owner(id=t_owner_id, contact=t_contact)
     session.add(owner_add)
-    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial, rat=t_rat,owner_id=t_owner_id)
+    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial, rat=t_rat,
+                         owner_id=t_owner_id, mac=t_mac)
     session.add(device_add)
-    paircode_add = Pairing_Codes(pair_code = t_paircode, is_active=True, device_id=t_device_id)
+    paircode_add = Pairing_Codes(pair_code=t_paircode, is_active=True, device_id=t_device_id)
     session.add(paircode_add)
-    imei_add = Imei(id= t_imei_id, imei= t_imei, device_id= t_device_id)
+    imei_add = Imei(id=t_imei_id, imei=t_imei, device_id=t_device_id)
     session.add(imei_add)
+    db.session.commit()
 
 
+def first_pair_db_insertion(session, db, t_pair_id, t_msisdn, t_mno, t_imei_id):
+
+    primary_add = Pairing(id=t_pair_id,
+                          primary_id=0,
+                          msisdn=t_msisdn,
+                          is_primary=True,
+                          creation_date=strftime("%Y-%m-%d %H:%M:%S"),
+                          operator_name=t_mno,
+                          add_pair_status=True,
+                          imei_id=t_imei_id)
+    session.add(primary_add)
+    db.session.commit()
 
 
-# def seed_database(db):
-#     """Helper method to seed data into the database."""
-#     seeder = Seed(db)
-#     seeder.seed_technologies()
-#     seeder.seed_status()
-#     seeder.seed_device_types()
-#     seeder.seed_documents()
+def add_pair_db_insertion(session, db, t_sec_id, t_primary_id, t_sec_msisdn, t_imei_id):
+    sec_add = Pairing(id=t_sec_id,  # adding secondary pair incase one or more secondary pairs already exists
+                      primary_id=t_primary_id,
+                      msisdn=t_sec_msisdn,
+                      is_primary=False,
+                      creation_date=strftime("%Y-%m-%d %H:%M:%S"),
+                      add_pair_status=False,
+                      imei_id=t_imei_id)
+    session.add(sec_add)
+    db.session.commit()
 
 
-# def create_database(db):
-#     """Helper method to index database and create views."""
-#     database = CreateDatabase(db)
-#     database.run()
+def add_pair_confrm_db_insertion(session, db, t_sec_no, t_primary_id, t_mno):
+    chks = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(t_sec_no),
+                                             Pairing.is_primary == False,
+                                             Pairing.primary_id == '{}'.format(t_primary_id),
+                                             Pairing.end_date == None,
+                                             Pairing.add_pair_status == False)).first()
+    if chks:
+        chks.add_pair_status = True
+        chks.operator_name = t_mno
+        chks.updated_at = '{}'.format(strftime("%Y-%m-%d %H:%M:%S"))
+        db.session.commit()
+
+
+def athty_input_payload(cc, sn, model, brand, serial_no, rat, imei, mac=None, cond=0):
+    if cond == 0:
+        data = {
+            "CONTACT": {
+                        "CC": cc,
+                        "SN": sn
+                    },
+            "MODEL": model,
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
+            }
+    elif cond == 1:
+        data = {
+            "CONTACT": {
+                    "SN": sn
+            },
+            "MODEL": model,
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
+        }
+    elif cond == 2:
+        data = {
+            "CONTACT": {
+                "CC": cc
+            },
+            "MODEL": model,
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
+        }
+    elif cond == 3:
+        data = {
+            "CONTACT": {
+                "CC": cc,
+                "SN": sn
+            },
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
+        }
+    elif cond == 4:
+        data = {
+            "CONTACT": {
+                "CC": cc,
+                "SN": sn
+            },
+            "MODEL": model,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
+        }
+    elif cond == 5:
+        data = {
+            "CONTACT": {
+                "CC": cc,
+                "SN": sn
+            },
+            "MODEL": model,
+            "BRAND": brand,
+            "MAC": mac,
+            "RAT": rat,
+            "IMEI": imei
+        }
+    elif cond == 6:
+        data = {
+            "CONTACT": {
+                "CC": cc,
+                "SN": sn
+            },
+            "MODEL": model,
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "IMEI": imei
+        }
+    elif cond == 7:
+        data = {
+            "CONTACT": {
+                "CC": cc,
+                "SN": sn
+            },
+            "MODEL": model,
+            "BRAND": brand,
+            "Serial_No": serial_no,
+            "MAC": mac,
+            "RAT": rat
+        }
+    return data
+
+
+def athty_search_db_insertion(session, db, t_owner_id, t_contact, t_device_id, t_model, t_brand, t_serial,
+                              t_rat, t_paircode, t_imei_id, t_imei, t_mac=None):
+
+    owner_add = Owner(id=t_owner_id, contact=t_contact)
+    session.add(owner_add)
+    device_add = Devices(id=t_device_id, model=t_model, brand=t_brand, serial_no=t_serial,
+                         rat=t_rat, owner_id=t_owner_id, mac=t_mac)
+
+    session.add(device_add)
+    paircode_add = Pairing_Codes(pair_code=t_paircode, is_active=True, device_id=t_device_id)
+    session.add(paircode_add)
+    imei_id = t_imei_id
+    for val in t_imei:
+        imei_add = Imei(id=imei_id, imei=val, device_id=t_device_id)
+        session.add(imei_add)
+        imei_id += 1
+    db.session.commit()
+
+
+def athty_search_payload(start, limit, t_imei, t_mac, t_serial, t_contact, cond=0):
+    if cond == 0:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "MAC": t_mac,
+                "CONTACT": t_contact,
+                "Serial_No": t_serial,
+                "IMEI": t_imei
+            }
+        }
+    elif cond == 1:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "MAC": t_mac,
+                "CONTACT": t_contact,
+                "Serial_No": t_serial
+            }
+        }
+    elif cond == 2:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "MAC": t_mac,
+                "CONTACT": t_contact,
+                "IMEI": t_imei
+            }
+        }
+    elif cond == 3:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "MAC": t_mac,
+                "Serial_No": t_serial,
+                "IMEI": t_imei
+            }
+        }
+    elif cond == 4:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "CONTACT": t_contact,
+                "Serial_No": t_serial,
+                "IMEI": t_imei
+            }
+        }
+    elif cond == 5:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "MAC": t_mac
+            }
+        }
+    elif cond == 6:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "CONTACT": t_contact
+            }
+        }
+    elif cond == 7:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "Serial_No": t_serial
+            }
+        }
+    elif cond == 8:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+                "IMEI": t_imei
+            }
+        }
+    elif cond == 9:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_args": {
+            }
+        }
+    elif cond == 10:
+        data = {
+            "start": start,
+            "limit": limit,
+            "search_a": {
+                "MAC": t_mac,
+                "CONTACT": t_contact,
+                "Serial_No": t_serial,
+                "IMEI": t_imei
+            }
+        }
+    return data
+
+
+def mno_imsi_upload(cc, sn, mno, imsi, cond=0):
+    if cond == 0:
+        data = {
+            "MSISDN": {
+                        "CC": cc,
+                        "SN": sn
+                    },
+            "mno": mno,
+            "IMSI": imsi
+            }
+    elif cond == 1:
+        data = {
+            "MSISDN": {
+                        "SN": sn
+                    },
+            "mno": mno,
+            "IMSI": imsi
+            }
+    elif cond == 2:
+        data = {
+            "MSISDN": {
+                        "CC": cc
+                    },
+            "mno": mno,
+            "IMSI": imsi
+            }
+    elif cond == 3:
+        data = {
+            "MSISDN": {
+                "CC": cc,
+                "SN": sn
+            },
+            "IMSI": imsi
+        }
+    elif cond == 4:
+        data = {
+            "MSISDN": {
+                "CC": cc,
+                "SN": sn
+            },
+            "mno": mno
+        }
+    elif cond == 5:
+        data = {
+            "": {
+                "CC": cc,
+                "SN": sn
+            },
+            "mno": mno,
+            "IMSI": imsi
+        }
+    return data

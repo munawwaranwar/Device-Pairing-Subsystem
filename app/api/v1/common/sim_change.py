@@ -1,5 +1,5 @@
 """
-DPS Unconfirmed Pair Deletion package.
+DPS notification resource package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,63 +20,54 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import psycopg2 as pg
-from time import strftime
-from datetime import datetime
+from app.api.v1.models.pairings import Pairing
+from app import db
+import re
 
 
-def uncnfrmd_pair_deletion():
-    """ Function to delete unconfirmed pairs after specific time"""
+def sim_chg(sender_num, mno):
+    """ Function to delete IMSI for SIM replacement """
     try:
-        con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
-        #con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
+        rtn_msg = ""
 
-        cur = con.cursor()
+        pattern_mno = re.compile(r'[a-zA-Z0-9]{1,20}')
+        match_mno = pattern_mno.fullmatch(mno)
 
-        fmt = '%Y-%m-%d %H:%M:%S'
+        pattern_sender_no = re.compile(r'923\d{9,12}')
+        match_sender_no = pattern_sender_no.fullmatch(sender_num)
 
-        crnt_date = strftime("%Y-%m-%d %H:%M:%S")
+        if match_mno and match_sender_no:  # if validations are passed
 
-        cur.execute("""select "creation_date" , "id" from pairing where "add_pair_status" = false """)
+            chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_num))\
+                                         .filter(Pairing.end_date == None)\
+                                         .filter(Pairing.add_pair_status == True).all()
 
-        rslt = cur.fetchall()
+                                    # checking conditions for SIM replacement
+            if chk_all:
 
-        for index, i in enumerate(rslt):
+                for q in chk_all:
 
-            d1 = datetime.strptime(crnt_date, fmt)
+                    q.old_imsi = q.imsi
+                    q.imsi = None
+                    q.operator_name = '{}'.format(mno)
+                    db.session.commit()
 
-            d2 = datetime.strptime(str(rslt[index][0]), fmt)
-            time_diff = d1-d2
+                    rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
 
-            seconds = int(time_diff.total_seconds())
+            else:
 
-            #days = time_diff.days
-            #minutes = int(int(time_diff.total_seconds())/60)
-            #hours = int((int(time_diff.total_seconds())/60)/60)
-            #day_2 = int(((int(time_diff.total_seconds()) / 60) / 60)/24)
+                rtn_msg = "MSISDN ({}) is not existed in any pair".format(sender_num)
 
-            #print("Time difference in Total Secs: ",seconds)
-            #print("Time difference in Days: ", days)
-            #print("Time difference in Total Minutes: ", minutes)
-            #print("Time difference in Total Hours: ", hours)
-            #print("Time difference in Total Days: ", day_2)
+            return rtn_msg
 
-            if seconds > 86400:
+        elif not match_sender_no:
+            return "Sender MSISDN format is not correct"
 
-                cur.execute("""delete from pairing where id = {}; """.format(rslt[index][1]))
-
-        con.commit()
-
-        con.close()
-
-        return
+        elif not match_mno:
+            return "operator's name is not correct"
 
     except Exception as e:
-        con.close()
+        db.session.rollback()
 
     finally:
-        con.close()
-
-
-if __name__ == "__main__":
-    uncnfrmd_pair_deletion()
+        db.session.close()

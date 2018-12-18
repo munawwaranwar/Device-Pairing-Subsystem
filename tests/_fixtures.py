@@ -1,15 +1,22 @@
 """
-DPS notification resource package.
+DPS fixtures for unit tests.
+
 Copyright (c) 2018 Qualcomm Technologies, Inc.
+
  All rights reserved.
+
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
  limitations in the disclaimer below) provided that the following conditions are met:
+
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
  disclaimer.
+
  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
  disclaimer in the documentation and/or other materials provided with the distribution.
+
  * Neither the name of Qualcomm Technologies, Inc. nor the names of its contributors may be used to endorse or promote
  products derived from this software without specific prior written permission.
+
  NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY
  THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -19,20 +26,19 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-
 import re
 import json
 import copy
 import pytest
+import shutil
 import httpretty
-
 from testing.postgresql import Postgresql
-
 from tests._helpers import *
+from os import path
 
 
 @pytest.yield_fixture(scope='session')
-def app():
+def app(tmpdir_factory):
     """Method to create an app for testing."""
     # need to import this late as it might have side effects
     from app import app as app_, db
@@ -48,17 +54,25 @@ def app():
     # initialize temp database and yield app
     with Postgresql() as postgresql:
         app_.config['SQLALCHEMY_DATABASE_URI'] = postgresql.url()
+
+        temp_download = tmpdir_factory.mktemp('downloads')
+        temp_uploads = tmpdir_factory.mktemp('uploads')
+        app_.config['DPS_UPLOADS'] = str(temp_uploads)
+        app_.config['DPS_DOWNLOADS'] = str(temp_download)
+
         yield app_
 
-        # restore old configs after successful session
-        app_.url_map = old_url_map
-        app_.view_functions = old_view_functions
-        app_.config = old_config
-        postgresql.stop()
+    # restore old configs after successful session
+    app_.url_map = old_url_map
+    app_.view_functions = old_view_functions
+    app_.config = old_config
+    shutil.rmtree(str(temp_download))
+    shutil.rmtree(str(temp_uploads))
+    postgresql.stop()
 
 
 @pytest.fixture(scope='session')
-def flask_app(app): # here app in parameter is app() fixture, used above
+def flask_app(app):
     """fixture for injecting flask test client into every test."""
     yield app.test_client()
 
@@ -100,51 +114,3 @@ def session(db):
     connection.close()
     session_.remove()
 
-
-# @pytest.yield_fixture(scope='session')
-# def dirbs_core_mock():
-#     """Monkey patch DIRBS-Core calls made by DRS."""
-#     httpretty.enable()
-#     from app import GLOBAL_CONF
-#
-#     single_tac_response = {
-#         "gsma": {
-#             "allocation_date": "string",
-#             "bands": "string",
-#             "bluetooth": "string",
-#             "brand_name": "string",
-#             "device_type": "string",
-#             "internal_model_name": "string",
-#             "manufacturer": "string",
-#             "marketing_name": "string",
-#             "model_name": "string",
-#             "nfc": "string",
-#             "radio_interface": "string",
-#             "wlan": "string"
-#         },
-#         "tac": "string"
-#     }
-
-
-
-    # # mock dirbs core single tac api
-    # dirbs_core_api = GLOBAL_CONF.get('core_api_v2')
-    # httpretty.register_uri(
-    #     httpretty.GET,
-    #     re.compile(r'{0}/tac/\d'.format(dirbs_core_api)),
-    #     body=json.dumps(single_tac_response),
-    #     content_type='application/json')
-    #
-    # # mock dirbs core batch tac api
-    # httpretty.register_uri(
-    #     httpretty.POST,
-    #     '{0}/tac'.format(dirbs_core_api),
-    #     body=json.dumps({"results": [single_tac_response]}),
-    #     content_type='application/json')
-    #
-    # yield
-
-    # disable afterwards when not in use to avoid issues with the sockets
-    # reset states
-    # httpretty.disable()
-    # httpretty.reset()
