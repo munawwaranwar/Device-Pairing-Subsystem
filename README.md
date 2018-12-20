@@ -2,6 +2,14 @@
 Device Pairing Sub-System is a part of the Device Identification, Registration and Blocking (DIRBS) System.
 The main purpose of DPS is to facilitate the pairing of users’ devices with their SIMs (IMSIs) over the SMS.
 
+#### Documentation
+[DPS-API-Installation-Guide-1.0.0.pdf](https://github.com/dirbs/Documentation/blob/master/Device-Pairing-Subsystem/DPS-API-Installation-Guide-1.0.0.pdf)<br />
+[DPS-SPA-Installation-Guide-1.0.0.pdf](https://github.com/dirbs/Documentation/blob/master/Device-Pairing-Subsystem/DPS-SPA-Installation-Guide-1.0.0.pdf) <br />
+[DPS-User-Guide-Authority-1.0.0.pdf](https://github.com/dirbs/Documentation/blob/master/Device-Pairing-Subsystem/DPS-User-Guide-Authority-1.0.0.pdf)<br />
+[DPS-User-Guide-MNO-1.0.0.pdf](https://github.com/dirbs/Documentation/blob/master/Device-Pairing-Subsystem/DPS-User-Guide-MNO-1.0.0.pdf)<br />
+#### Frontend Application Repo
+https://github.com/dirbs/Device-Pairing-Subsystem-Frontend
+
 #### Directory structure
 This repository contains code for **DPS** part of the **DIRBS**. It contains
 * ``app/`` -- The DPS core server app, to be used as DPS Web Server including database models, apis and resources
