@@ -44,11 +44,11 @@ all commands mentioned in this guide are run from root directory of the project 
 
 On Windows, we assume that a Bash like shell is available (i.e Bash under Cygwin), with GNU make installed.
 
-#### Starting a dev environment
+### Starting a dev environment
 The easiest and quickest way to get started is to use local-only environment (i.e everything runs locally, including
 Postgresql Server). To setup the local environment, follow the section below:
 
-##### Setting up local dev environment
+### Setting up local dev environment
 For setting up a local dev environment we assume that the ```prerequisites``` are met already. To setup a local
 environment:
 * Create database using Postgresql (Name and credentials should be same as in [config](mock/test-config.ini))
@@ -79,7 +79,7 @@ pytest -v -ss
 ```
 
 
-#### Other Helpful Commands
+### Other Helpful Commands
 
 
 To Upgrade already installed database:
