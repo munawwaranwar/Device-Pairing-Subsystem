@@ -23,7 +23,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 from flask import Blueprint, Response, request, make_response, send_file
 import json
 from app import conf
-from app.api.v1.common.Athty_Search_Form import Search_authority
+from app.api.v1.common.athrty_search_form import SearchAuthority
 from app.api.v1.common.generate_paircode import gen_paircode
 from app.api.v1.common.additional_pair import add_pair
 from app.api.v1.common.add_pair_confirmation import add_pair_cnfrm
@@ -33,10 +33,10 @@ from app.api.v1.common.sim_change import sim_chg
 from app.api.v1.common.verify_paircode import vfy_paircode
 from app.api.v1.common.find_pairs import find_pairs
 from app.api.v1.common.first_pair import first_pair
-from app.api.v1.common.atrhty_inpt_form import authority_input
+from app.api.v1.common.athrty_inpt_form import authority_input
 from app.api.v1.common.mno_first_page import fetch_msisdns
 from app.api.v1.common.mno_bulk_download import bulk_msisdns
-from app.api.v1.common.mno_bulk_upload import bulk_upload
+from app.api.v1.common.mno_bulk_upload import BulkUpload
 from app.api.v1.common.mno_sngl_upload import sngl_imsi
 from app.api.v1.common.mno_error_file import error_url
 
@@ -249,7 +249,7 @@ def athrty_search():
             existance['imei_exist'] = True
 
     count = len(req_data)
-    msg, stat = Search_authority.authority_search(start, limit, req_data, count, existance)
+    msg, stat = SearchAuthority.authority_search(start, limit, req_data, count, existance)
     return Response(json.dumps(msg), status=stat, mimetype='application/json')
 
 
@@ -340,7 +340,7 @@ def sngl_uploads():
 
 @api.route('/mno-bulk-upload', methods=['POST'])
 def bulk_uploads():
-    msg, stat = bulk_upload.bulk_imsis()
+    msg, stat = BulkUpload.bulk_imsis()
     return Response(json.dumps(msg), status=stat, mimetype='application/json')
 
 

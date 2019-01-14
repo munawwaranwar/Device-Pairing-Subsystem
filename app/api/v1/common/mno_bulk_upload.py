@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS MNOs' Bulk-IMSI Upload package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -24,7 +24,7 @@ import os
 import re
 from werkzeug import secure_filename
 from flask import request
-from app import db, conf, app
+from app import db, conf
 import pandas as pd
 from time import strftime
 import magic
@@ -32,21 +32,22 @@ from app.api.v1.common.database import connect
 
 
 ALLOWED_EXTENSIONS = {'csv', 'txt'}
-UPLOAD_FOLDER = app.config['DPS_UPLOADS']
-DOWNLOAD_FOLDER = app.config['DPS_DOWNLOADS']
+UPLOAD_FOLDER = conf['Upload_Path']
+DOWNLOAD_FOLDER = conf['Download_Path']
 
 
-class bulk_upload:
+class BulkUpload:
 
+    # noinspection PyUnboundLocalVariable,PyUnusedLocal
     @staticmethod
     def bulk_imsis():
 
         try:
-            rtn_msg = ""
             chk_mno = False
+            rtn_msg = ""
             mno = request.form.get("mno")
 
-            for key, val in conf.items():   # checking for correct operator's name
+            for key, val in conf.items():  # checking for correct operator's name
                 if mno == val:
                     chk_mno = True
 
@@ -65,6 +66,7 @@ class bulk_upload:
                     filename = secure_filename(file.filename)
                     file_path = os.path.join(UPLOAD_FOLDER, filename)
                     file.save(os.path.join(UPLOAD_FOLDER, filename))
+
                     f = magic.Magic(mime=True)
                     file_type = f.from_file(file_path)
                     if file_type != 'text/plain':
@@ -144,27 +146,26 @@ class bulk_upload:
                         cur.copy_from(f, 'test_mno', sep=",")
 
                         cur.execute(""" select msisdn, imsi, t_msisdn, t_imsi, change_type, export_status, old_imsi 
-                                        from pairing 
-                                        inner join test_mno 
-                                        on (pairing.msisdn = test_mno.t_msisdn) and (pairing.end_date is null)
-                                        and (pairing.add_pair_status = true) 
-                                        and (pairing.operator_name = '{}'); """.format(mno))
+                                            from pairing 
+                                            inner join test_mno 
+                                            on (pairing.msisdn = test_mno.t_msisdn) and (pairing.end_date is null)
+                                            and (pairing.add_pair_status = true) and 
+                                            (pairing.operator_name = '{mno}');  """)
 
-                        cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'ADD', export_status = false, 
-                                        updated_at = date_trunc('second', NOW()) 
-                                        from test_mno 
-                                        where pairing.msisdn = test_mno.t_msisdn 
-                                        and pairing.end_date is null and pairing.add_pair_status = true 
-                                        and pairing.operator_name = '{}'; """.format(mno))
+                        cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'ADD', 
+                                            export_status = false, updated_at = date_trunc('second', NOW()) 
+                                            from test_mno 
+                                            where pairing.msisdn = test_mno.t_msisdn and pairing.end_date is null 
+                                            and pairing.add_pair_status = true and pairing.operator_name = '{mno}'; """)
 
-                        cur.execute(""" drop table if exists test_mno; """)
+                        cur.execute(""" drop table if exists test_mno;  """)
 
                         con.commit()
 
                         con.close()
                         f.close()
 
-                        if del_rec:
+                        if del_rec > 0:
                             error_file = "Error-Records_" + mno + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
                             download_path = os.path.join(DOWNLOAD_FOLDER, error_file)
                             file.save(download_path)

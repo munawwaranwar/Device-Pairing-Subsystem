@@ -1,5 +1,5 @@
 """
-Unit Test Module DB-Models and Indexes test
+Unit Test Module DB-Models and Indices test
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the

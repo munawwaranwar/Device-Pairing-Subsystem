@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Authority Search package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,19 +20,18 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app.api.v1.views.pagination import Pagination
 from app import db, conf
 import re
 
 
-class Search_authority:
+class SearchAuthority:
     """ Class to provide search methods for authority to find registered devices  """
 
     def authority_search(startt, limit, data, para_cnt, para_exists):
         """ Method to search registered devices """
 
         try:
-
+            cases = []
             chk_mac, chk_serial, chk_contact, chk_imei = False, False, False, False
             fst = False
 
@@ -109,42 +108,43 @@ class Search_authority:
                         elif p == "CONTACT" and fst:
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
 
-                    qry = qry + " group by serial_no, mac,contact, brand, model, pair_code, is_active; "
+                    tmp_qry = qry + " group by serial_no, mac,contact, brand, model, pair_code, is_active ;"
+                    chk_rslt = db.engine.execute(tmp_qry)
+                    qry_count = chk_rslt.fetchall()
+
+                    qry = qry + " group by serial_no, mac,contact, brand, model, pair_code," \
+                                " is_active Limit {} offset {} ;".format(limit, startt)
                     rslt = db.engine.execute(qry)
-                    cases = []
 
                     for rows in rslt:
                         cases.append(dict((a, b) for a, b in rows.items()))
 
                     if cases:
-                        paginated_data = Pagination.get_paginated_list(cases, '/authority-search', start=startt,
-                                                                       limit=limit)
+                        paginated_data = {'start': startt,
+                                          'limit': limit,
+                                          'count': len(qry_count),
+                                          'country_code': conf['CC'],
+                                          'cases': cases
+                                          }
                         return paginated_data, 200
 
                     else:
                         data = {
                             "start": startt,
-                            "previous": "",
-                            "next": "",
                             "cases": cases,
                             "count": 0,
                             "Country_Code": conf['CC'],
                             "limit": limit
                         }
-
                         return data, 200
-
                 else:
                     data = {
                         "start": startt,
-                        "previous": "",
-                        "next": "",
                         "cases": [],
                         "count": 0,
                         "Country_Code": conf['CC'],
                         "limit": limit
                     }
-
                     return data, 200
 
             elif not chk_mac:

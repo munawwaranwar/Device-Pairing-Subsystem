@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Authority-Input package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -32,6 +32,7 @@ import requests
 from app import conf
 
 
+# noinspection PyUnboundLocalVariable,PyUnusedLocal
 def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
     """ Function to register device parameters from Authority's portal and assigns pair-code """
     try:
@@ -165,7 +166,8 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
                     "pair_code": pair_code
                 }
 
-                message = "Device has been registered with Authority. Your Activation Pair-Code is ({})".format(pair_code)
+                message = "Device has been registered with Authority. " \
+                          "Your Activation Pair-Code is ({})".format(pair_code)
 
                 payload = {'username': 'tester', 'password': 'foobar', 'smsc': 'at', 'from': '7787',
                            'to': contact_msisdn, 'text': message}

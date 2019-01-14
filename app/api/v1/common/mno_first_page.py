@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS MNO's Display-Page package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -25,9 +25,9 @@ import re
 from random import choice
 from app.api.v1.models.pairings import Pairing
 from app import conf, db
-from app.api.v1.views.pagination import Pagination
 
 
+# noinspection PyUnusedLocal
 def fetch_msisdns(mno, st, lt):
     """ Function leads to method that fetches MSISDNs for MNOs """
 
@@ -53,16 +53,16 @@ def fetch_msisdns(mno, st, lt):
                 cases = mno_records(mno, start, limit)
             else:
                 data = {
-                        "Error": "improper Operator's name provided"
-                       }
+                    "Error": "improper Operator's name provided"
+                }
                 return data, 422
 
             return cases
 
         else:
             data = {
-                     "Error": "Start or limit is not correct"
-                   }
+                "Error": "Start or limit is not correct"
+            }
             return data, 422
 
     except Exception as e:
@@ -79,18 +79,21 @@ def mno_records(mno, start, limit):
         mno_info = []
         msisdn_list = []
 
-        chk_imsi = Pairing.query.filter(Pairing.operator_name == '{}'.format(mno)) \
-                                .filter(Pairing.imsi == None) \
-                                .filter(Pairing.add_pair_status == True) \
-                                .filter(Pairing.end_date == None).all()
+        chk_count = Pairing.query.filter(Pairing.operator_name == '{}'.format(mno),
+                                         Pairing.imsi == None,
+                                         Pairing.add_pair_status == True,
+                                         Pairing.end_date == None).distinct(Pairing.msisdn).count()
+
+        chk_imsi = Pairing.query.filter(Pairing.operator_name == '{}'.format(mno),
+                                        Pairing.imsi == None,
+                                        Pairing.add_pair_status == True,
+                                        Pairing.end_date == None).distinct(Pairing.msisdn). \
+            offset(start).limit(limit).all()
 
         if chk_imsi:
 
             for c in chk_imsi:
                 msisdn_list.append(c.msisdn)
-
-            msisdn_list = set(msisdn_list)
-            msisdn_list = list(msisdn_list)
 
             for r in msisdn_list:
                 a = gen_req_id()
@@ -101,16 +104,17 @@ def mno_records(mno, start, limit):
                 mno_info.append(data)
 
             if mno_info:
-                paginated_data = Pagination.get_paginated_list(mno_info, '/get-pairs', start=start, limit=limit)
-
-                if paginated_data:
-                    return paginated_data, 200
-
+                paginated_data = {'start': start,
+                                  'limit': limit,
+                                  'count': chk_count,
+                                  'country_code': conf['CC'],
+                                  'cases': mno_info
+                                  }
+                return paginated_data, 200
         else:
             data = {
                 "msg": "no record found"
             }
-
             return data, 200
 
     except Exception as e:
@@ -121,7 +125,6 @@ def mno_records(mno, start, limit):
 
 
 def gen_req_id():
-
     all_char = string.ascii_letters + string.digits
     req_id = "".join(choice(all_char) for x in range(8))
     return req_id
