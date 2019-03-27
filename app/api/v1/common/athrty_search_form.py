@@ -20,8 +20,9 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app import db, conf
+from app import db, conf, app
 import re
+from flask_babel import lazy_gettext as _
 
 
 class SearchAuthority:
@@ -150,35 +151,35 @@ class SearchAuthority:
             elif not chk_mac:
 
                 rtn_msg = {
-                            "Error": "MAC format is not correct"
+                            "Error": _("MAC format is not correct")
                           }
                 return rtn_msg, 422
 
             elif not chk_serial:
 
                 rtn_msg = {
-                            "Error": "Serial-Number format is not correct"
+                            "Error": _("Serial-Number format is not correct")
                           }
                 return rtn_msg, 422
 
             elif not chk_contact:
 
                 rtn_msg = {
-                            "Error": "Contact-MSISDN format is not correct"
+                            "Error": _("Contact-MSISDN format is not correct")
                           }
                 return rtn_msg, 422
 
             elif not chk_imei:
 
                 rtn_msg = {
-                            "Error": "IMEI format is not correct"
+                            "Error": _('IMEI format is not correct')
                           }
                 return rtn_msg, 422
 
             elif type(startt) is not int or type(limit) is not int:
 
                 rtn_msg = {
-                            "Error": "Start or Limit is not integer"
+                            "Error": _("Start or Limit is not integer")
                           }
                 return rtn_msg, 422
 

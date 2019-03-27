@@ -30,6 +30,7 @@ from app import db
 import re
 import requests
 from app import conf
+from flask_babel import lazy_gettext as _
 
 
 # noinspection PyUnboundLocalVariable,PyUnusedLocal
@@ -90,7 +91,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
                                         # to check if device is not already registered
             if chk_duplicate:
                 rtn_msg = {
-                    "Error": "Device with same Serial number already exists"
+                    "Error": _("Device with same Serial number already exists")
                 }
                 return rtn_msg, 422
 
@@ -162,7 +163,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
                 db.session.commit()
 
                 rtn_msg = {
-                    "msg": "Device's information has been successfully loaded",
+                    "msg": _("Device's information has been successfully loaded"),
                     "pair_code": pair_code
                 }
 
@@ -179,49 +180,49 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
         elif not chk_contact:
 
             rtn_msg = {
-                "Error": "Contact-MSISDN format is not correct"
+                "Error": _("Contact-MSISDN format is not correct")
             }
             return rtn_msg, 422
 
         elif not match_model:
 
             rtn_msg = {
-                "Error": "Model format is not correct"
+                "Error": _("Model format is not correct")
             }
             return rtn_msg, 422
 
         elif not match_brand:
 
             rtn_msg = {
-                "Error": "Brand format is not correct"
+                "Error": _("Brand format is not correct")
             }
             return rtn_msg, 422
 
         elif not match_rat:
 
             rtn_msg = {
-                "Error": "RAT format is not correct"
+                "Error": _("RAT format is not correct")
             }
             return rtn_msg, 422
 
         elif not match_serial:
 
             rtn_msg = {
-                "Error": "Serial-Number format is not correct"
+                "Error": _("Serial-Number format is not correct")
             }
             return rtn_msg, 422
 
         elif not chk_mac:
 
             rtn_msg = {
-                "Error": "MAC format is not correct"
+                "Error": _("MAC format is not correct")
             }
             return rtn_msg, 422
 
         elif not chk_imei:
 
             rtn_msg = {
-                "Error": "IMEI format is not correct"
+                "Error": _("IMEI format is not correct")
             }
             return rtn_msg, 422
 

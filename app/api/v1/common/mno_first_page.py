@@ -25,6 +25,7 @@ import re
 from random import choice
 from app.api.v1.models.pairings import Pairing
 from app import conf, db
+from flask_babel import lazy_gettext as _
 
 
 # noinspection PyUnusedLocal
@@ -53,7 +54,7 @@ def fetch_msisdns(mno, st, lt):
                 cases = mno_records(mno, start, limit)
             else:
                 data = {
-                    "Error": "improper Operator's name provided"
+                    "Error": _("improper Operator's name provided")
                 }
                 return data, 422
 
@@ -61,7 +62,7 @@ def fetch_msisdns(mno, st, lt):
 
         else:
             data = {
-                "Error": "Start or limit is not correct"
+                "Error": _("Start or limit is not correct")
             }
             return data, 422
 
@@ -113,7 +114,7 @@ def mno_records(mno, start, limit):
                 return paginated_data, 200
         else:
             data = {
-                "msg": "no record found"
+                "msg": _("no record found")
             }
             return data, 200
 

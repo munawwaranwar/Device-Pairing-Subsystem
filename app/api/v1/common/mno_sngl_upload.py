@@ -25,6 +25,7 @@ from app import db
 from time import strftime
 import re
 from app import conf
+from flask_babel import lazy_gettext as _
 
 
 def sngl_imsi(mno, msisdn, imsi):
@@ -54,14 +55,14 @@ def sngl_imsi(mno, msisdn, imsi):
 
                 if chk_imsi:
                     data = {
-                        "Error": "IMSI already exists"
+                        "Error": _("IMSI already exists")
                     }
                     return data, 422
                 else:
                     cases = sngl_imsi_update(mno, f_msisdn, imsi)
             else:
                 data = {
-                        "Error": "Improper Operator-Name provided"
+                        "Error": _("Improper Operator-Name provided")
                        }
                 return data, 422
             data = {
@@ -74,13 +75,13 @@ def sngl_imsi(mno, msisdn, imsi):
 
         elif not chk_msisdn:
             rtn_msg = {
-                        "Error": "MSISDN format is not correct"
+                        "Error": _("MSISDN format is not correct")
                       }
             return rtn_msg, 422
 
         elif not match_imsi:
             rtn_msg = {
-                        "Error": "IMSI format is not correct"
+                        "Error": _("IMSI format is not correct")
                       }
             return rtn_msg, 422
 
@@ -109,10 +110,10 @@ def sngl_imsi_update(mno, msisdn, imsi):
                 m.change_type = 'ADD'
                 m.export_status = False
             db.session.commit()
-            rtn_msg = "IMSI added successfully"
+            rtn_msg = _("IMSI added successfully")
 
         else:
-            rtn_msg = "IMSI addition Failed"
+            rtn_msg = _("IMSI addition Failed")
 
         return rtn_msg
 

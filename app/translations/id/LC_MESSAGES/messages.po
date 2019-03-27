@@ -1,0 +1,194 @@
+# Indonesian translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-03-25 22:02+0500\n"
+"PO-Revision-Date: 2019-03-25 22:07+0500\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: id\n"
+"Language-Team: id <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: app/api/v1/common/athrty_inpt_form.py:94
+msgid "Device with same Serial number already exists"
+msgstr "Perangkat dengan nomor seri yang sama sudah ada"
+
+#: app/api/v1/common/athrty_inpt_form.py:166
+msgid "Device's information has been successfully loaded"
+msgstr "Informasi perangkat telah berhasil dimuat"
+
+#: app/api/v1/common/athrty_inpt_form.py:183
+#: app/api/v1/common/athrty_search_form.py:168
+msgid "Contact-MSISDN format is not correct"
+msgstr "Format kontak-MSISDN tidak benar"
+
+#: app/api/v1/common/athrty_inpt_form.py:190
+msgid "Model format is not correct"
+msgstr "Format model tidak benar"
+
+#: app/api/v1/common/athrty_inpt_form.py:197
+msgid "Brand format is not correct"
+msgstr "Format merek tidak benar"
+
+#: app/api/v1/common/athrty_inpt_form.py:204
+msgid "RAT format is not correct"
+msgstr "Format RAT tidak benar"
+
+#: app/api/v1/common/athrty_inpt_form.py:211
+#: app/api/v1/common/athrty_search_form.py:161
+msgid "Serial-Number format is not correct"
+msgstr "Format Serial-Number tidak benar"
+
+#: app/api/v1/common/athrty_inpt_form.py:218
+#: app/api/v1/common/athrty_search_form.py:154
+msgid "MAC format is not correct"
+msgstr "Format MAC tidak benar"
+
+#: app/api/v1/common/athrty_inpt_form.py:225
+#: app/api/v1/common/athrty_search_form.py:175
+msgid "IMEI format is not correct"
+msgstr "Format IMEI tidak benar"
+
+#: app/api/v1/common/athrty_search_form.py:182
+msgid "Start or Limit is not integer"
+msgstr "Mulai atau Batasi bukan bilangan bulat"
+
+#: app/api/v1/common/mno_bulk_upload.py:57
+msgid "improper Operator-name provided"
+msgstr "Nama Operator tidak benar disediakan"
+
+#: app/api/v1/common/mno_bulk_upload.py:75
+msgid "File type is not valid"
+msgstr "Jenis file tidak valid"
+
+#: app/api/v1/common/mno_bulk_upload.py:93
+msgid "File content is not Correct"
+msgstr "Konten file tidak Benar"
+
+#: app/api/v1/common/mno_bulk_upload.py:103
+msgid "File headers are missing or incorrect"
+msgstr "Header file tidak ada atau salah"
+
+#: app/api/v1/common/mno_bulk_upload.py:113
+msgid "File contains duplicated IMSIs"
+msgstr ""
+
+#: app/api/v1/common/mno_bulk_upload.py:175
+msgid "No error file available"
+msgstr "File berisi duplikasi IMSI"
+
+#: app/api/v1/common/mno_bulk_upload.py:178
+msgid "File successfully loaded"
+msgstr "File berhasil dimuat"
+
+#: app/api/v1/common/mno_bulk_upload.py:189
+msgid "No file or improper file found"
+msgstr "Tidak ada file atau file yang tidak patut ditemukan"
+
+#: app/api/v1/common/mno_first_page.py:57
+msgid "improper Operator's name provided"
+msgstr "Nama Operator yang tidak benar disediakan"
+
+#: app/api/v1/common/mno_first_page.py:65
+msgid "Start or limit is not correct"
+msgstr "Mulai atau batas tidak benar"
+
+#: app/api/v1/common/mno_first_page.py:117
+msgid "no record found"
+msgstr "tidak ada catatan yang ditemukan"
+
+#: app/api/v1/common/mno_sngl_upload.py:58
+msgid "IMSI already exists"
+msgstr "IMSI sudah ada"
+
+#: app/api/v1/common/mno_sngl_upload.py:65 app/api/v1/views/__init__.py:288
+msgid "Improper Operator-Name provided"
+msgstr "Nama Operator yang Tidak Benar disediakan"
+
+#: app/api/v1/common/mno_sngl_upload.py:78
+msgid "MSISDN format is not correct"
+msgstr "Format MSISDN tidak benar"
+
+#: app/api/v1/common/mno_sngl_upload.py:84
+msgid "IMSI format is not correct"
+msgstr "Format IMSI tidak benar"
+
+#: app/api/v1/common/mno_sngl_upload.py:113
+msgid "IMSI added successfully"
+msgstr "IMSI berhasil ditambahkan"
+
+#: app/api/v1/common/mno_sngl_upload.py:116
+msgid "IMSI addition Failed"
+msgstr "Penambahan IMSI Gagal"
+
+#: app/api/v1/views/__init__.py:187
+#, python-format
+msgid "%(key)s not found"
+msgstr "%(key)s tidak ditemukan"
+
+#: app/api/v1/views/__init__.py:196
+msgid "Country-Code not found"
+msgstr "Kode Negara tidak ditemukan"
+
+#: app/api/v1/views/__init__.py:201
+msgid "Subscriber-Number not found"
+msgstr "Nomor Pelanggan tidak ditemukan"
+
+#: app/api/v1/views/__init__.py:224
+#, python-format
+msgid "Up to %(var1)s IMEIs per device are allowed only"
+msgstr "IMEIs hingga %(var1)s per perangkat hanya diizinkan"
+
+#: app/api/v1/views/__init__.py:238
+msgid "search_args is not correct"
+msgstr "search_args tidak benar"
+
+#: app/api/v1/views/__init__.py:262 app/api/v1/views/__init__.py:326
+msgid "operator's name is missing"
+msgstr "nama operator tidak ada"
+
+#: app/api/v1/views/__init__.py:268
+msgid "start is missing"
+msgstr "mulai hilang"
+
+#: app/api/v1/views/__init__.py:274
+msgid "limit is missing"
+msgstr "batas tidak ada"
+
+#: app/api/v1/views/__init__.py:293
+msgid "No File found"
+msgstr "Tidak ada File yang ditemukan"
+
+#: app/api/v1/views/__init__.py:313
+msgid "Country-Code is missing"
+msgstr "Kode Negara tidak ada"
+
+#: app/api/v1/views/__init__.py:316
+msgid "Subscriber-Number is missing"
+msgstr "Nomor Pelanggan tidak ada"
+
+#: app/api/v1/views/__init__.py:320
+msgid "MSISDN is missing"
+msgstr "MSISDN tidak ada"
+
+#: app/api/v1/views/__init__.py:332
+msgid "IMSI is missing"
+msgstr "IMSI tidak ada"
+
+#: app/api/v1/views/__init__.py:351
+msgid "URL is missing"
+msgstr "URL tidak ada"
+
+#: app/api/v1/views/__init__.py:359
+msgid "File not found"
+msgstr "Berkas tidak ditemukan"
+

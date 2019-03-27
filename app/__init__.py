@@ -20,26 +20,30 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 import yaml
 import json
 import sys
 from flask_cors import CORS
 from flask import Response
+from flask_babel import Babel
+from app.api.v1.common.lazy_text_encoder import JSON_Encoder
 
 app = Flask(__name__)
 CORS(app)
+app.j_encoder = JSON_Encoder()
+babel = Babel(app)
 
 
 try:
     with open('config.yml', 'r') as yaml_file:
-        global_config = yaml.load(yaml_file)
+        global_config = yaml.safe_load(yaml_file)
 except Exception as e:
     app.logger.error('Exception encountered during loading the config file')
     app.logger.exception(e)
     sys.exit(1)
-# global_config = yaml.load(open("config.yml"))
+# global_config = yaml.safe_load(open("config.yml"))
 
 conf = global_config['global']
 
@@ -54,6 +58,9 @@ app.config['SQLALCHEMY_MAX_OVERFLOW'] = int(conf['overflow_size'])
 app.config['SQLALCHEMY_POOL_TIMEOUT'] = int(conf['pool_timeout'])
 app.config['DPS_DOWNLOADS'] = conf['Download_Path']
 app.config['DPS_UPLOADS'] = conf['Upload_Path']
+app.config['BABEL_DEFAULT_LOCALE'] = conf['default_language']
+app.config['SUPPORTED_LANGUAGES'] = conf['supported_languages']
+
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -79,3 +86,8 @@ def handle_405(err):
 
 from app.api.v1.common.database import connect
 pg_connt = connect()
+
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['SUPPORTED_LANGUAGES'])

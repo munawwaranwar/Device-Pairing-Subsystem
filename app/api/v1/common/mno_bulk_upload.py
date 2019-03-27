@@ -29,6 +29,7 @@ import pandas as pd
 from time import strftime
 import magic
 from app.api.v1.common.database import connect
+from flask_babel import lazy_gettext as _
 
 
 ALLOWED_EXTENSIONS = {'csv', 'txt'}
@@ -53,7 +54,7 @@ class BulkUpload:
 
             if not chk_mno:
                 data = {
-                    "Error": "improper Operator-name provided"
+                    "Error": _("improper Operator-name provided")
                 }
                 return data, 422
 
@@ -71,7 +72,7 @@ class BulkUpload:
                     file_type = f.from_file(file_path)
                     if file_type != 'text/plain':
                         data = {
-                            "Error": "File type is not valid"
+                            "Error": _("File type is not valid")
                         }
                         if os.path.isfile(file_path):
                             os.remove(file_path)
@@ -89,7 +90,7 @@ class BulkUpload:
                         if e:
                             newfile.close()
                             data = {
-                                "Error": "File content is not Correct"
+                                "Error": _("File content is not Correct")
                             }
                             if os.path.isfile(file_path):
                                 os.remove(file_path)
@@ -99,7 +100,7 @@ class BulkUpload:
 
                     if df.columns[0] != 'MSISDN' or df.columns[1] != 'IMSI':
                         data = {
-                            "Error": "File headers are missing or incorrect"
+                            "Error": _("File headers are missing or incorrect")
                         }
                         if os.path.isfile(file_path):
                             os.remove(file_path)
@@ -109,7 +110,7 @@ class BulkUpload:
 
                     if not df_dup.empty:
                         data = {
-                            "Error": "File contains duplicated IMSIs"
+                            "Error": _("File contains duplicated IMSIs")
                         }
                         if os.path.isfile(file_path):
                             os.remove(file_path)
@@ -171,10 +172,10 @@ class BulkUpload:
                             file.save(download_path)
                             dfs.to_csv(download_path, index=False)
                         else:
-                            download_path = "No error file available"
+                            download_path = _("No error file available")
 
                         rtn_msg = {
-                            "msg": "File successfully loaded",
+                            "msg": _("File successfully loaded"),
                             "Total_Records": total_rows,
                             "Successful_Records": final_rows,
                             "Deleted_Record": del_rec,
@@ -185,7 +186,7 @@ class BulkUpload:
                 else:
 
                     rtn_msg = {
-                        "Error": "No file or improper file found"
+                        "Error": _("No file or improper file found")
                     }
 
                     return rtn_msg, 422
