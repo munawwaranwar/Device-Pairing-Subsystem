@@ -1,5 +1,5 @@
 """
-DPS Pair-Code Generation package.
+DPS Views package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,31 +20,37 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-
-import string
-from random import choice
-from app import conf
-from app.api.v1.models.pairing_codes import Pairing_Codes
+from sqlalchemy import text # pragma: no cover
 
 
-def gen_paircode():
-    # min_char, max_char = 6, 8
+class Views:        # pragma: no cover
+    """Class for creating/migrating views into the database."""
 
-    paircode_exist = True
-    paircode = ''
+    def __init__(self, db):
+        """Constructor."""
+        self.db = db
 
-    while paircode_exist:
+    def create_view(self):
+        """Method to create registration view for search function."""
 
-        all_char = string.ascii_letters + string.digits
+        try:
+            query = text("""CREATE OR REPLACE VIEW public.test_view AS  SELECT owner.contact,
+            imei.imei,
+            devices.brand,
+            devices.model,
+            devices.serial_no,
+            devices.mac,
+            pairing_codes.pair_code,
+            pairing_codes.is_active
+           FROM owner
+             JOIN devices ON devices.owner_id = owner.id
+             JOIN imei ON imei.device_id = devices.id
+             JOIN pairing_codes ON pairing_codes.device_id = devices.id;""")
 
-        # paircode = "".join(choice(all_char) for x in range(randint(min_char,max_char)))
-        paircode = "".join(choice(all_char) for x in range(conf['pc_length']))
+            self.db.engine.execute(query)
 
-        chk = Pairing_Codes.query.filter(Pairing_Codes.pair_code == '{}'.format(paircode)).first()
+        except Exception as e:
+            self.db.session.rollback()
 
-        if chk:     # pragma: no cover
-            paircode_exist = True
-        else:
-            paircode_exist = False
-
-    return paircode
+        finally:
+            self.db.session.close()

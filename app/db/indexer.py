@@ -1,5 +1,5 @@
 """
-DPS Pair-Code Generation package.
+DPS Indexer package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,31 +20,31 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
+from app.api.v1.models.owner import Owner   # pragma: no cover
+from app.api.v1.models.devices import Devices   # pragma: no cover
+from app.api.v1.models.imeis import Imei    # pragma: no cover
+from app.api.v1.models.pairing_codes import Pairing_Codes   # pragma: no cover
+from app.api.v1.models.pairings import Pairing  # pragma: no cover
+from app import app, db # pragma: no cover
+import sys  # pragma: no cover
 
-import string
-from random import choice
-from app import conf
-from app.api.v1.models.pairing_codes import Pairing_Codes
 
+class Indexer:      # pragma: no cover
+    """Class for indexing the database tables and views."""
 
-def gen_paircode():
-    # min_char, max_char = 6, 8
+    def __init__(self, db):
+        """Constructor."""
+        self.db = db
 
-    paircode_exist = True
-    paircode = ''
-
-    while paircode_exist:
-
-        all_char = string.ascii_letters + string.digits
-
-        # paircode = "".join(choice(all_char) for x in range(randint(min_char,max_char)))
-        paircode = "".join(choice(all_char) for x in range(conf['pc_length']))
-
-        chk = Pairing_Codes.query.filter(Pairing_Codes.pair_code == '{}'.format(paircode)).first()
-
-        if chk:     # pragma: no cover
-            paircode_exist = True
-        else:
-            paircode_exist = False
-
-    return paircode
+    def create_indexes(self):
+        """ method to create indexes on the database """
+        with db.engine.connect() as conn:
+            with conn.execution_options(isolation_level='AUTOCOMMIT'):
+                try:
+                    Pairing.create_index(conn)
+                    Pairing_Codes.create_index(conn)
+                    Imei.create_index(conn)
+                    Devices.create_index(conn)
+                    Owner.create_index(conn)
+                except Exception as e:
+                    sys.exit(1)

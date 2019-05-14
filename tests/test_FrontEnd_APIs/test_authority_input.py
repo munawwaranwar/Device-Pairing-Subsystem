@@ -145,6 +145,42 @@ def test_athty_input_validations_invalid_mac_formats(flask_app, db):
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
+def test_athty_input_invalid_mac_espanish_msg(flask_app, db):
+    """Verify that athty-input api doesn't allow invalid mac"""
+
+    HEADERS = {'Content-Type': "application/json", 'Accept-Language': 'es'}
+    imei = ["37327433394FBC5", "386735ABC903832"]
+    mac = ["AC:AA:aH:FF:FF:8n", "AA:AA:AA:FF:FF", "AA-AA-AA-FF-FF-FF-FF", "AAA.AAA.FFF.FFF.AAA",
+           "AAA.AAA.FFF", "00:25:96:FF:FE:12:34:56:FE", "0025:96FF:FE12", "0025:96FF:FE12:3456:A1CE",
+           "AL-@M-AA-XX-7$-d&", "00:25:96:GH:%E:12:YZ:5#", "0A2T:9@Fv:Fz1?:34|6"]
+    for val in mac:
+        payload = athty_input_payload("92", "3002161904", "Mate-10", "HUAWEI", "Xc5dt8KlT", "2G,3G", imei, val)
+        rsl = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload))
+        print(rsl.data, val)
+        assert rsl.status_code == 422
+        data = json.loads(rsl.data.decode('utf-8'))
+        assert data.get('Error') == "El formato MAC no es correcto"
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_athty_input_invalid_mac_indonesian_msg(flask_app, db):
+    """Verify that athty-input api doesn't allow invalid mac"""
+
+    HEADERS = {'Content-Type': "application/json", 'Accept-Language': 'id'}
+    imei = ["37327433394FBC5", "386735ABC903832"]
+    mac = ["AC:AA:aH:FF:FF:8n", "AA:AA:AA:FF:FF", "AA-AA-AA-FF-FF-FF-FF", "AAA.AAA.FFF.FFF.AAA",
+           "AAA.AAA.FFF", "00:25:96:FF:FE:12:34:56:FE", "0025:96FF:FE12", "0025:96FF:FE12:3456:A1CE",
+           "AL-@M-AA-XX-7$-d&", "00:25:96:GH:%E:12:YZ:5#", "0A2T:9@Fv:Fz1?:34|6"]
+    for val in mac:
+        payload = athty_input_payload("92", "3002161904", "Mate-10", "HUAWEI", "Xc5dt8KlT", "2G,3G", imei, val)
+        rsl = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload))
+        print(rsl.data, val)
+        assert rsl.status_code == 422
+        data = json.loads(rsl.data.decode('utf-8'))
+        assert data.get('Error') == "Format MAC tidak benar"
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_model_formats(flask_app, db):
     """Verify that athty-input api doesn't allow invalid mac"""
     imei = ["37327433394FBC5", "386735ABC903832"]

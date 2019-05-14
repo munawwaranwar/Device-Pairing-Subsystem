@@ -118,7 +118,7 @@ def test_first_pair_missing_parameters(flask_app, db):
     result_3 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_3))
     assert result_1.data == b"Pair-Code is missing in SMS"
     assert result_2.data == b"sender number is missing in SMS"
-    assert result_3.data == b"operator name is missing in SMS"
+    assert result_3.data == b"operator's name is missing in SMS"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames

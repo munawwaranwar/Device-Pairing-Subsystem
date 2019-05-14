@@ -101,7 +101,7 @@ class SearchAuthority:
                         elif p == "MAC" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
                             fst = True
-                        elif p == "MAC" and fst:
+                        elif p == "MAC" and fst:    # pragma: no cover
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
                         elif p == "CONTACT" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
@@ -115,7 +115,8 @@ class SearchAuthority:
 
                     qry = qry + " group by serial_no, mac,contact, brand, model, pair_code," \
                                 " is_active Limit {} offset {} ;".format(limit, startt)
-                    rslt = db.engine.execute(qry)
+
+                    rslt = db.session.execute(qry)
 
                     for rows in rslt:
                         cases.append(dict((a, b) for a, b in rows.items()))

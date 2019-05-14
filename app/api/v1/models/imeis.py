@@ -33,12 +33,12 @@ class Imei(db.Model):
 
     pairs = db.relationship('Pairing', backref='imei')
 
-    def __repr__(self):
+    def __repr__(self):     # pragma: no cover
         return "<Imei ({} ,{})>".format(self.id, self.imei)
 
     @classmethod
     def create_index(cls, engine):
         """ Create Indexes for imei table. """
 
-        devices_imei = db.Index('devices_imei_index', cls.imei, postgresql_concurrently=True)
+        devices_imei = db.Index('devices_imei_index', cls.imei, postgresql_concurrently=False)
         devices_imei.create(bind=engine)

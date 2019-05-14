@@ -7,7 +7,6 @@ flask_script==2.0.6
 flask_migrate==2.4.0
 flask_cors==3.0.7
 libmagic==1.0
-python-magic-bin==0.4.14
 sqlalchemy==1.3.0
 pydash==4.7.4
 apispec==0.39.0
@@ -20,4 +19,4 @@ pytest-cov==2.5.1
 coverage==4.4.2
 Babel==2.6.0
 flask-babel==0.12.2
-speaklater
+speaklater==1.3

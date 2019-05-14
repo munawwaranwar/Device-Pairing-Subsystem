@@ -30,53 +30,58 @@ from app.api.v1.models.imeis import Imei
 from app.api.v1.models.pairing_codes import Pairing_Codes
 from app.api.v1.models.pairings import Pairing
 from app import app, db
+from app.db import CreateDatabase
 
 
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+manager.add_command('install-db', CreateDatabase(db))
 
 
-@manager.command
-def create_view():
-    try:
-        query = text("""CREATE OR REPLACE VIEW public.test_view AS  SELECT owner.contact,
-        imei.imei,
-        devices.brand,
-        devices.model,
-        devices.serial_no,
-        devices.mac,
-        pairing_codes.pair_code,
-        pairing_codes.is_active
-       FROM owner
-         JOIN devices ON devices.owner_id = owner.id
-         JOIN imei ON imei.device_id = devices.id
-         JOIN pairing_codes ON pairing_codes.device_id = devices.id;""")
+# @manager.command
+# def create_view():
+#     try:
+#         query = text("""CREATE OR REPLACE VIEW public.test_view AS  SELECT owner.contact,
+#         imei.imei,
+#         devices.brand,
+#         devices.model,
+#         devices.serial_no,
+#         devices.mac,
+#         pairing_codes.pair_code,
+#         pairing_codes.is_active
+#        FROM owner
+#          JOIN devices ON devices.owner_id = owner.id
+#          JOIN imei ON imei.device_id = devices.id
+#          JOIN pairing_codes ON pairing_codes.device_id = devices.id;""")
+#
+#         db.engine.execute(query)
+#
+#     except Exception as e:
+#         db.session.rollback()
+#
+#     finally:
+#         db.session.close()
 
-        db.engine.execute(query)
 
-    except Exception as e:
-        db.session.rollback()
+# @manager.command
+# def create_indexes():
+#     """ method to create indexes on the database """
+#     with db.engine.connect() as conn:
+#         with conn.execution_options(isolation_level='AUTOCOMMIT'):
+#             try:
+#                 app.logger.info(Pairing.create_index(conn))
+#                 app.logger.info(Pairing_Codes.create_index(conn))
+#                 app.logger.info(Imei.create_index(conn))
+#                 app.logger.info(Devices.create_index(conn))
+#                 app.logger.info(Owner.create_index(conn))
+#             except Exception as e:
+#                 app.logger.error('an unknown error occured during indexing, see the logs below for details')
+#                 app.logger.exception(e)
+#                 sys.exit(1)
 
-    finally:
-        db.session.close()
 
 
-@manager.command
-def create_indexes():
-    """ method to create indexes on the database """
-    with db.engine.connect() as conn:
-        with conn.execution_options(isolation_level='AUTOCOMMIT'):
-            try:
-                app.logger.info(Pairing.create_index(conn))
-                app.logger.info(Pairing_Codes.create_index(conn))
-                app.logger.info(Imei.create_index(conn))
-                app.logger.info(Devices.create_index(conn))
-                app.logger.info(Owner.create_index(conn))
-            except Exception as e:
-                app.logger.error('an unknown error occured during indexing, see the logs below for details')
-                app.logger.exception(e)
-                sys.exit(1)
 
 
 if __name__ == '__main__':

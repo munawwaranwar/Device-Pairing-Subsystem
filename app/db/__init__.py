@@ -1,5 +1,5 @@
 """
-DPS Pair-Code Generation package.
+DPS Database Script Module
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -19,32 +19,40 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+import sys  # pragma: no cover
+from flask_script import Command  # pylint: disable=deprecated-module  # pragma: no cover
+from sqlalchemy.exc import SQLAlchemyError  # pragma: no cover
+from app.db.indexer import Indexer  # pragma: no cover
+from app.db.views import Views  # pragma: no cover
 
 
-import string
-from random import choice
-from app import conf
-from app.api.v1.models.pairing_codes import Pairing_Codes
+class CreateDatabase(Command):     # pragma: no cover
+    """Class to manage database post creation operations."""
 
+    def __init__(self, db):
+        """Constructor"""
+        super().__init__()
+        self.db = db
 
-def gen_paircode():
-    # min_char, max_char = 6, 8
+    def _create_views(self):
+        """Method to auto create views and materialized views on database."""
+        db_views = Views(self.db)
+        try:
+            db_views.create_view()
+        except SQLAlchemyError as e:
+            sys.exit(1)
 
-    paircode_exist = True
-    paircode = ''
+    def _create_indexes(self):
+        """Method to perform database indexing."""
+        db_indexer = Indexer(self.db)
 
-    while paircode_exist:
+        with self.db.engine.connect() as conn:
+            with conn.execution_options(isolation_level='AUTOCOMMIT'):
+                try:
+                    db_indexer.create_indexes()
+                except SQLAlchemyError as e:
+                    sys.exit(1)
 
-        all_char = string.ascii_letters + string.digits
-
-        # paircode = "".join(choice(all_char) for x in range(randint(min_char,max_char)))
-        paircode = "".join(choice(all_char) for x in range(conf['pc_length']))
-
-        chk = Pairing_Codes.query.filter(Pairing_Codes.pair_code == '{}'.format(paircode)).first()
-
-        if chk:     # pragma: no cover
-            paircode_exist = True
-        else:
-            paircode_exist = False
-
-    return paircode
+    def run(self):
+        self._create_views()
+        self._create_indexes()

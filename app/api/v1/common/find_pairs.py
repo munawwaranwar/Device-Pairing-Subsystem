@@ -75,7 +75,7 @@ def find_pairs(sender_no):
         elif not match_sender_no:
             return "Sender MSISDN format is not correct"
 
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         db.session.rollback()
 
     finally:

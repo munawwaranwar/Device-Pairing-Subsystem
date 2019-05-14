@@ -43,24 +43,24 @@ class Pairing(db.Model):
 
     imei_id = db.Column(db.BigInteger, db.ForeignKey('imei.id'))
 
-    def __repr__(self):
+    def __repr__(self):     # pragma: no cover
         return "<Pairing ({} ,{}, {})>".format(self.id, self.msisdn, self.imsi)
 
     @classmethod
     def create_index(cls, engine):
         """ Method to create Indexes for pairing table. """
 
-        devices_msisdn = db.Index('devices_msisdn_index', cls.msisdn, postgresql_concurrently=True)
+        devices_msisdn = db.Index('devices_msisdn_index', cls.msisdn, postgresql_concurrently=False)
         devices_msisdn.create(bind=engine)
 
-        devices_imsi = db.Index('devices_imsi_index', cls.imsi, postgresql_concurrently=True)
+        devices_imsi = db.Index('devices_imsi_index', cls.imsi, postgresql_concurrently=False)
         devices_imsi.create(bind=engine)
 
-        devices_creation_date = db.Index('devices_creation_date_index', cls.creation_date, postgresql_concurrently=True)
+        devices_creation_date = db.Index('devices_creation_date_index', cls.creation_date, postgresql_concurrently=False)
         devices_creation_date.create(bind=engine)
 
-        devices_end_date = db.Index('devices_end_date_index', cls.end_date, postgresql_concurrently=True)
+        devices_end_date = db.Index('devices_end_date_index', cls.end_date, postgresql_concurrently=False)
         devices_end_date.create(bind=engine)
 
-        devices_operator_name = db.Index('devices_operator_index', cls.operator_name, postgresql_concurrently=True)
+        devices_operator_name = db.Index('devices_operator_index', cls.operator_name, postgresql_concurrently=False)
         devices_operator_name.create(bind=engine)

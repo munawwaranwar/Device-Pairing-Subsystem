@@ -26,15 +26,14 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-import re
+
 import json
 import copy
 import pytest
 import shutil
-import httpretty
 from testing.postgresql import Postgresql
 from tests._helpers import *
-from os import path
+from app.api.v1.common.lazy_text_encoder import JSON_Encoder
 
 
 @pytest.yield_fixture(scope='session')
@@ -45,6 +44,8 @@ def app(tmpdir_factory):
 
     # need to save old configurations of the app
     # to restore them later upon tear down
+
+    #app_.j_encoder = JSON_Encoder()
     old_url_map = copy.copy(app_.url_map)
     old_view_functions = copy.copy(app_.view_functions)
     app_.testing = True
@@ -74,6 +75,7 @@ def app(tmpdir_factory):
 @pytest.fixture(scope='session')
 def flask_app(app):
     """fixture for injecting flask test client into every test."""
+    #app.j_encoder = JSON_Encoder()
     yield app.test_client()
 
 

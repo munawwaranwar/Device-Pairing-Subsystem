@@ -51,7 +51,7 @@ def add_pair(add_msisdn, sender_num):
                 chk_1 = True
                 max_pair_id = db.session.query(func.max(Pairing.id)).scalar()  # query to get maximum Pairing_id
 
-                if max_pair_id is None:
+                if max_pair_id is None:   # pragma: no cover
                     max_pair_id = 1
 
                 else:

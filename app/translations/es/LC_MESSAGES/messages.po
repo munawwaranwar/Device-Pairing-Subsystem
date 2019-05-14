@@ -33,7 +33,7 @@ msgstr "El formato de contacto MSISDN no es correcto"
 
 #: app/api/v1/common/athrty_inpt_form.py:190
 msgid "Model format is not correct"
-msgstr ""El formato del modelo no es correcto"
+msgstr "El formato del modelo no es correcto"
 
 #: app/api/v1/common/athrty_inpt_form.py:197
 msgid "Brand format is not correct"
@@ -56,11 +56,11 @@ msgstr "El formato MAC no es correcto"
 #: app/api/v1/common/athrty_inpt_form.py:225
 #: app/api/v1/common/athrty_search_form.py:175
 msgid "IMEI format is not correct"
-msgstr ""
+msgstr "El formato IMEI no es correcto"
 
 #: app/api/v1/common/athrty_search_form.py:182
 msgid "Start or Limit is not integer"
-msgstr "El formato IMEI no es correcto"
+msgstr "Inicio o Límite no es entero"
 
 #: app/api/v1/common/mno_bulk_upload.py:57
 msgid "improper Operator-name provided"

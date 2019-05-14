@@ -30,6 +30,7 @@ from flask import Response
 from flask_babel import Babel
 from app.api.v1.common.lazy_text_encoder import JSON_Encoder
 
+
 app = Flask(__name__)
 CORS(app)
 app.j_encoder = JSON_Encoder()
@@ -39,7 +40,7 @@ babel = Babel(app)
 try:
     with open('config.yml', 'r') as yaml_file:
         global_config = yaml.safe_load(yaml_file)
-except Exception as e:
+except Exception as e:  # pragma: no cover
     app.logger.error('Exception encountered during loading the config file')
     app.logger.exception(e)
     sys.exit(1)

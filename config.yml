@@ -39,8 +39,8 @@ global:
   pairlist_path: 'D:\dirbs_intl_dps\pairing_lists'
 
   # System Paths for files
-  Download_Path: 'C:\Users\Pc\Desktop\Device-Pairing-Subsystem-tests\Device-Pairing-Subsystem-tests\downloads'
-  Upload_Path: 'C:\Users\Pc\Desktop\Device-Pairing-Subsystem-tests\Device-Pairing-Subsystem-tests\uploads'
+  Download_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/downloads'
+  Upload_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/uploads'
 
   # Multi-Language Support
   supported_languages:
