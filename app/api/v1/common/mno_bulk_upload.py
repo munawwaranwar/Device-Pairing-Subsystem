@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS MNOs' Bulk-IMSI Upload package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -24,35 +24,37 @@ import os
 import re
 from werkzeug import secure_filename
 from flask import request
-from app import db, conf, app
+from app import db, conf
 import pandas as pd
 from time import strftime
 import magic
 from app.api.v1.common.database import connect
+from flask_babel import lazy_gettext as _
 
 
 ALLOWED_EXTENSIONS = {'csv', 'txt'}
-UPLOAD_FOLDER = app.config['DPS_UPLOADS']
-DOWNLOAD_FOLDER = app.config['DPS_DOWNLOADS']
+UPLOAD_FOLDER = conf['Upload_Path']
+DOWNLOAD_FOLDER = conf['Download_Path']
 
 
-class bulk_upload:
+class BulkUpload:
 
+    # noinspection PyUnboundLocalVariable,PyUnusedLocal
     @staticmethod
     def bulk_imsis():
 
         try:
-            rtn_msg = ""
             chk_mno = False
+            rtn_msg = ""
             mno = request.form.get("mno")
 
-            for key, val in conf.items():   # checking for correct operator's name
+            for key, val in conf.items():  # checking for correct operator's name
                 if mno == val:
                     chk_mno = True
 
             if not chk_mno:
                 data = {
-                    "Error": "improper Operator-name provided"
+                    "Error": _("improper Operator-name provided")
                 }
                 return data, 422
 
@@ -65,17 +67,18 @@ class bulk_upload:
                     filename = secure_filename(file.filename)
                     file_path = os.path.join(UPLOAD_FOLDER, filename)
                     file.save(os.path.join(UPLOAD_FOLDER, filename))
+
                     f = magic.Magic(mime=True)
                     file_type = f.from_file(file_path)
                     if file_type != 'text/plain':
                         data = {
-                            "Error": "File type is not valid"
+                            "Error": _("File type is not valid")
                         }
                         if os.path.isfile(file_path):
                             os.remove(file_path)
                         return data, 422
 
-                    # ---------------------------------------------------------------------------------------------------
+                    # --------------------------------------------------------------------------------------------------
 
                     pat1 = re.compile(r'923\d{9}')
                     pat2 = re.compile(r'\d{15}')
@@ -87,7 +90,7 @@ class bulk_upload:
                         if e:
                             newfile.close()
                             data = {
-                                "Error": "File content is not Correct"
+                                "Error": _("File content is not Correct")
                             }
                             if os.path.isfile(file_path):
                                 os.remove(file_path)
@@ -97,7 +100,7 @@ class bulk_upload:
 
                     if df.columns[0] != 'MSISDN' or df.columns[1] != 'IMSI':
                         data = {
-                            "Error": "File headers are missing or incorrect"
+                            "Error": _("File headers are missing or incorrect")
                         }
                         if os.path.isfile(file_path):
                             os.remove(file_path)
@@ -107,7 +110,7 @@ class bulk_upload:
 
                     if not df_dup.empty:
                         data = {
-                            "Error": "File contains duplicated IMSIs"
+                            "Error": _("File contains duplicated IMSIs")
                         }
                         if os.path.isfile(file_path):
                             os.remove(file_path)
@@ -132,7 +135,7 @@ class bulk_upload:
                         lst_df = [df2, df3, df4, df5, df6]
                         dfs = pd.concat(lst_df, ignore_index=False)
 
-                        # ---------------------------------------------------------------------------------------------------
+                        # ----------------------------------------------------------------------------------------------
 
                         con = connect()
                         cur = con.cursor()
@@ -144,36 +147,35 @@ class bulk_upload:
                         cur.copy_from(f, 'test_mno', sep=",")
 
                         cur.execute(""" select msisdn, imsi, t_msisdn, t_imsi, change_type, export_status, old_imsi 
-                                        from pairing 
-                                        inner join test_mno 
-                                        on (pairing.msisdn = test_mno.t_msisdn) and (pairing.end_date is null)
-                                        and (pairing.add_pair_status = true) 
-                                        and (pairing.operator_name = '{}'); """.format(mno))
+                                            from pairing 
+                                            inner join test_mno 
+                                            on (pairing.msisdn = test_mno.t_msisdn) and (pairing.end_date is null)
+                                            and (pairing.add_pair_status = true) and 
+                                            (pairing.operator_name = '{mno}');  """)
 
-                        cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'ADD', export_status = false, 
-                                        updated_at = date_trunc('second', NOW()) 
-                                        from test_mno 
-                                        where pairing.msisdn = test_mno.t_msisdn 
-                                        and pairing.end_date is null and pairing.add_pair_status = true 
-                                        and pairing.operator_name = '{}'; """.format(mno))
+                        cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'ADD', 
+                                            export_status = false, updated_at = date_trunc('second', NOW()) 
+                                            from test_mno 
+                                            where pairing.msisdn = test_mno.t_msisdn and pairing.end_date is null 
+                                            and pairing.add_pair_status = true and pairing.operator_name = '{mno}'; """)
 
-                        cur.execute(""" drop table if exists test_mno; """)
+                        cur.execute(""" drop table if exists test_mno;  """)
 
                         con.commit()
 
                         con.close()
                         f.close()
 
-                        if del_rec:
+                        if del_rec > 0:
                             error_file = "Error-Records_" + mno + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
                             download_path = os.path.join(DOWNLOAD_FOLDER, error_file)
                             file.save(download_path)
                             dfs.to_csv(download_path, index=False)
                         else:
-                            download_path = "No error file available"
+                            download_path = _("No error file available")
 
                         rtn_msg = {
-                            "msg": "File successfully loaded",
+                            "msg": _("File successfully loaded"),
                             "Total_Records": total_rows,
                             "Successful_Records": final_rows,
                             "Deleted_Record": del_rec,
@@ -184,7 +186,7 @@ class bulk_upload:
                 else:
 
                     rtn_msg = {
-                        "Error": "No file or improper file found"
+                        "Error": _("No file or improper file found")
                     }
 
                     return rtn_msg, 422

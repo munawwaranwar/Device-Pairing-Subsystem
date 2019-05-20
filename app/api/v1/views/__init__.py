@@ -22,8 +22,8 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 
 from flask import Blueprint, Response, request, make_response, send_file
 import json
-from app import conf
-from app.api.v1.common.Athty_Search_Form import Search_authority
+from app import conf, app
+from app.api.v1.common.athrty_search_form import SearchAuthority
 from app.api.v1.common.generate_paircode import gen_paircode
 from app.api.v1.common.additional_pair import add_pair
 from app.api.v1.common.add_pair_confirmation import add_pair_cnfrm
@@ -33,12 +33,13 @@ from app.api.v1.common.sim_change import sim_chg
 from app.api.v1.common.verify_paircode import vfy_paircode
 from app.api.v1.common.find_pairs import find_pairs
 from app.api.v1.common.first_pair import first_pair
-from app.api.v1.common.atrhty_inpt_form import authority_input
+from app.api.v1.common.athrty_inpt_form import authority_input
 from app.api.v1.common.mno_first_page import fetch_msisdns
 from app.api.v1.common.mno_bulk_download import bulk_msisdns
-from app.api.v1.common.mno_bulk_upload import bulk_upload
+from app.api.v1.common.mno_bulk_upload import BulkUpload
 from app.api.v1.common.mno_sngl_upload import sngl_imsi
 from app.api.v1.common.mno_error_file import error_url
+from flask_babel import lazy_gettext as _
 
 
 api = Blueprint('v1', __name__.split('.')[0])
@@ -183,10 +184,8 @@ def sbmt_dev_info():
     req_data = request.get_json()
     for key in args:
         if key not in req_data:
-            data = {
-                    "Error": "{} not found".format(key)
-                   }
-            return Response(json.dumps(data), status=422, mimetype='application/json')
+            data = {'Error': _('%(key)s not found', key=key)}
+            return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     for k in req_data:
         if k == 'CONTACT':
@@ -194,13 +193,13 @@ def sbmt_dev_info():
             if 'CC' in contact:
                 cc = contact.get("CC")
             else:
-                data = {"Error": "Country-Code not found"}
-                return Response(json.dumps(data), status=422, mimetype='application/json')
+                data = {"Error": _("Country-Code not found")}
+                return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
             if 'SN' in contact:
                 sn = contact.get("SN")
             else:
-                data = {"Error": "Subscriber-Number not found"}
-                return Response(json.dumps(data), status=422, mimetype='application/json')
+                data = {"Error": _("Subscriber-Number not found")}
+                return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
         elif k == 'MODEL':
             model = req_data.get('MODEL')
         elif k == 'BRAND':
@@ -219,12 +218,12 @@ def sbmt_dev_info():
 
     if imei and len(imei) <= conf['imeis_per_device']:
         message, stat = authority_input(contact, model, brand, serial_no, mac, rat, imei)
-        return Response(json.dumps(message), status=stat, mimetype='application/json')
+        return Response(app.j_encoder.encode(message), status=stat, mimetype='application/json')
     else:
         data = {
-                "Error": "Up to {} IMEIs per device are allowed only".format(conf['imeis_per_device'])
+                "Error": _("Up to %(var1)s IMEIs per device are allowed only", var1=conf['imeis_per_device'])
                }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
 
 @api.route('/authority-search', methods=['POST'])
@@ -236,8 +235,8 @@ def athrty_search():
     if 'search_args' in args:
         req_data = args.get("search_args")
     else:
-        data = {"Error": "Search Arguments is not correct"}
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        data = {"Error": _("search_args is not correct")}
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
     for key in req_data:
         if key == 'MAC':
             existance['mac_exist'] = True
@@ -249,8 +248,8 @@ def athrty_search():
             existance['imei_exist'] = True
 
     count = len(req_data)
-    msg, stat = Search_authority.authority_search(start, limit, req_data, count, existance)
-    return Response(json.dumps(msg), status=stat, mimetype='application/json')
+    msg, stat = SearchAuthority.authority_search(start, limit, req_data, count, existance)
+    return Response(app.j_encoder.encode(msg), status=stat, mimetype='application/json')
 
 
 @api.route('/mno-first-page', methods=['GET'])  # from MNO's Portal to get MSISDN list for IMSIs (when page loading)
@@ -260,24 +259,24 @@ def get_pair():
     lt = request.args.get('limit')
     if not mno:
         data = {
-            "Error": "operator's name is missing"
+            "Error": _("operator's name is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     if not st:
         data = {
-            "Error": "start is missing"
+            "Error": _("start is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     if not lt:
         data = {
-            "Error": "limit is missing"
+            "Error": _("limit is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     msg, stat = fetch_msisdns(mno, st, lt)
-    return Response(json.dumps(msg), status=stat, mimetype='application/json')
+    return Response(app.j_encoder.encode(msg), status=stat, mimetype='application/json')
 
 
 @api.route('/mno-bulk-download', methods=['GET'])
@@ -286,14 +285,14 @@ def bulk_downloads():
     cmplt_path = bulk_msisdns(mno)
     if cmplt_path == "wrong mno":
         data = {
-                "Error": "Improper Operator-Name provided"
+                "Error": _("Improper Operator-Name provided")
                }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
     elif cmplt_path == "No File found":
         data = {
-                "Error": "No File found"
+                "Error": _("No File found")
                }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
     else:
         response = make_response(send_file(cmplt_path, as_attachment=True))
         response.headers['Cache-Control'] = 'no-store'
@@ -311,37 +310,37 @@ def sngl_uploads():
     if 'MSISDN' in req_data:
         msisdn = req_data.get('MSISDN')
         if 'CC' not in msisdn:
-            data = {"Error": "Country-Code is missing"}
-            return Response(json.dumps(data), status=422, mimetype='application/json')
+            data = {"Error": _("Country-Code is missing")}
+            return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
         if 'SN' not in msisdn:
-            data = {"Error": "Subscriber-Number is missing"}
-            return Response(json.dumps(data), status=422, mimetype='application/json')
+            data = {"Error": _("Subscriber-Number is missing")}
+            return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
     else:
         data = {
-            "Error": "MSISDN is missing"
+            "Error": _("MSISDN is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     if not mno:
         data = {
-            "Error": "operator's name is missing"
+            "Error": _("operator's name is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     if not imsi:
         data = {
-            "Error": "IMSI is missing"
+            "Error": _("IMSI is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     msg, stat = sngl_imsi(mno, msisdn, imsi)
-    return Response(json.dumps(msg), status=stat, mimetype='application/json')
+    return Response(app.j_encoder.encode(msg), status=stat, mimetype='application/json')
 
 
 @api.route('/mno-bulk-upload', methods=['POST'])
 def bulk_uploads():
-    msg, stat = bulk_upload.bulk_imsis()
-    return Response(json.dumps(msg), status=stat, mimetype='application/json')
+    msg, stat = BulkUpload.bulk_imsis()
+    return Response(app.j_encoder.encode(msg), status=stat, mimetype='application/json')
 
 
 @api.route('/mno-error-file', methods=['GET'])
@@ -349,16 +348,16 @@ def error_file():
     url = request.args.get('url')
     if not url:
         data = {
-            "Error": "URL is missing"
+            "Error": _("URL is missing")
         }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
 
     file_path = error_url(url)
 
     if file_path == "no file found":
         data = {
-                "Error": "File not found"
+                "Error": _("File not found")
                }
-        return Response(json.dumps(data), status=422, mimetype='application/json')
+        return Response(app.j_encoder.encode(data), status=422, mimetype='application/json')
     else:
         return send_file(file_path, as_attachment=True)

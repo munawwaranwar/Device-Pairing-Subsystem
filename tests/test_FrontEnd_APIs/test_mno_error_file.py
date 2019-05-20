@@ -33,7 +33,7 @@ MNO_ERROR_FILE = 'api/v1/mno-error-file'
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_happy_case(flask_app, session):
     """ Verify that error-file api downloads the error-file successfully"""
-    link = "/var/www/html/dirbs-dps-api-1.0.0/Downloads/Error-Records_ufone_2018-11-26_06-02-47.csv"
+    link = "/home/munawar/PycharmProjects/Device-Pairing-Subsystem/downloads/Error-Records_jazz_2019-04-15_16-29-16.csv"
     url = '{api}?url={link}'.format(api=MNO_ERROR_FILE, link=link)
     rs = flask_app.get(url)
     print(rs.data)

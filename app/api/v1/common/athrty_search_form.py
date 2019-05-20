@@ -1,5 +1,5 @@
 """
-DPS notification resource package.
+DPS Authority Search package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,19 +20,19 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app.api.v1.views.pagination import Pagination
-from app import db, conf
+from app import db, conf, app
 import re
+from flask_babel import lazy_gettext as _
 
 
-class Search_authority:
+class SearchAuthority:
     """ Class to provide search methods for authority to find registered devices  """
 
     def authority_search(startt, limit, data, para_cnt, para_exists):
         """ Method to search registered devices """
 
         try:
-
+            cases = []
             chk_mac, chk_serial, chk_contact, chk_imei = False, False, False, False
             fst = False
 
@@ -101,7 +101,7 @@ class Search_authority:
                         elif p == "MAC" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
                             fst = True
-                        elif p == "MAC" and fst:
+                        elif p == "MAC" and fst:    # pragma: no cover
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
                         elif p == "CONTACT" and not fst:
                             qry = qry + """{} = '{}' """.format(p, (data.get(p)))
@@ -109,76 +109,78 @@ class Search_authority:
                         elif p == "CONTACT" and fst:
                             qry = qry + """ and {} = '{}' """.format(p, (data.get(p)))
 
-                    qry = qry + " group by serial_no, mac,contact, brand, model, pair_code, is_active; "
-                    rslt = db.engine.execute(qry)
-                    cases = []
+                    tmp_qry = qry + " group by serial_no, mac,contact, brand, model, pair_code, is_active ;"
+                    chk_rslt = db.engine.execute(tmp_qry)
+                    qry_count = chk_rslt.fetchall()
+
+                    qry = qry + " group by serial_no, mac,contact, brand, model, pair_code," \
+                                " is_active Limit {} offset {} ;".format(limit, startt)
+
+                    rslt = db.session.execute(qry)
 
                     for rows in rslt:
                         cases.append(dict((a, b) for a, b in rows.items()))
 
                     if cases:
-                        paginated_data = Pagination.get_paginated_list(cases, '/authority-search', start=startt,
-                                                                       limit=limit)
+                        paginated_data = {'start': startt,
+                                          'limit': limit,
+                                          'count': len(qry_count),
+                                          'country_code': conf['CC'],
+                                          'cases': cases
+                                          }
                         return paginated_data, 200
 
                     else:
                         data = {
                             "start": startt,
-                            "previous": "",
-                            "next": "",
                             "cases": cases,
                             "count": 0,
                             "Country_Code": conf['CC'],
                             "limit": limit
                         }
-
                         return data, 200
-
                 else:
                     data = {
                         "start": startt,
-                        "previous": "",
-                        "next": "",
                         "cases": [],
                         "count": 0,
                         "Country_Code": conf['CC'],
                         "limit": limit
                     }
-
                     return data, 200
 
             elif not chk_mac:
 
                 rtn_msg = {
-                            "Error": "MAC format is not correct"
+                            "Error": _("MAC format is not correct")
                           }
                 return rtn_msg, 422
 
             elif not chk_serial:
 
                 rtn_msg = {
-                            "Error": "Serial-Number format is not correct"
+                            "Error": _("Serial-Number format is not correct")
                           }
                 return rtn_msg, 422
 
             elif not chk_contact:
 
                 rtn_msg = {
-                            "Error": "Contact-MSISDN format is not correct"
+                            "Error": _("Contact-MSISDN format is not correct")
                           }
                 return rtn_msg, 422
 
             elif not chk_imei:
 
                 rtn_msg = {
-                            "Error": "IMEI format is not correct"
+                            "Error": _('IMEI format is not correct')
                           }
                 return rtn_msg, 422
 
             elif type(startt) is not int or type(limit) is not int:
 
                 rtn_msg = {
-                            "Error": "Start or Limit is not integer"
+                            "Error": _("Start or Limit is not integer")
                           }
                 return rtn_msg, 422
 

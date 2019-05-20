@@ -37,12 +37,12 @@ class Pairing_Codes(db.Model):
         self.is_active = is_active
         self.device_id = device_id
 
-    def __repr__(self):
+    def __repr__(self):     # pragma: no cover
         return "<Pairing_Codes ({} , {})>" .format(self.pair_code, self.is_active)
 
     @classmethod
     def create_index(cls, engine):
         """ Create Indexes for pairing_codes table. """
 
-        devices_paircodes = db.Index('devices_paircodes_index', cls.pair_code, postgresql_concurrently=True)
+        devices_paircodes = db.Index('devices_paircodes_index', cls.pair_code, postgresql_concurrently=False)
         devices_paircodes.create(bind=engine)

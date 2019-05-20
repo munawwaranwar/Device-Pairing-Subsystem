@@ -1,5 +1,5 @@
 """
-DPS SIM Change package.
+DPS Views package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,54 +20,37 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app.api.v1.models.pairings import Pairing
-from app import db
-import re
+from sqlalchemy import text # pragma: no cover
 
 
-def sim_chg(sender_num, mno):
-    """ Function to delete IMSI for SIM replacement """
-    try:
-        rtn_msg = ""
+class Views:        # pragma: no cover
+    """Class for creating/migrating views into the database."""
 
-        pattern_mno = re.compile(r'[a-zA-Z0-9]{1,20}')
-        match_mno = pattern_mno.fullmatch(mno)
+    def __init__(self, db):
+        """Constructor."""
+        self.db = db
 
-        pattern_sender_no = re.compile(r'923\d{9,12}')
-        match_sender_no = pattern_sender_no.fullmatch(sender_num)
+    def create_view(self):
+        """Method to create registration view for search function."""
 
-        if match_mno and match_sender_no:  # if validations are passed
+        try:
+            query = text("""CREATE OR REPLACE VIEW public.test_view AS  SELECT owner.contact,
+            imei.imei,
+            devices.brand,
+            devices.model,
+            devices.serial_no,
+            devices.mac,
+            pairing_codes.pair_code,
+            pairing_codes.is_active
+           FROM owner
+             JOIN devices ON devices.owner_id = owner.id
+             JOIN imei ON imei.device_id = devices.id
+             JOIN pairing_codes ON pairing_codes.device_id = devices.id;""")
 
-            chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_num))\
-                                         .filter(Pairing.end_date == None)\
-                                         .filter(Pairing.add_pair_status == True).all()
+            self.db.engine.execute(query)
 
-                                    # checking conditions for SIM replacement
-            if chk_all:
+        except Exception as e:
+            self.db.session.rollback()
 
-                for q in chk_all:
-
-                    q.old_imsi = q.imsi
-                    q.imsi = None
-                    q.operator_name = '{}'.format(mno)
-                    db.session.commit()
-
-                    rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
-
-            else:
-
-                rtn_msg = "MSISDN ({}) is not existed in any pair".format(sender_num)
-
-            return rtn_msg
-
-        elif not match_sender_no:
-            return "Sender MSISDN format is not correct"
-
-        elif not match_mno:
-            return "operator's name is not correct"
-
-    except Exception as e:
-        db.session.rollback()
-
-    finally:
-        db.session.close()
+        finally:
+            self.db.session.close()

@@ -217,27 +217,30 @@ def athty_search_db_insertion(session, db, t_owner_id, t_contact, t_device_id, t
                          rat=t_rat, owner_id=t_owner_id, mac=t_mac)
 
     session.add(device_add)
-    paircode_add = Pairing_Codes(pair_code=t_paircode, is_active=True, device_id=t_device_id)
-    session.add(paircode_add)
+
     imei_id = t_imei_id
     for val in t_imei:
         imei_add = Imei(id=imei_id, imei=val, device_id=t_device_id)
         session.add(imei_add)
         imei_id += 1
+
+    paircode_add = Pairing_Codes(pair_code=t_paircode, is_active=True, device_id=t_device_id)
+    session.add(paircode_add)
+
     db.session.commit()
 
 
 def athty_search_payload(start, limit, t_imei, t_mac, t_serial, t_contact, cond=0):
     if cond == 0:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "MAC": t_mac,
-                "CONTACT": t_contact,
-                "Serial_No": t_serial,
-                "IMEI": t_imei
-            }
+            data = {
+                "start": start,
+                "limit": limit,
+                "search_args": {
+                    "MAC": t_mac,
+                    "CONTACT": t_contact,
+                    "Serial_No": t_serial,
+                    "IMEI": t_imei
+                }
         }
     elif cond == 1:
         data = {

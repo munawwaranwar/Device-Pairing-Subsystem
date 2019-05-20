@@ -12,10 +12,10 @@ global:
   imeis_per_device: 5
 
   # DataBase Parameters
-  dbname: 'DPS_Test'
+  dbname: 'dps'
   dbusername: 'postgres'
-  dbpassword: 'Pakistan1'
-  dbhost: 'localhost'
+  dbpassword: 'sms003'
+  dbhost: '192.168.100.69'
 
 
   # SQL_ALCHEMY Parameters
@@ -39,10 +39,17 @@ global:
   pairlist_path: 'D:\dirbs_intl_dps\pairing_lists'
 
   # System Paths for files
-  Download_Path: 'D:\dirbs_intl_dps\Downloads\'
-  Upload_Path: 'D:\dirbs_intl_dps\Uploads\'
+  Download_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/downloads'
+  Upload_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/uploads'
 
-  #SMS Texts
+  # Multi-Language Support
+  supported_languages:
+    - es
+    - en
+    - id
+  default_language: en
+
+  # SMS Texts
   # Additional-Pair Messages
   sms_pair_limit_breached: 'Pairing limit breached: need to remove any existing pair'
 

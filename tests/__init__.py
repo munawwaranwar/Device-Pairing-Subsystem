@@ -1,5 +1,5 @@
 """
-Package for DRS regression and unit tests.
+Package for unit tests.
 
 Copyright (c) 2018 Qualcomm Technologies, Inc.
 

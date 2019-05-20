@@ -38,21 +38,21 @@ class Devices(db.Model):
     pairing_codes = db.relationship('Pairing_Codes', backref='devices', lazy='dynamic')
     imeis = db.relationship('Imei', backref='devices', lazy='dynamic')
 
-    def __repr__(self):
+    def __repr__(self):     # pragma: no cover
         return "<Devices ({} ,{}, {})>".format(self.id, self.model, self.brand)
 
     @classmethod
     def create_index(cls, engine):
         """ Method to create Indexes for devices table. """
 
-        devices_serialno = db.Index('devices_serialno_index', cls.serial_no, postgresql_concurrently=True)
+        devices_serialno = db.Index('devices_serialno_index', cls.serial_no, postgresql_concurrently=False)
         devices_serialno.create(bind=engine)
 
-        devices_mac = db.Index('devices_mac_index', cls.mac, postgresql_concurrently=True)
+        devices_mac = db.Index('devices_mac_index', cls.mac, postgresql_concurrently=False)
         devices_mac.create(bind=engine)
 
-        devices_model = db.Index('devices_model_index', cls.model, postgresql_concurrently=True)
+        devices_model = db.Index('devices_model_index', cls.model, postgresql_concurrently=False)
         devices_model.create(bind=engine)
 
-        devices_brand = db.Index('devices_brand_index', cls.brand, postgresql_concurrently=True)
+        devices_brand = db.Index('devices_brand_index', cls.brand, postgresql_concurrently=False)
         devices_brand.create(bind=engine)

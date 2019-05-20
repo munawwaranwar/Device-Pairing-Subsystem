@@ -86,6 +86,7 @@ def test_mno_first_page_happy_case_single_record(flask_app, session, db):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_missing_parameters(flask_app, session):
     """ Verify that mno-first-page api prompts when any parameter is missing """
+
     url_1 = '{api}?mno=warid&start=1&limit='.format(api=MNO_FIRST_PAGE)
     url_2 = '{api}?mno=warid&start=&limit=10'.format(api=MNO_FIRST_PAGE)
     url_3 = '{api}?mno=&start=1&limit=10'.format(api=MNO_FIRST_PAGE)
@@ -101,7 +102,7 @@ def test_mno_first_page_missing_parameters(flask_app, session):
     print(d1, d2, d3)
     assert d1.get('Error') == 'limit is missing'
     assert d2.get('Error') == 'start is missing'
-    assert d3.get('Error') == 'operator name is missing'
+    assert d3.get('Error') == "operator's name is missing"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames

@@ -1,5 +1,5 @@
 """
-DPS SIM Change package.
+DPS Indexer package.
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -20,54 +20,31 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from app.api.v1.models.pairings import Pairing
-from app import db
-import re
+from app.api.v1.models.owner import Owner   # pragma: no cover
+from app.api.v1.models.devices import Devices   # pragma: no cover
+from app.api.v1.models.imeis import Imei    # pragma: no cover
+from app.api.v1.models.pairing_codes import Pairing_Codes   # pragma: no cover
+from app.api.v1.models.pairings import Pairing  # pragma: no cover
+from app import app, db # pragma: no cover
+import sys  # pragma: no cover
 
 
-def sim_chg(sender_num, mno):
-    """ Function to delete IMSI for SIM replacement """
-    try:
-        rtn_msg = ""
+class Indexer:      # pragma: no cover
+    """Class for indexing the database tables and views."""
 
-        pattern_mno = re.compile(r'[a-zA-Z0-9]{1,20}')
-        match_mno = pattern_mno.fullmatch(mno)
+    def __init__(self, db):
+        """Constructor."""
+        self.db = db
 
-        pattern_sender_no = re.compile(r'923\d{9,12}')
-        match_sender_no = pattern_sender_no.fullmatch(sender_num)
-
-        if match_mno and match_sender_no:  # if validations are passed
-
-            chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_num))\
-                                         .filter(Pairing.end_date == None)\
-                                         .filter(Pairing.add_pair_status == True).all()
-
-                                    # checking conditions for SIM replacement
-            if chk_all:
-
-                for q in chk_all:
-
-                    q.old_imsi = q.imsi
-                    q.imsi = None
-                    q.operator_name = '{}'.format(mno)
-                    db.session.commit()
-
-                    rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
-
-            else:
-
-                rtn_msg = "MSISDN ({}) is not existed in any pair".format(sender_num)
-
-            return rtn_msg
-
-        elif not match_sender_no:
-            return "Sender MSISDN format is not correct"
-
-        elif not match_mno:
-            return "operator's name is not correct"
-
-    except Exception as e:
-        db.session.rollback()
-
-    finally:
-        db.session.close()
+    def create_indexes(self):
+        """ method to create indexes on the database """
+        with db.engine.connect() as conn:
+            with conn.execution_options(isolation_level='AUTOCOMMIT'):
+                try:
+                    Pairing.create_index(conn)
+                    Pairing_Codes.create_index(conn)
+                    Imei.create_index(conn)
+                    Devices.create_index(conn)
+                    Owner.create_index(conn)
+                except Exception as e:
+                    sys.exit(1)

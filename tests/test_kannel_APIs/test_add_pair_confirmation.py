@@ -110,7 +110,7 @@ def test_add_confirm_missing_parameters(flask_app, db):
         if val == 0 or val == 1:
             assert result.data == b"Sender number is missing in SMS"
         elif val == 2 or val == 3:
-            assert result.data == b"Operator name is missing in SMS"
+            assert result.data == b"Operator's name is missing in SMS"
         elif val == 4 or val == 5:
             assert result.data == b"Primary number is missing in SMS"
         elif val == 6 or val == 7:

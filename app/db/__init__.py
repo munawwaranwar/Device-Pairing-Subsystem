@@ -1,5 +1,5 @@
 """
-DPS Pagination resource package.
+DPS Database Script Module
 Copyright (c) 2018 Qualcomm Technologies, Inc.
  All rights reserved.
  Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
@@ -19,41 +19,40 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+import sys  # pragma: no cover
+from flask_script import Command  # pylint: disable=deprecated-module  # pragma: no cover
+from sqlalchemy.exc import SQLAlchemyError  # pragma: no cover
+from app.db.indexer import Indexer  # pragma: no cover
+from app.db.views import Views  # pragma: no cover
 
-class Pagination:
-    """ Class to provide paginated view """
 
-    @staticmethod
-    def get_paginated_list(model_data, url, start, limit):
-        from app import conf
+class CreateDatabase(Command):     # pragma: no cover
+    """Class to manage database post creation operations."""
 
-        count = len(model_data)
+    def __init__(self, db):
+        """Constructor"""
+        super().__init__()
+        self.db = db
 
-        obj = {'start': start, 'limit': limit, 'count': count, 'Country_Code': conf['CC']}
-        if start < 1 or start > count:
-            return {}
-        else:
-            if count < start:
-                return model_data
+    def _create_views(self):
+        """Method to auto create views and materialized views on database."""
+        db_views = Views(self.db)
+        try:
+            db_views.create_view()
+        except SQLAlchemyError as e:
+            sys.exit(1)
 
-            if start == 1:
-                obj['previous'] = ''
-                limit_prev = -1
-            else:
-                limit_prev = ((start * limit) - limit - 1)
-                start_prev = (limit_prev - limit) + 1
-                obj['previous'] = url + '?start=%d&limit=%d' % (start_prev, limit_prev)
+    def _create_indexes(self):
+        """Method to perform database indexing."""
+        db_indexer = Indexer(self.db)
 
-            # make next url
-            if (start * limit) >= count:
-                obj['next'] = ''
-            else:
-                start_next = (start * limit)
-                limit_next = (start_next + limit) - 1
-                if limit_next > count:
-                    limit_next = count
-                obj['next'] = url + '?start=%d&limit=%d' % (start_next, limit_next)
+        with self.db.engine.connect() as conn:
+            with conn.execution_options(isolation_level='AUTOCOMMIT'):
+                try:
+                    db_indexer.create_indexes()
+                except SQLAlchemyError as e:
+                    sys.exit(1)
 
-            # finally extract result according to bounds
-            obj['cases'] = model_data[(limit_prev + 1):(limit_prev + limit + 1)]
-            return obj
+    def run(self):
+        self._create_views()
+        self._create_indexes()

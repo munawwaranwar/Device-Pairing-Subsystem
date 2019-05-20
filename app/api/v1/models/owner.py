@@ -31,12 +31,12 @@ class Owner(db.Model):
 
     devices = db.relationship('Devices', backref='owner', lazy='dynamic')
 
-    def __repr__(self):
+    def __repr__(self):     # pragma: no cover
         return "<Owner({},{})>".format(self.id, self.contact)
 
     @classmethod
     def create_index(cls, engine):
         """ Method to create Indexes for Owner table. """
 
-        owner_contact = db.Index('owner_contact_index', cls.contact, postgresql_concurrently=True)
+        owner_contact = db.Index('owner_contact_index', cls.contact, postgresql_concurrently=False)
         owner_contact.create(bind=engine)
