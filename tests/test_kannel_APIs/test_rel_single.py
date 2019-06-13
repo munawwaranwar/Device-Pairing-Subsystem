@@ -194,5 +194,5 @@ def test_rel_single_pair_functionality_chk_db_insertion(flask_app, db, session):
     print(result.data)
     qry = session.execute(text("""SELECT * FROM public.pairing WHERE msisdn = '923018144773'; """)).fetchone()
     print(qry.change_type, qry.export_status)
-    assert qry.change_type == 'REMOVE'
+    assert qry.change_type == 'remove'
     assert qry.export_status is False

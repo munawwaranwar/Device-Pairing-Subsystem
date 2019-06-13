@@ -200,7 +200,7 @@ def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app
 
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923155432109'; """)).fetchone()
     print(qry.change_type, qry.export_status)
-    assert qry.change_type == 'REMOVE'
+    assert qry.change_type == 'remove'
     assert qry.export_status is False
 
 
@@ -220,5 +220,5 @@ def test_rel_all_pairs_functionality_chk_db_insertion_with_sec_pair(flask_app, d
 
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923028432506'; """)).fetchone()
     print(qry.change_type, qry.export_status)
-    assert qry.change_type == 'REMOVE'
+    assert qry.change_type == 'remove'
     assert qry.export_status is False

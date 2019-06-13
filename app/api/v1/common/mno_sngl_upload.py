@@ -51,7 +51,8 @@ def sngl_imsi(mno, msisdn, imsi):
                     chk_mno = True
 
             if chk_mno:
-                chk_imsi = Pairing.query.filter(Pairing.imsi == '{}'.format(imsi)).first()
+                chk_imsi = Pairing.query.filter(Pairing.imsi == '{}'.format(imsi),
+                                                Pairing.end_date == None).first()
 
                 if chk_imsi:
                     data = {
@@ -107,7 +108,7 @@ def sngl_imsi_update(mno, msisdn, imsi):
             for m in chk_msisdn:
                 m.imsi = imsi
                 m.updated_at = strftime("%Y-%m-%d %H:%M:%S")
-                m.change_type = 'ADD'
+                m.change_type = 'add'
                 m.export_status = False
             db.session.commit()
             rtn_msg = _("IMSI added successfully")

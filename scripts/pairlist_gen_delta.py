@@ -23,7 +23,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 import psycopg2 as pg
 from time import strftime
 
-LIST_PATH = r'D:\dirbs_intl_dps\Pairing_Lists'
+LIST_PATH = r'/home/munawar/PycharmProjects/Device-Pairing-Subsystem/pairing_lists'
 
 
 def pair_list_creation():
@@ -32,68 +32,73 @@ def pair_list_creation():
     global con
 
     try:
-        con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
-        # con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
+        # con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
+        con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
 
         cur = con.cursor()
 
-        cur.execute(""" select imei_id, imsi, change_type, export_status, old_imsi from pairing where imsi is not null
+        cur.execute(""" select imei_id, imsi, old_imsi, change_type from pairing where imsi is not null
                         and change_type is not null and export_status = false order by imei_id ;""")
 
         chk_1 = cur.fetchall()
 
+        filename_add = LIST_PATH + '/ADD_Pair_List' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
+        filename_remove = LIST_PATH + '/REMOVE_Pair_List' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
+
+        add_file = open(filename_add, 'w')
+        add_file.write('imei,' + 'imsi,' + 'change_type' + '\n')
+
+        remove_file = open(filename_remove, 'w')
+        remove_file.write('imei,' + 'imsi,' + 'change_type' + '\n')
+
         if chk_1:
-
-            filename = LIST_PATH + '/Pair_List' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
-
-            file = open(filename, 'w')
 
             for qry in chk_1:
 
-                if qry[4]:
+                if qry[2]:
+
                     cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
                     chk_imei = cur.fetchone()
-                    file.write(chk_imei[0] + ',' + qry[4] + ',REMOVE\n')
-                    file.write(chk_imei[0] + ',' + qry[1] + ',ADD\n')
+                    remove_file.write(chk_imei[0] + ',' + qry[2] + ',remove\n')
+                    add_file.write(chk_imei[0] + ',' + qry[1] + ',add\n')
 
-                else:
+                elif qry[3] == 'remove':
+
+                    cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
+                    chk_imei = cur.fetchone()
+                    remove_file.write(chk_imei[0] + ',' + qry[1] + ',remove\n')
+
+                elif qry[3] == 'add' and qry[2] is None:
+
                     cur.execute(""" select imei from imei where id = {} """.format(qry[0]))
                     chk_imei = cur.fetchone()
-                    file.write(chk_imei[0] + ',' + qry[1] + ',ADD\n')
-
-            file.close()
+                    add_file.write(chk_imei[0] + ',' + qry[1] + ',add\n')
 
             cur.execute(""" update pairing set export_status = true , old_imsi = null
                             where imsi is not null and change_type is not null and export_status = false """)
 
-            uniqe_pairs = set(open(filename).readlines())
-            file2 = open(filename, 'w')
+            # uniqe_pairs = set(open(filename).readlines())
+            # file2 = open(filename, 'w')
+            #
+            # for row in uniqe_pairs:
+            #     file2.write(row)
+            #
+            # file2.close()
 
-            for row in uniqe_pairs:
-                file2.write(row)
-
-            file2.close()
-
-        else:
-            filename = LIST_PATH + '\PairList_ERROR_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
-
-            file = open(filename, 'w')
-
-            file.write("No Record found / no new pair created.....")
-            file.close()
+        add_file.close()
+        remove_file.close()
 
         con.commit()
-
-        con.close()
 
         return
 
     except Exception as e:
-        print(e)
+        cur.close()
         con.close()
         return
 
     finally:
+        cur.close()
         con.close()
 
 

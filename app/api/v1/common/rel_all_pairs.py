@@ -52,24 +52,72 @@ def rel_all(sender_no):
                         rel_all_cond = 1
                         q1.end_date = '{}'.format(strftime("%Y-%m-%d"))
 
-                        if q1.imsi is not None and q1.add_pair_status:
+                        if q1.imsi is not None and q1.add_pair_status and q1.change_type == 'add'\
+                                and q1.export_status is True:
 
-                            q1.change_type = 'REMOVE'
+                            # Condition checks only those pairs be exported as "removed" in pair-list
+                            # which are added and already exported to DIRBS-CORE before removing
+
                             q1.export_status = False
+                            q1.change_type = 'remove'
+
+                        elif q1.export_status is False and (q1.change_type is None or q1.change_type == 'add'):
+
+                            # Condition to avoid exporting this pair to DIRBS-CORE
+
+                            q1.export_status = None
+                            q1.change_type = None
+                            q1.old_imsi = None
+
+                        elif q1.imsi is None and q1.export_status is None \
+                                and q1.change_type is None and q1.old_imsi is not None:
+
+                            # Condition for case where pair(s) is exported once and after that SIM-Change is requested
+                            # but before MNO provides new IMSI, Pair is deleted.
+
+                            q1.export_status = False
+                            q1.change_type = "remove"
+                            q1.imsi = q1.old_imsi
+                            q1.old_imsi = None
 
                         db.session.commit()
 
                         chk_sec_pairs = Pairing.query.filter(Pairing.primary_id == q1.id).all()
-                                            # checking if secondary pairs exist under primary
+                                                # checking if secondary pairs exist under primary
+
                         if chk_sec_pairs:
 
                             for q2 in chk_sec_pairs:
 
-                                q2.end_date = '{}'.format(strftime("%Y-%m-%d"))
+                                if q2.imsi is not None and q2.add_pair_status and q2.change_type == 'add'\
+                                        and q2.export_status and q2.end_date is None:
 
-                                if q2.imsi is not None and q2.add_pair_status:
-                                    q2.change_type = 'REMOVE'
+                                    # Condition checks only those pairs be exported as "removed" in pair-list
+                                    # which are added and already exported to DIRBS-CORE before removing
+
                                     q2.export_status = False
+                                    q2.change_type = 'remove'
+
+                                elif q2.export_status is False and (q2.change_type is None or q2.change_type == 'add'):
+
+                                    # Condition to avoid exporting this pair to DIRBS-CORE
+
+                                    q2.export_status = None
+                                    q2.change_type = None
+                                    q2.old_imsi = None
+
+                                elif q2.imsi is None and q2.export_status is None \
+                                        and q2.change_type is None and q2.old_imsi is not None:
+
+                                    # Condition for case where pair(s) is exported once and after that SIM-Change is
+                                    # requested but before MNO provides new IMSI, Pair is deleted.
+
+                                    q2.export_status = False
+                                    q2.change_type = "remove"
+                                    q2.imsi = q2.old_imsi
+                                    q2.old_imsi = None
+
+                                q2.end_date = '{}'.format(strftime("%Y-%m-%d"))
 
                                 db.session.commit()
 

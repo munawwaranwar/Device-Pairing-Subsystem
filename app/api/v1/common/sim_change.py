@@ -40,6 +40,7 @@ def sim_chg(sender_num, mno):
 
             chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_num))\
                                          .filter(Pairing.end_date == None)\
+                                         .filter(Pairing.imsi != None)\
                                          .filter(Pairing.add_pair_status == True).all()
 
                                     # checking conditions for SIM replacement
@@ -47,16 +48,28 @@ def sim_chg(sender_num, mno):
 
                 for q in chk_all:
 
-                    q.old_imsi = q.imsi
-                    q.imsi = None
-                    q.operator_name = '{}'.format(mno)
-                    db.session.commit()
+                    if q.export_status is True:
 
-                    rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+                        q.old_imsi = q.imsi
+                        q.imsi = None
+                        q.export_status = None
+                        q.change_type = None
+                        q.operator_name = '{}'.format(mno)
+                        db.session.commit()
+
+                    else:
+                        q.imsi = None
+                        q.export_status = None
+                        q.change_type = None
+                        q.operator_name = '{}'.format(mno)
+                        db.session.commit()
+
+                rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
 
             else:
 
-                rtn_msg = "MSISDN ({}) is not existed in any pair".format(sender_num)
+                rtn_msg = "MSISDN ({}) is not existed in any pair or SIM-Change request is already in process"\
+                    .format(sender_num)
 
             return rtn_msg
 

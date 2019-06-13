@@ -38,7 +38,7 @@ def rel_single(del_msisdn, sender_no):
 
         if match_primary and match_secondary:
             chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_no),
-                                               Pairing.is_primary == True,Pairing.end_date == None,
+                                               Pairing.is_primary == True, Pairing.end_date == None,
                                                Pairing.msisdn != del_msisdn).all()
 
                                         # checking primary and checking deletion request is not for Primary-Pair
@@ -51,15 +51,40 @@ def rel_single(del_msisdn, sender_no):
                                                      Pairing.end_date == None,
                                                      Pairing.primary_id == p.id).first()
 
-                    # checking the condition whether, to-be-deleted MSISDN is paired with Primary, or not"
+                    # checking whether, to-be-deleted MSISDN is paired with Primary, or not"
 
                     if num_exist:
 
                         num_exist.end_date = strftime("%Y-%m-%d")
 
-                        if num_exist.imsi is not None and num_exist.add_pair_status:
-                            num_exist.change_type = 'REMOVE'
+                        if num_exist.imsi is not None and num_exist.add_pair_status \
+                                and num_exist.change_type == 'add' and num_exist.export_status == True:
+
+                            # Condition checks only those pairs be exported as "removed" in pair-list
+                            # which are added and already exported to DIRBS-CORE before removing
+
                             num_exist.export_status = False
+                            num_exist.change_type = 'remove'
+
+                        elif num_exist.export_status is False and \
+                                (num_exist.change_type is None or num_exist.change_type == 'add'):
+
+                            # Condition to avoid exporting this pair to DIRBS-CORE
+
+                            num_exist.export_status = None
+                            num_exist.change_type = None
+                            num_exist.old_imsi = None
+
+                        elif num_exist.imsi is None and num_exist.export_status is None \
+                                and num_exist.change_type is None and num_exist.old_imsi is not None:
+
+                            # Condition for case where pair(s) is exported once and after that SIM-Change is requested
+                            # but before MNO provides new IMSI, Pair is deleted.
+
+                            num_exist.export_status = False
+                            num_exist.change_type = "remove"
+                            num_exist.imsi = num_exist.old_imsi
+                            num_exist.old_imsi = None
 
                         db.session.commit()
 

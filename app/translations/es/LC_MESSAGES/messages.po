@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-03-25 22:02+0500\n"
+"POT-Creation-Date: 2019-05-30 00:36+0500\n"
 "PO-Revision-Date: 2019-03-25 22:07+0500\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -27,7 +27,7 @@ msgid "Device's information has been successfully loaded"
 msgstr "La información del dispositivo se ha cargado correctamente"
 
 #: app/api/v1/common/athrty_inpt_form.py:183
-#: app/api/v1/common/athrty_search_form.py:168
+#: app/api/v1/common/athrty_search_form.py:169
 msgid "Contact-MSISDN format is not correct"
 msgstr "El formato de contacto MSISDN no es correcto"
 
@@ -44,21 +44,21 @@ msgid "RAT format is not correct"
 msgstr "El formato RAT no es correcto"
 
 #: app/api/v1/common/athrty_inpt_form.py:211
-#: app/api/v1/common/athrty_search_form.py:161
+#: app/api/v1/common/athrty_search_form.py:162
 msgid "Serial-Number format is not correct"
 msgstr "El formato del número de serie no es correcto"
 
 #: app/api/v1/common/athrty_inpt_form.py:218
-#: app/api/v1/common/athrty_search_form.py:154
+#: app/api/v1/common/athrty_search_form.py:155
 msgid "MAC format is not correct"
 msgstr "El formato MAC no es correcto"
 
 #: app/api/v1/common/athrty_inpt_form.py:225
-#: app/api/v1/common/athrty_search_form.py:175
+#: app/api/v1/common/athrty_search_form.py:176
 msgid "IMEI format is not correct"
 msgstr "El formato IMEI no es correcto"
 
-#: app/api/v1/common/athrty_search_form.py:182
+#: app/api/v1/common/athrty_search_form.py:183
 msgid "Start or Limit is not integer"
 msgstr "Inicio o Límite no es entero"
 
@@ -106,27 +106,27 @@ msgstr "Inicio o límite no es correcto"
 msgid "no record found"
 msgstr "ningún record fue encontrado"
 
-#: app/api/v1/common/mno_sngl_upload.py:58
+#: app/api/v1/common/mno_sngl_upload.py:59
 msgid "IMSI already exists"
 msgstr "IMSI ya existe"
 
-#: app/api/v1/common/mno_sngl_upload.py:65 app/api/v1/views/__init__.py:288
+#: app/api/v1/common/mno_sngl_upload.py:66 app/api/v1/views/__init__.py:294
 msgid "Improper Operator-Name provided"
 msgstr "Nombre de operador incorrecto proporcionado"
 
-#: app/api/v1/common/mno_sngl_upload.py:78
+#: app/api/v1/common/mno_sngl_upload.py:79
 msgid "MSISDN format is not correct"
 msgstr "El formato MSISDN no es correcto"
 
-#: app/api/v1/common/mno_sngl_upload.py:84
+#: app/api/v1/common/mno_sngl_upload.py:85
 msgid "IMSI format is not correct"
 msgstr "El formato IMSI no es correcto"
 
-#: app/api/v1/common/mno_sngl_upload.py:113
+#: app/api/v1/common/mno_sngl_upload.py:114
 msgid "IMSI added successfully"
 msgstr "IMSI agregado exitosamente"
 
-#: app/api/v1/common/mno_sngl_upload.py:116
+#: app/api/v1/common/mno_sngl_upload.py:117
 msgid "IMSI addition Failed"
 msgstr "Falló la adición de IMSI"
 
@@ -152,43 +152,43 @@ msgstr "Solo se permiten hasta %(var1)s IMEI por dispositivo"
 msgid "search_args is not correct"
 msgstr "search_args no es correcto"
 
-#: app/api/v1/views/__init__.py:262 app/api/v1/views/__init__.py:326
+#: app/api/v1/views/__init__.py:268 app/api/v1/views/__init__.py:332
 msgid "operator's name is missing"
 msgstr "Falta el nombre del operador"
 
-#: app/api/v1/views/__init__.py:268
+#: app/api/v1/views/__init__.py:274
 msgid "start is missing"
 msgstr "falta el inicio"
 
-#: app/api/v1/views/__init__.py:274
+#: app/api/v1/views/__init__.py:280
 msgid "limit is missing"
-msgstr ""
-
-#: app/api/v1/views/__init__.py:293
-msgid "No File found"
 msgstr "falta el límite"
 
-#: app/api/v1/views/__init__.py:313
+#: app/api/v1/views/__init__.py:299
+msgid "No File found"
+msgstr "Archivo no encontrado"
+
+#: app/api/v1/views/__init__.py:319
 msgid "Country-Code is missing"
 msgstr "Falta el código del país"
 
-#: app/api/v1/views/__init__.py:316
+#: app/api/v1/views/__init__.py:322
 msgid "Subscriber-Number is missing"
 msgstr "Falta el número de abonado"
 
-#: app/api/v1/views/__init__.py:320
+#: app/api/v1/views/__init__.py:326
 msgid "MSISDN is missing"
 msgstr "Falta MSISDN"
 
-#: app/api/v1/views/__init__.py:332
+#: app/api/v1/views/__init__.py:338
 msgid "IMSI is missing"
 msgstr "IMSI falta"
 
-#: app/api/v1/views/__init__.py:351
+#: app/api/v1/views/__init__.py:357
 msgid "URL is missing"
 msgstr "Falta la URL"
 
-#: app/api/v1/views/__init__.py:359
+#: app/api/v1/views/__init__.py:365
 msgid "File not found"
 msgstr "Archivo no encontrado"
 
