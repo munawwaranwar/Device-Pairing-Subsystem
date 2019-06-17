@@ -65,9 +65,9 @@ def rel_all(sender_no):
 
                             # Condition to avoid exporting this pair to DIRBS-CORE
 
-                            q1.export_status = None
-                            q1.change_type = None
-                            q1.old_imsi = None
+                            q1.export_status = None     # pragma: no cover
+                            q1.change_type = None       # pragma: no cover
+                            q1.old_imsi = None          # pragma: no cover
 
                         elif q1.imsi is None and q1.export_status is None \
                                 and q1.change_type is None and q1.old_imsi is not None:
@@ -102,9 +102,9 @@ def rel_all(sender_no):
 
                                     # Condition to avoid exporting this pair to DIRBS-CORE
 
-                                    q2.export_status = None
-                                    q2.change_type = None
-                                    q2.old_imsi = None
+                                    q2.export_status = None     # pragma: no cover
+                                    q2.change_type = None       # pragma: no cover
+                                    q2.old_imsi = None          # pragma: no cover
 
                                 elif q2.imsi is None and q2.export_status is None \
                                         and q2.change_type is None and q2.old_imsi is not None:

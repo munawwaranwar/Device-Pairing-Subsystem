@@ -69,7 +69,7 @@ def sngl_imsi(mno, msisdn, imsi):
             data = {
                      "msg": cases
                    }
-            if cases == 'IMSI added successfully':
+            if cases == _('IMSI added successfully'):
                 return data, 200
             else:
                 return data, 422
@@ -115,7 +115,6 @@ def sngl_imsi_update(mno, msisdn, imsi):
 
         else:
             rtn_msg = _("IMSI addition Failed")
-
         return rtn_msg
 
     except Exception as e:

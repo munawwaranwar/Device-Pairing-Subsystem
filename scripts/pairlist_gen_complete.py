@@ -20,44 +20,61 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-# import psycopg2 as pg
-# from time import strftime
-#
-# LIST_PATH = r'/home/munawar/PycharmProjects/Device-Pairing-Subsystem/pairing_lists'
-#
-#
-# def pair_list_complete():
-#     """ Function to generate pair-list for DIRBS CORE"""
-#
-#     global con
-#
-#     try:
-#         # con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
-#         con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
-#
-#         cur = con.cursor()
-#
-#     cur.execute(""" select imei_id, imsi, old_imsi from pairing where add_pair_status = true order by imei_id ;""")
-#
-#     chk_1 = cur.fetchall()
-#
-#     filename = LIST_PATH + '/Pair_List_Complete' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
-#
-#     file = open(filename, 'w')
-#     file.write('imei,' + 'imsi' + '\n')
-#
-#     if chk_1:
-#
-#         for qry in chk_1:
-#
-#             if qry[2]:
-#                 cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
-#                 chk_imei = cur.fetchone()
-#                 file.write(chk_imei[0] + ',' + qry[1] + '\n')
+import psycopg2 as pg
+from time import strftime
+
+LIST_PATH = r'/var/www/html/Device-Pairing-Subsystem/pairing_lists'
 
 
+def pair_list_complete():
+    """ Function to generate pair-list for DIRBS CORE"""
+
+    global con
+
+    try:
+        # con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
+        con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
+
+        cur = con.cursor()
+
+        cur.execute(""" select imei_id, imsi, old_imsi from pairing where add_pair_status = true order by imei_id ;""")
+
+        chk_1 = cur.fetchall()
+
+        filename = LIST_PATH + '/Pair_List_Complete' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
+
+        file = open(filename, 'w')
+        file.write('imei,' + 'imsi' + '\n')
+
+        if chk_1:
+
+            for qry in chk_1:
+
+                if qry[1] and qry[2] is None:
+                    cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
+                    chk_imei = cur.fetchone()
+                    file.write(chk_imei[0] + ',' + qry[1] + '\n')
+
+                elif qry[1] is None and qry[2]:
+                    cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
+                    chk_imei = cur.fetchone()
+                    file.write(chk_imei[0] + ',' + qry[2] + '\n')
+
+        file.close()
+
+        con.commit()
+
+        return
+
+    except Exception as e:
+        cur.close()
+        con.close()
+        return
+
+    finally:
+        cur.close()
+        con.close()
 
 
-
-
-
+if __name__ == "__main__":
+    pair_list_complete()

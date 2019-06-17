@@ -24,17 +24,19 @@ import json
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 from io import BytesIO
+from app import conf
 
 
 MNO_BULK_UPLOAD = 'api/v1/mno-bulk-upload'
+FILE_PATH = conf['test_doc_path']
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_happy_case_proper_file(flask_app, session):
     """ Verify that bulk-upload api uploads the file successfully"""
 
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_proper_file.csv'
-    with open(file_path, 'rb') as test_file:
+    file_name = FILE_PATH + 'sample_proper_file.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'warid',
@@ -45,14 +47,20 @@ def test_bulk_upload_happy_case_proper_file(flask_app, session):
     print(rs.data)
     assert rs.status_code == 200
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('msg') == 'File successfully loaded'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == 'File successfully loaded'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "Archivo cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "File berhasil dimuat"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_duplicated_imsis(flask_app, session):
     """ Verify that bulk-upload api detects duplicated IMSIs in the file"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_duplicate_imsi.csv'
-    with open(file_path, 'rb') as test_file:
+
+    file_name = FILE_PATH + 'sample_duplicate_imsi.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'jazz',
@@ -63,14 +71,20 @@ def test_bulk_upload_file_duplicated_imsis(flask_app, session):
     print(rs.data)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('Error') == 'File contains duplicated IMSIs'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'File contains duplicated IMSIs'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "El archivo contiene IMSI duplicados"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "File berisi duplikasi IMSI"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_incorrect_content(flask_app, session):
     """ Verify that bulk-upload api detects file with invalid/incorrect content"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_content_incorrect.csv'
-    with open(file_path, 'rb') as test_file:
+
+    file_name = FILE_PATH + 'sample_content_incorrect.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'jazz',
@@ -81,14 +95,20 @@ def test_bulk_upload_file_incorrect_content(flask_app, session):
     print(rs.data)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('Error') == 'File content is not Correct'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'File content is not Correct'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "El contenido del archivo no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Konten file tidak Benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_with_errors(flask_app, session):
-    """ Verify that bulk-upload api detects file with invalid/incorrect content"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_with_errors.csv'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api uploads file but with errors"""
+
+    file_name = FILE_PATH + 'sample_with_errors.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'jazz',
@@ -99,15 +119,21 @@ def test_bulk_upload_file_with_errors(flask_app, session):
     print(rs.data)
     assert rs.status_code == 200
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('msg') == 'File successfully loaded'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == 'File successfully loaded'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "Archivo cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "File berhasil dimuat"
     assert not d1.get('link') == ''
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_headers_incorrect(flask_app, session):
-    """ Verify that bulk-upload api detects file with invalid/incorrect content"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_without_headers.csv'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api detects file with invalid/incorrect headers"""
+
+    file_name = FILE_PATH + 'sample_without_headers.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'telenor',
@@ -118,14 +144,20 @@ def test_bulk_upload_file_headers_incorrect(flask_app, session):
     print(rs.data)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('Error') == 'File headers are missing or incorrect'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'File headers are missing or incorrect'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Los encabezados de los archivos faltan o son incorrectos"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Header file tidak ada atau salah"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_file_type_invalid(flask_app, session):
-    """ Verify that bulk-upload api detects file with invalid/incorrect content"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_pdf_csv.pdf.csv'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api detects invalid/incorrect file type"""
+
+    file_name = FILE_PATH + 'sample_pdf_csv.pdf.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'jazz',
@@ -136,14 +168,20 @@ def test_bulk_upload_file_type_invalid(flask_app, session):
     print(rs.data)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('Error') == 'File type is not valid'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'File type is not valid'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "El tipo de archivo no es válido"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Jenis file tidak valid"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_no_file_or_incorrect(flask_app, session):
-    """ Verify that bulk-upload api detects file with invalid/incorrect content"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_proper_file.csv'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api detects no file or invalid/incorrect file"""
+
+    file_name = FILE_PATH + 'sample_proper_file.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'jazz',
@@ -154,14 +192,20 @@ def test_bulk_upload_no_file_or_incorrect(flask_app, session):
     print(rs.data)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('Error') == 'No file or improper file found'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'No file or improper file found'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Ningún archivo o archivo inadecuado encontrado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Tidak ada file atau file yang tidak patut ditemukan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_invalid_mno(flask_app, session):
-    """ Verify that bulk-upload api detects file with invalid/incorrect content"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_proper_file.csv'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api detects invalid/incorrect operator name"""
+
+    file_name = FILE_PATH + 'sample_proper_file.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'j@zz',
@@ -172,14 +216,20 @@ def test_bulk_upload_validation_invalid_mno(flask_app, session):
     print(rs.data)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
-    assert d1.get('Error') == 'improper Operator-name provided'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'improper Operator-name provided'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Nombre de operador incorrecto proporcionado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Nama Operator tidak benar disediakan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_txt_file(flask_app, session):
     """ Verify that bulk-upload api can accept .txt files"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_text_file.txt'
-    with open(file_path, 'rb') as test_file:
+
+    file_name = FILE_PATH + 'sample_text_file.txt'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'telenor',
@@ -190,14 +240,20 @@ def test_bulk_upload_validation_txt_file(flask_app, session):
     assert rs.status_code == 200
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('msg') == 'File successfully loaded'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == 'File successfully loaded'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "Archivo cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "File berhasil dimuat"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_wrong_extention_file(flask_app, session):
-    """ Verify that bulk-upload api can accept .txt files"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_pdf.pdf'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api can detect files with wrong extensions"""
+
+    file_name = FILE_PATH + 'sample_pdf.pdf'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data = {
         'mno': 'ufone',
@@ -208,14 +264,20 @@ def test_bulk_upload_validation_wrong_extention_file(flask_app, session):
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('Error') == 'No file or improper file found'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'No file or improper file found'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Ningún archivo o archivo inadecuado encontrado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Tidak ada file atau file yang tidak patut ditemukan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_validation_wrong_api_parameters(flask_app, session):
-    """ Verify that bulk-upload api can accept .txt files"""
-    file_path = '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/sample_proper_file.csv'
-    with open(file_path, 'rb') as test_file:
+    """ Verify that bulk-upload api detects incorrect/invalid input parameters"""
+
+    file_name = FILE_PATH + 'sample_proper_file.csv'
+    with open(file_name, 'rb') as test_file:
         file_content = test_file.read()
     data_1 = {
         'mnoo': 'zong',
@@ -226,7 +288,13 @@ def test_bulk_upload_validation_wrong_api_parameters(flask_app, session):
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('Error') == 'improper Operator-name provided'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'improper Operator-name provided'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Nombre de operador incorrecto proporcionado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Nama Operator tidak benar disediakan"
+
     data_2 = {
         'mno': 'jazz',
         'fileee': (BytesIO(file_content), 'sample_proper_file.csv')
@@ -235,10 +303,15 @@ def test_bulk_upload_validation_wrong_api_parameters(flask_app, session):
     assert rs.status_code == 422
     d2 = json.loads(rs2.data.decode('utf-8'))
     print(d2)
-    assert d2.get('Error') == 'No file or improper file found'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d2.get('Error') == 'No file or improper file found'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d2.get('Error') == "Ningún archivo o archivo inadecuado encontrado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d2.get('Error') == "Tidak ada file atau file yang tidak patut ditemukan"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_upload_error__404_wrong_api(flask_app, db):
     """ Verify that bulk-upload api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnooo-bulkkk-uploaddd'

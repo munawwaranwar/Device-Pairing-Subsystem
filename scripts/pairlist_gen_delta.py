@@ -23,7 +23,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 import psycopg2 as pg
 from time import strftime
 
-LIST_PATH = r'/home/munawar/PycharmProjects/Device-Pairing-Subsystem/pairing_lists'
+LIST_PATH = r'/var/www/html/Device-Pairing-Subsystem/pairing_lists'
 
 
 def pair_list_creation():

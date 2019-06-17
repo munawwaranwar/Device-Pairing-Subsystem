@@ -62,9 +62,11 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
         pattern_rat = re.compile(r'(2G|3G|4G|5G)[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?')
         match_rat = pattern_rat.fullmatch(rat)
 
-        pattern_model_brand = re.compile(r'[a-zA-Z0-9_ .\'-]{1,1000}')
-        match_model = pattern_model_brand.fullmatch(model)
-        match_brand = pattern_model_brand.fullmatch(brand)
+        lang_model = re.match(conf['regex'][conf['supported_languages']['default_language']]['model_name'], model)
+        lang_brand = re.match(conf['regex'][conf['supported_languages']['default_language']]['brand'], brand)
+        # pattern_model_brand = re.compile(r'[a-zA-Z0-9_ .\'-]{1,1000}')
+        # match_model = pattern_model_brand.fullmatch(model)
+        # match_brand = pattern_model_brand.fullmatch(brand)
 
         pattern_serial_no = re.compile(r'[a-zA-Z0-9]{1,1000}')
         match_serial = pattern_serial_no.fullmatch(serial_no)
@@ -86,7 +88,7 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
                 chk_imei = False
                 break
 
-        if match_model and match_brand and match_serial and match_rat and chk_mac and chk_imei and chk_contact:
+        if lang_model and lang_brand and match_serial and match_rat and chk_mac and chk_imei and chk_contact:
             chk_duplicate = Devices.query.filter(Devices.serial_no == '{}'.format(serial_no)).first()
                                         # to check if device is not already registered
             if chk_duplicate:
@@ -184,14 +186,14 @@ def authority_input(contact_no, model, brand, serial_no, mac, rat, imei):
             }
             return rtn_msg, 422
 
-        elif not match_model:
+        elif not lang_model:
 
             rtn_msg = {
                 "Error": _("Model format is not correct")
             }
             return rtn_msg, 422
 
-        elif not match_brand:
+        elif not lang_brand:
 
             rtn_msg = {
                 "Error": _("Brand format is not correct")

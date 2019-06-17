@@ -26,6 +26,7 @@ from tests._helpers import *
 import json
 # noinspection PyUnresolvedReferences
 from sqlalchemy import text
+from app import conf
 
 MNO_BULK_DOWNLOAD = 'api/v1/mno-bulk-download'
 HEADERS = {'Content-Type': "application/json"}
@@ -41,10 +42,15 @@ def test_bulk_download_functionality_no_records(flask_app, db):
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, val)
-        assert d1.get('Error') == "No File found"
+        if conf['supported_languages']['default_language'] == 'en':
+            assert d1.get('Error') == "No File found"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert d1.get('Error') == "Archivo no encontrado"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert d1.get('Error') == "Tidak ada File yang ditemukan"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_happy_case_primary_pairs_only(flask_app, db, session):
     """ Verify that bulk-download api downloads the file successfully having only primary pairs"""
     complete_db_insertion(session, db, 251, '923357891879', 251, 'G4', 'LG', 'shfy8JhZx', '2G,3G',
@@ -94,10 +100,15 @@ def test_bulk_download_validations_operator_names(flask_app, db):
         rs_1 = flask_app.get(url)
         f_d1 = json.loads(rs_1.data.decode('utf-8'))
         print(f_d1, v)
-        assert f_d1.get('Error') == "Improper Operator-Name provided"
+        if conf['supported_languages']['default_language'] == 'en':
+            assert f_d1.get('Error') == "Improper Operator-Name provided"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert f_d1.get('Error') == "Nombre de operador incorrecto proporcionado"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert f_d1.get('Error') == "Nama Operator yang Tidak Benar disediakan"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_bulk_download_error_404_wrong_api(flask_app, db):
     """ Verify that bulk-download api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnooo-bulkkk-downloaddd'
