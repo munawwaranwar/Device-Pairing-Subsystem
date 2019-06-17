@@ -26,14 +26,15 @@ import json
 from tests._fixtures import *
 # noinspection PyUnresolvedReferences
 from io import BytesIO, StringIO
+from app import conf
 
 MNO_ERROR_FILE = 'api/v1/mno-error-file'
-
+FILE_PATH = conf['Download_Path']
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_happy_case(flask_app, session):
     """ Verify that error-file api downloads the error-file successfully"""
-    link = "/home/munawar/PycharmProjects/Device-Pairing-Subsystem/downloads/Error-Records_jazz_2019-04-15_16-29-16.csv"
+    link = FILE_PATH + "/Error-Records_jazz_2019-06-13_16-36-37.csv"
     url = '{api}?url={link}'.format(api=MNO_ERROR_FILE, link=link)
     rs = flask_app.get(url)
     print(rs.data)
@@ -49,10 +50,15 @@ def test_mno_error_file_not_found(flask_app, session):
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     assert rs.status_code == 422
-    assert d1.get('Error') == 'File not found'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'File not found'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Archivo no encontrado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Berkas tidak ditemukan"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_missing_url(flask_app, session):
     """ Verify that error-file api prompts when error-file is not found"""
     url = '{api}?url='.format(api=MNO_ERROR_FILE)
@@ -60,10 +66,15 @@ def test_mno_error_file_missing_url(flask_app, session):
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     assert rs.status_code == 422
-    assert d1.get('Error') == 'URL is missing'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'URL is missing'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Falta la URL"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "URL tidak ada"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_error_file_error_404_wrong_api(flask_app, session):
     """ Verify that error-file api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnoo-errorrr-fileee'

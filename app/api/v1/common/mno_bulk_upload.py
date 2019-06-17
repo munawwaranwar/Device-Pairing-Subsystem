@@ -153,7 +153,7 @@ class BulkUpload:
                                             and (pairing.add_pair_status = true) and 
                                             (pairing.operator_name = '{mno}');  """)
 
-                        cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'ADD', 
+                        cur.execute(""" update pairing set imsi = test_mno.t_imsi, change_type = 'add', 
                                             export_status = false, updated_at = date_trunc('second', NOW()) 
                                             from test_mno 
                                             where pairing.msisdn = test_mno.t_msisdn and pairing.end_date is null 

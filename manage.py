@@ -80,9 +80,5 @@ manager.add_command('install-db', CreateDatabase(db))
 #                 app.logger.exception(e)
 #                 sys.exit(1)
 
-
-
-
-
 if __name__ == '__main__':
     manager.run()

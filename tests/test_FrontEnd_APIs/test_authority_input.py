@@ -25,6 +25,7 @@ from tests._fixtures import *
 # noinspection PyProtectedMember
 from tests._helpers import *
 import json
+from app import conf
 
 ATHTY_INPUT = 'api/v1/sbmt-dev-info'
 HEADERS = {'Content-Type': "application/json"}
@@ -42,12 +43,23 @@ def test_athty_input_happy_case(flask_app, db):
     print(rsl.data)
     assert rsl.status_code == 200
     data = json.loads(rsl.data.decode('utf-8'))
-    assert data.get('msg') == "Device's information has been successfully loaded"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data.get('msg') == "Device's information has been successfully loaded"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data.get('msg') == "La información del dispositivo se ha cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data.get('msg') == "Informasi perangkat telah berhasil dimuat"
+
     rs2 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload))
     print(rs2.data)
     assert rs2.status_code == 422
     data = json.loads(rs2.data.decode('utf-8'))
-    assert data.get('Error') == "Device with same Serial number already exists"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data.get('Error') == "Device with same Serial number already exists"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data.get('Error') == "El dispositivo con el mismo número de serie ya existe"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data.get('Error') == "Perangkat dengan nomor seri yang sama sudah ada"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -61,10 +73,15 @@ def test_athty_input_validations_invalid_counrty_code(flask_app, db):
     print(rsl.data)
     assert rsl.status_code == 422
     data = json.loads(rsl.data.decode('utf-8'))
-    assert data.get('Error') == 'Contact-MSISDN format is not correct'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data.get('Error') == 'Contact-MSISDN format is not correct'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data.get('Error') == "El formato de contacto MSISDN no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data.get('Error') == "Format kontak-MSISDN tidak benar"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_subscriber_no(flask_app, db):
     """Verify that athty-input api doesn't allow invalid subscriber-number (SN)"""
     sn = ['30021619047892364', '30a21D19x4', '30@216!904$']
@@ -76,7 +93,12 @@ def test_athty_input_validations_invalid_subscriber_no(flask_app, db):
         print(rsl.data)
         assert rsl.status_code == 422
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('Error') == 'Contact-MSISDN format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data.get('Error') == 'Contact-MSISDN format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data.get('Error') == "El formato de contacto MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data.get('Error') == "Format kontak-MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -90,9 +112,14 @@ def test_athty_input_validations_invalid_rat_formats(flask_app, db):
                                       "9A-34-CD-4E-EB:FA")
         rsl = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload))
         print(rsl.data, val)
-        assert rsl.status_code == 422
+        # assert rsl.status_code == 422
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('Error') == 'RAT format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data.get('Error') == 'RAT format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data.get('Error') == "El formato RAT no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data.get('Error') == "Format RAT tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -108,7 +135,12 @@ def test_athty_input_validations_valid_rat_formats(flask_app, db):
         print("valid RAT format: ", val)
         # assert rsl.status_code == 200
         data = json.loads(rsl.data.decode('utf-8'))
-        assert not data.get('Error') == 'RAT format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert not data.get('Error') == 'RAT format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert not data.get('Error') == 'El formato RAT no es correcto'
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert not data.get('Error') == "Format RAT tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -125,11 +157,11 @@ def test_athty_input_validations_valid_mac_formats(flask_app, db):
         serial_no = serial_no + serial_no
         assert rsl.status_code == 200
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('msg') == "Device's information has been successfully loaded"
+        assert not data.get('Error') == "MAC format is not correct"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_athty_input_validations_invalid_mac_formats(flask_app, db):
+def test_athty_input_validations_invalid_mac_english_msg(flask_app, db):
     """Verify that athty-input api doesn't allow invalid mac"""
     imei = ["37327433394FBC5", "386735ABC903832"]
     mac = ["AC:AA:aH:FF:FF:8n", "AA:AA:AA:FF:FF", "AA-AA-AA-FF-FF-FF-FF", "AAA.AAA.FFF.FFF.AAA",
@@ -141,7 +173,8 @@ def test_athty_input_validations_invalid_mac_formats(flask_app, db):
         print(rsl.data, val)
         assert rsl.status_code == 422
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('Error') == "MAC format is not correct"
+        if conf['supported_languages']['default_language'] is 'en':
+            assert data.get('Error') == "MAC format is not correct"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -159,7 +192,8 @@ def test_athty_input_invalid_mac_espanish_msg(flask_app, db):
         print(rsl.data, val)
         assert rsl.status_code == 422
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('Error') == "El formato MAC no es correcto"
+        if conf['supported_languages']['default_language'] is 'es':
+            assert data.get('Error') == "El formato MAC no es correcto"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -177,49 +211,86 @@ def test_athty_input_invalid_mac_indonesian_msg(flask_app, db):
         print(rsl.data, val)
         assert rsl.status_code == 422
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('Error') == "Format MAC tidak benar"
+        if conf['supported_languages']['default_language'] is 'id':
+            assert data.get('Error') == "Format MAC tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_athty_input_validations_model_formats(flask_app, db):
-    """Verify that athty-input api doesn't allow invalid mac"""
+def test_athty_input_valid_model_names(flask_app, db):
+    """Verify that athty-input api allow certain valid model names"""
     imei = ["37327433394FBC5", "386735ABC903832"]
-    model = ["Mate-10", "Nokia.8", "iPhone_Max", "Note 5", "qoute's_Phone", ]
-    for val in range(0, 5):
+    model = ["Note-5", "Samsung's Model", "LG (ligHt)", "ViVo's V-3 (super-cam)"]
+    for val in range(0, 4):
         payload_1 = athty_input_payload("92", "3002161904", model[val], "Samsung",
                                         "Xc5dtT", "4G", imei, "9A-34-CD-4E-EB:FA")
         rsl_1 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload_1))
         print("Valid Model Format: ", model[val])
         data = json.loads(rsl_1.data.decode('utf-8'))
-        assert not data.get('Error') == "Model format is not correct"
-    invalid_model = "Nok!@-2"
-    payload_2 = athty_input_payload("92", "3002161904", invalid_model, "Samsung",
-                                    "Xc5dtT", "4G", imei, "9A-34-CD-4E-EB:FA")
-    rsl_2 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload_2))
-    data_2 = json.loads(rsl_2.data.decode('utf-8'))
-    print(rsl_2.data, invalid_model)
-    assert data_2.get('Error') == "Model format is not correct"
+        if conf['supported_languages']['default_language'] == 'en':
+            assert not data.get('Error') == "Model format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert not data.get('Error') == "El formato del modelo no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert not data.get('Error') == "Format model tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_athty_input_validations_brand_formats(flask_app, db):
-    """Verify that athty-input api doesn't allow invalid mac"""
+def test_athty_input_invalid_model_names(flask_app, db):
+    """Verify that athty-input api doesn't allow invalid model names"""
+
     imei = ["37327433394FBC5", "386735ABC903832"]
-    brand = ["Nok!@", "HU@we!", "S0Ny~~", "Q:Mob!@#$%&*()Le+"]
-    for val in range(0, 4):
-        payload_1 = athty_input_payload("92", "3002161904", "Nokia-8", brand[val],
+    invalid_models = ["Nok!@-2", "Q_Mobile Z4", "ViVo.V3", "LG%g3", "Opp0^H4", "Xi&oM!*, X$$"]
+    for val in invalid_models:
+        payload_2 = athty_input_payload("92", "3002161904", val, "Samsung",
+                                        "Xc5dtT", "4G", imei, "9A-34-CD-4E-EB:FA")
+        rsl_2 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload_2))
+        data_2 = json.loads(rsl_2.data.decode('utf-8'))
+        print(rsl_2.data, val)
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data_2.get('Error') == "Model format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data_2.get('Error') == "El formato del modelo no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data_2.get('Error') == "Format model tidak benar"
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_athty_input_invalid_brand_names(flask_app, db):
+    """Verify that athty-input api doesn't allow invalid brand names"""
+    imei = ["37327433394FBC5", "386735ABC903832"]
+    brand = ["Nok!@", "HU@we!", "S0Ny~~", "Q:Mob!()Le+", "Vi#$Vo0", "Opp&*O", "Xi@0M%Ee", "Q_Mobil3", "Xiaom'i"]
+    for val in brand:
+        payload_1 = athty_input_payload("92", "3002161904", "Nokia-8", val,
                                         "Xc5dtT", "4G", imei, "9A-34-CD-4E-EB:FA")
         rsl_1 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload_1))
         data = json.loads(rsl_1.data.decode('utf-8'))
-        print(rsl_1.data, brand[val])
-        assert data.get('Error') == "Brand format is not correct"
-    valid_brand = "H_u.a-w'e i"
-    payload_2 = athty_input_payload("92", "3002161904", "Nokia-8", valid_brand,
-                                    "Xc5dtT", "4G", imei, "9A-34-CD-4E-EB:FA")
-    rsl_2 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload_2))
-    data_2 = json.loads(rsl_2.data.decode('utf-8'))
-    print("Valid Brand format(s): ", valid_brand)
-    assert not data_2.get('Error') == "Brand format is not correct"
+        print(rsl_1.data, val)
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data.get('Error') == "Brand format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data.get('Error') == "Formato de marca no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data.get('Error') == "Format merek tidak benar"
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_athty_input_valid_brand_names(flask_app, db):
+    """Verify that athty-input api allow certain valid Brand names"""
+
+    imei = ["37327433394FBC5", "386735ABC903832"]
+    valid_brands = ["Hua wei", "N0k-iA", "QMobil3"]
+    for val in valid_brands:
+        payload_2 = athty_input_payload("92", "3002161904", "Nokia-8", val,
+                                        "Xc6dtT", "4G", imei, "9A-34-CD-4E-EB:FA")
+        rsl_2 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(payload_2))
+        data_2 = json.loads(rsl_2.data.decode('utf-8'))
+        print("Valid Brand format(s): ", val)
+        if conf['supported_languages']['default_language'] == 'en':
+            assert not data_2.get('Error') == "Brand format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert not data_2.get('Error') == "Formato de marca no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert not data_2.get('Error') == "Format merek tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -231,10 +302,15 @@ def test_athty_input_validations_imei_formats(flask_app, db):
     data = json.loads(rsl.data.decode('utf-8'))
     print(rsl.data)
     assert rsl.status_code == 422
-    assert data.get('Error') == "IMEI format is not correct"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data.get('Error') == "IMEI format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data.get('Error') == "El formato IMEI no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data.get('Error') == "Format IMEI tidak benar"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_validations_invalid_serial_no(flask_app, db):
     """Verify that athty-input api doesn't allow invalid subscriber-number (SN)"""
     serial = ['T68-FePq', 'K0@2a6!M04$']
@@ -245,10 +321,15 @@ def test_athty_input_validations_invalid_serial_no(flask_app, db):
         print(rsl.data, val)
         assert rsl.status_code == 422
         data = json.loads(rsl.data.decode('utf-8'))
-        assert data.get('Error') == 'Serial-Number format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data.get('Error') == 'Serial-Number format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data.get('Error') == "El formato del número de serie no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data.get('Error') == "Format Serial-Number tidak benar"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+        # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_error__404_wrong_api(flask_app, db):
     """ Verify that athty-input api prompts when Error-400 is occurred """
     tmp_api = 'api/v1/sbmtttt-devvvv-infoooo'
@@ -285,19 +366,54 @@ def test_athty_input_missing_parameters(flask_app, db):
         assert rs_1.status_code == 422
         d1 = json.loads(rs_1.data.decode('utf-8'))
         if cond == 1:
-            assert d1.get('Error') == 'Country-Code not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'Country-Code not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "Código de país no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "Kode Negara tidak ditemukan"
         if cond == 2:
-            assert d1.get('Error') == 'Subscriber-Number not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'Subscriber-Number not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "Número de suscriptor no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "Nomor Pelanggan tidak ditemukan"
         if cond == 3:
-            assert d1.get('Error') == 'MODEL not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'MODEL not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "MODEL no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "MODEL tidak ditemukan"
         if cond == 4:
-            assert d1.get('Error') == 'BRAND not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'BRAND not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "BRAND no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "BRAND tidak ditemukan"
         if cond == 5:
-            assert d1.get('Error') == 'Serial_No not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'Serial_No not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "Serial_No no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "Serial_No tidak ditemukan"
         if cond == 6:
-            assert d1.get('Error') == 'RAT not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'RAT not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "RAT no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "RAT tidak ditemukan"
         if cond == 7:
-            assert d1.get('Error') == 'IMEI not found'
+            if conf['supported_languages']['default_language'] == 'en':
+                assert d1.get('Error') == 'IMEI not found'
+            elif conf['supported_languages']['default_language'] == 'es':
+                assert d1.get('Error') == "IMEI no encontrado"
+            elif conf['supported_languages']['default_language'] == 'id':
+                assert d1.get('Error') == "IMEI tidak ditemukan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -309,7 +425,12 @@ def test_athty_input_missing_mac(flask_app, db):
     assert rs.status_code == 200
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('msg') == "Device's information has been successfully loaded"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == "Device's information has been successfully loaded"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "La información del dispositivo se ha cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "Informasi perangkat telah berhasil dimuat"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -332,11 +453,19 @@ def test_athty_input_functionality_single_contact_multiple_devices(flask_app, db
     d1 = json.loads(rs1.data.decode('utf-8'))
     d2 = json.loads(rs2.data.decode('utf-8'))
     d3 = json.loads(rs3.data.decode('utf-8'))
-    print(d1, d2)
-    assert d1.get('msg') == "Device's information has been successfully loaded"
-    assert d2.get('msg') == "Device's information has been successfully loaded"
-    assert d3.get('msg') == "Device's information has been successfully loaded"
-
+    print(d1, d2, d3)
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == "Device's information has been successfully loaded"
+        assert d2.get('msg') == "Device's information has been successfully loaded"
+        assert d3.get('msg') == "Device's information has been successfully loaded"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "La información del dispositivo se ha cargado correctamente"
+        assert d2.get('msg') == "La información del dispositivo se ha cargado correctamente"
+        assert d3.get('msg') == "La información del dispositivo se ha cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "Informasi perangkat telah berhasil dimuat"
+        assert d2.get('msg') == "Informasi perangkat telah berhasil dimuat"
+        assert d3.get('msg') == "Informasi perangkat telah berhasil dimuat"
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_input_functionality_max_imeis_per_device(flask_app, db):
@@ -355,9 +484,20 @@ def test_athty_input_functionality_max_imeis_per_device(flask_app, db):
     print(rsl_1.data)
     assert rsl_1.status_code == 200
     d1 = json.loads(rsl_1.data.decode('utf-8'))
-    assert d1.get('msg') == "Device's information has been successfully loaded"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == "Device's information has been successfully loaded"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "La información del dispositivo se ha cargado correctamente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "Informasi perangkat telah berhasil dimuat"
+
     rsl_2 = flask_app.post(ATHTY_INPUT, headers=HEADERS, data=json.dumps(pl_2))
     print(rsl_2.data)
     assert rsl_2.status_code == 422
     d2 = json.loads(rsl_2.data.decode('utf-8'))
-    assert d2.get('Error') == "Up to 5 IMEIs per device are allowed only"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d2.get('Error') == "Up to 5 IMEIs per device are allowed only"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d2.get('Error') == "Solo se permiten hasta 5 IMEI por dispositivo"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d2.get('Error') == "IMEIs hingga 5 per perangkat hanya diizinkan"

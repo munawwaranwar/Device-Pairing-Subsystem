@@ -36,14 +36,14 @@ global:
   kannel_sms: 'http://192.168.100.70:13013/cgi-bin/sendsms'
 
   # Pair-List generation Path
-  pairlist_path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/pairing_lists'
+  pairlist_path: '/var/www/html/Device-Pairing-Subsystem/pairing_lists'
 
   # System Paths for files
-  Download_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/downloads'
-  Upload_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/uploads'
+  Download_Path: '/var/www/html/Device-Pairing-Subsystem/downloads'
+  Upload_Path: '/var/www/html/Device-Pairing-Subsystem/uploads'
 
   # path for test-documents
-  test_doc_path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/'
+  test_doc_path: '/var/www/html/Device-Pairing-Subsystem/tests/unittest_data/sample_files/'
 
   # SMS Texts
   # Additional-Pair Messages

@@ -25,6 +25,7 @@ from tests._fixtures import *
 # noinspection PyProtectedMember
 from tests._helpers import *
 import json
+from app import conf
 
 
 MNO_FIRST_PAGE = 'api/v1/mno-first-page'
@@ -33,7 +34,8 @@ HEADERS = {'Content-Type': "application/json"}
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_happy_case_multiple_record(flask_app, session, db):
-    """ Verify that mno-first-page api provides correct results """
+    """ Verify that mno-first-page api provides correct results for multiple records"""
+
     owner = ['923001111111', '923002222222', '923003333333', '923004444444']
     pair_code = ['xGnTrInE', 'z3fQp3X7', '3Bdzs1sx', 'JM7Bt9QX']
     primary = ['923458888111', '923458888222', '923458888333', '923458888444']
@@ -70,7 +72,8 @@ def test_mno_first_page_happy_case_multiple_record(flask_app, session, db):
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_happy_case_single_record(flask_app, session, db):
-    """ Verify that mno-first-page api provides correct results """
+    """ Verify that mno-first-page api provides correct results for single record"""
+
     complete_db_insertion(session, db, 2005, '923089923776', 2005, 'Nokia-8 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
                           'Ox4KWcst', 2005, '810223947333344')
     first_pair_db_insertion(session, db, 2021, '923216754889', 'warid', 2005)
@@ -100,14 +103,25 @@ def test_mno_first_page_missing_parameters(flask_app, session):
     assert rs2.status_code == 422
     assert rs3.status_code == 422
     print(d1, d2, d3)
-    assert d1.get('Error') == 'limit is missing'
-    assert d2.get('Error') == 'start is missing'
-    assert d3.get('Error') == "operator's name is missing"
+
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'limit is missing'
+        assert d2.get('Error') == 'start is missing'
+        assert d3.get('Error') == "operator's name is missing"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "falta el límite"
+        assert d2.get('Error') == "falta el inicio"
+        assert d3.get('Error') == "Falta el nombre del operador"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "batas tidak ada"
+        assert d2.get('Error') == "mulai hilang"
+        assert d3.get('Error') == "nama operator tidak ada"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_validations_start_and_limit(flask_app, session):
     """Verify that mno-first-page api doesn't allow invalid start & limit values"""
+
     url_1 = '{api}?mno=warid&start=1&limit=a'.format(api=MNO_FIRST_PAGE)
     url_2 = '{api}?mno=warid&start=@&limit=10'.format(api=MNO_FIRST_PAGE)
     rs1 = flask_app.get(url_1)
@@ -117,27 +131,47 @@ def test_mno_first_page_validations_start_and_limit(flask_app, session):
     assert rs1.status_code == 422
     assert rs2.status_code == 422
     print(d1, d2)
-    assert d1.get('Error') == 'Start or limit is not correct'
-    assert d2.get('Error') == 'Start or limit is not correct'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'Start or limit is not correct'
+        assert d2.get('Error') == 'Start or limit is not correct'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Inicio o límite no es correcto"
+        assert d2.get('Error') == "Inicio o límite no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Mulai atau batas tidak benar"
+        assert d2.get('Error') == "Mulai atau batas tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_validations_operator_name(flask_app, session):
     """Verify that mno-first-page api doesn't allow mno names other than mentioned in configuration file"""
+
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
     f_mno = ['j@zz', 'Vodafone', 'T-Mobile', 'Orange', 'wariid']
+
     for val in mno:
         url = '{api}?mno={operator}&start=1&limit=10'.format(api=MNO_FIRST_PAGE, operator=val)
         rs = flask_app.get(url)
         d1 = json.loads(rs.data.decode('utf-8'))
         print('correct operator name: ', val)
-        assert not d1.get('Error') == "improper Operator's name provided"
+        if conf['supported_languages']['default_language'] == 'en':
+            assert not d1.get('Error') == "improper Operator's name provided"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert not d1.get('Error') == "Nombre incorrecto del operador proporcionado"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert not d1.get('Error') =="Nama Operator yang tidak benar disediakan"
+
     for v in f_mno:
         f_url = '{api}?mno={operator}&start=1&limit=10'.format(api=MNO_FIRST_PAGE, operator=v)
         f_rs = flask_app.get(f_url)
         f_d1 = json.loads(f_rs.data.decode('utf-8'))
         print(f_d1, v)
-        assert f_d1.get('Error') == "improper Operator's name provided"
+        if conf['supported_languages']['default_language'] == 'en':
+            assert f_d1.get('Error') == "improper Operator's name provided"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert f_d1.get('Error') == "Nombre incorrecto del operador proporcionado"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert f_d1.get('Error') =="Nama Operator yang tidak benar disediakan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -147,10 +181,15 @@ def test_mno_first_page_functionality_no_records(flask_app, session):
     rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('msg') == "no record found"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('msg') == "no record found"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('msg') == "ningún record fue encontrado"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('msg') == "tidak ada catatan yang ditemukan"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+    # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_first_page_error_404_wrong_api(flask_app, session):
     """ Verify that mno-first-page api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/mnooo-firstttt-pageeee'
