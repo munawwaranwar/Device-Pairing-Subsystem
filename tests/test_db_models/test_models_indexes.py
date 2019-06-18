@@ -19,6 +19,7 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 from app.api.v1.models.pairings import Pairing

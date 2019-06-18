@@ -25,6 +25,7 @@ from tests._fixtures import *
 # noinspection PyProtectedMember
 from tests._helpers import *
 import json
+from app import conf
 
 ATHTY_SEARCH = 'api/v1/authority-search'
 HEADERS = {'Content-Type': "application/json"}
@@ -33,9 +34,9 @@ HEADERS = {'Content-Type': "application/json"}
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_happy_case(flask_app, db, session):
     """ Verify that athty-serach provides correct search result """
+
     athty_search_db_insertion(session, db, 701, '923145309633', 701, 'Note5', 'Samsung', '1234GHb4y', '3G,4G',
                               'g8qquEVQ', 701, ['111111111111111'], "20:AB:56:AF:44:C4")
-
 
     payload = athty_search_payload(0, 5, "111111111111111", "20:AB:56:AF:44:C4", "1234GHb4y", "923145309633", 0)
     rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
@@ -48,6 +49,7 @@ def test_athty_search_happy_case(flask_app, db, session):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_missing_parameters(flask_app, db, session):
     """ Verify that athty-serach supports search by any parameter """
+
     athty_search_db_insertion(session, db, 702, '923158154773', 702, 'F-6', 'OPPO', '1234GHAAA', '4G',
                               'kyDCAmL1', 702, ['222222222222222'], "20:AB:5C:AF:44:AD")
 
@@ -63,6 +65,7 @@ def test_athty_search_functionality_missing_parameters(flask_app, db, session):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_single_parameter_search(flask_app, db, session):
     """ Verify that athty-serach api supports search by single parameter as well"""
+
     athty_search_db_insertion(session, db, 703, '923006819263', 703, 'RedMi', 'Xiamo', 'U87Hsr',
                               '3G,4G', 'QBADXNGZ', 703, ['333333333333333'], "F0:CB:AD:EF:84:FD")
     for val in range(5, 9):
@@ -77,6 +80,7 @@ def test_athty_search_functionality_single_parameter_search(flask_app, db, sessi
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_no_search_parameter(flask_app, db, session):
     """ to check the response of athty-serach api when no search parameter is provided"""
+
     athty_search_db_insertion(session, db, 704, '923218965339', 704, 'Nokia-8', 'NOKIA', '0oa36Th7Fe',
                               '3G,4G', 'm9p4dViX', 704, ['444444444444444'], "78:C3:AD:54:84:FD")
     payload = athty_search_payload(0, 5, "444444444444444", "78:C3:AD:54:84:FD", "0oa36Th7Fe", "923218965339", 9)
@@ -90,6 +94,7 @@ def test_athty_search_functionality_no_search_parameter(flask_app, db, session):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_wrong_search_parameter(flask_app, db, session):
     """ to check the response of athty-serach api when wrong search parameters are provided"""
+
     athty_search_db_insertion(session, db, 705, '(23457091287', 705, 'Nokia-2', 'NOKIA', 'Kj8sR56h',
                               '3G,4G', 'HP0nCrc9', 705, ['555555555555555'], "AD:C3:99:54:84:88")
     payload = athty_search_payload(0, 5, "545454545454545", "12:C3:34:54:56:78", "a1b2c3d4", "923149988770")
@@ -103,6 +108,7 @@ def test_athty_search_functionality_wrong_search_parameter(flask_app, db, sessio
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_grouped_imeis(flask_app, db, session):
     """ Verify that athty-serach api groups IMEIs for single search result"""
+
     imei = ['555555555555555', '666666666666666']
     athty_search_db_insertion(session, db, 706, '923457091247', 706, 'Nokia-2', 'NOKIA', 'G6Tre4kl',
                               '3G,4G', 'FrfxlfLk', 706, imei, "AD:C3:99:54:84:88")
@@ -125,7 +131,12 @@ def test_athty_search_validations_invalid_mac(flask_app, db):
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, "MAC=", val)
-        assert d1.get('Error') == 'MAC format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert d1.get('Error') == 'MAC format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert d1.get('Error') == "El formato MAC no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert d1.get('Error') == "Format MAC tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -138,7 +149,12 @@ def test_athty_search_validations_invalid_serial_no(flask_app, db):
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, "Serial_No=", val)
-        assert d1.get('Error') == 'Serial-Number format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert d1.get('Error') == 'Serial-Number format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert d1.get('Error') == "El formato del número de serie no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert d1.get('Error') == "Format Serial-Number tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -151,7 +167,12 @@ def test_athty_search_validations_invalid_contact_no(flask_app, db):
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, "Contact_No=", val)
-        assert d1.get('Error') == 'Contact-MSISDN format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert d1.get('Error') == 'Contact-MSISDN format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert d1.get('Error') == "El formato de contacto MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert d1.get('Error') == "Format kontak-MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -164,7 +185,12 @@ def test_athty_search_validations_invalid_imei(flask_app, db):
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, "IMEI=", val)
-        assert d1.get('Error') == 'IMEI format is not correct'
+        if conf['supported_languages']['default_language'] == 'en':
+            assert d1.get('Error') == 'IMEI format is not correct'
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert d1.get('Error') == "El formato IMEI no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert d1.get('Error') == "Format IMEI tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -175,7 +201,12 @@ def test_athty_search_validations_invalid_start_limit(flask_app, db):
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('Error') == 'Start or Limit is not integer'
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == 'Start or Limit is not integer'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "Inicio o Límite no es entero"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "Mulai atau Batasi bukan bilangan bulat"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -186,7 +217,12 @@ def test_athty_search_validations_invalid_search_arguments(flask_app, db):
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert d1.get('Error') == "search_args is not correct"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1.get('Error') == "search_args is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1.get('Error') == "search_args no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1.get('Error') == "search_args tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames

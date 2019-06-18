@@ -128,22 +128,53 @@ def test_sim_change_happy_case(flask_app, db, session):
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_sim_change_functionality_chk_old_and_new_imsis(flask_app, db, session):
-    """ Verify that sim-chg api handles old & new IMSIs correctly """
+def test_sim_change_functionality_before_export_to_PairList(flask_app, db, session):
+    """ Verify the behaviour of sim-chg api when pair is not exported to Pair-List at the time of deletion """
+
     complete_db_insertion(session, db, 412, '923047930553', 412, 'F-9', 'OPPO', 'Fd9kLqwV', '3G,4G',
                           'gDd7XsL4', 412, '910223945867106')
     first_pair_db_insertion(session, db, 413, '923155406922', 'zong', 412)
     imsi = '410042233445566'
+
     session.execute(text("""UPDATE public.pairing SET imsi = '{}' WHERE msisdn = '923155406922';""".format(imsi)))
     payload = {"Sender_No": "923155406922", "Operator": "warid"}
     result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923155406922'; """)).fetchone()
-    print("old imsi = ", qry.old_imsi)
-    print("new imsi = ", qry.imsi)
-    assert qry.old_imsi == imsi
+    print("\n-----Pair Status-----\nOld IMSI = {}\nNew IMSI = {}\nchange_type = {}\nexport_status = {}".
+          format(qry.old_imsi, qry.imsi, qry.change_type, qry.export_status))
+
+    assert qry.old_imsi is None
     assert qry.imsi is None
+    assert qry.change_type is None
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_sim_change_functionality_after_export_to_PairList(flask_app, db, session):
+    """ Verify the behaviour of sim-chg api when pair is already exported to Pair-List at the time of deletion """
+
+    complete_db_insertion(session, db, 416, '923047930887', 416, 'F4', 'OPPO', 'Fd9k567wV', '3G,4G',
+                          'Df5tNkL0', 416, '910296775432106')
+    first_pair_db_insertion(session, db, 420, '923128845768', 'zong', 416)
+    imsi = '410049007345128'
+
+    session.execute(text("""UPDATE public.pairing SET imsi = '{}', export_status = true 
+                            WHERE msisdn = '923128845768';""".format(imsi)))
+    payload = {"Sender_No": "923128845768", "Operator": "warid"}
+    result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+    assert result.data == b"SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+
+    qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923128845768'; """)).fetchone()
+    print("\n-----Pair Status-----\nOld IMSI = {}\nNew IMSI = {}\nchange_type = {}\nexport_status = {}".
+          format(qry.old_imsi, qry.imsi, qry.change_type, qry.export_status))
+
+    assert qry.old_imsi == '410049007345128'
+    assert qry.imsi is None
+    assert qry.change_type is None
+    assert qry.export_status is None
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -155,7 +186,8 @@ def test_sim_change_functionality_wrong_sender_no(flask_app, db, session):
     payload = {"Sender_No": "923113306922", "Operator": "ufone"}
     result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert result.data == b"MSISDN (923113306922) is not existed in any pair"
+    assert result.data == b"MSISDN (923113306922) is not existed in any pair or SIM-Change request " \
+                          b"is already in process"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -168,17 +200,22 @@ def test_sim_change_functionality_request_from_unconfirmed_sec_pair(flask_app, d
     payload = {"Sender_No": "923125840917", "Operator": "zong"}
     result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert result.data == b"MSISDN (923125840917) is not existed in any pair"
+    assert result.data == b"MSISDN (923125840917) is not existed in any pair or SIM-Change request " \
+                          b"is already in process"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_sim_change_functionality_request_from_confirmed_sec_pair(flask_app, db, session):
     """ Verify that sim-chg api can cater request from confirmed secondary pair as well """
-    complete_db_insertion(session, db, 415, '923089923776', 415, 'Nokia-4 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
+    complete_db_insertion(session, db, 415, '923089923776', 415, 'Nokia-4', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
                           'Ox4sTcst', 415, '910223947333344')
     first_pair_db_insertion(session, db, 418, '923216754889', 'warid', 415)
     add_pair_db_insertion(session, db, 419, 418, '923125840917', 415)
     add_pair_confrm_db_insertion(session, db, '923125840917', 418, 'zong')
+
+    imsi = '410065544332211'
+    session.execute(text("""UPDATE public.pairing SET imsi = '{}' WHERE msisdn = '923125840917';""".format(imsi)))
+
     payload = {"Sender_No": "923125840917", "Operator": "zong"}
     result = flask_app.delete(SIM_CHG_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)

@@ -23,79 +23,58 @@ Copyright (c) 2018 Qualcomm Technologies, Inc.
 import psycopg2 as pg
 from time import strftime
 
-LIST_PATH = r'D:\dirbs_intl_dps\Pairing_Lists'
+LIST_PATH = r'/var/www/html/Device-Pairing-Subsystem/pairing_lists'
 
 
-def pair_list_creation():
+def pair_list_complete():
     """ Function to generate pair-list for DIRBS CORE"""
 
     global con
 
     try:
-        con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
-        # con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
+        # con = pg.connect("dbname = 'DPS_Test' user = 'postgres' password = 'Pakistan1' host = 'localhost'")
+        con = pg.connect("dbname = 'dps' user = 'admin' password = 'admin' host = '192.168.100.69'")
 
         cur = con.cursor()
 
-        cur.execute(""" select imei_id, imsi, change_type, export_status, old_imsi from pairing where imsi is not null
-                        and change_type is not null and export_status = false order by imei_id ;""")
+        cur.execute(""" select imei_id, imsi, old_imsi from pairing where add_pair_status = true order by imei_id ;""")
 
         chk_1 = cur.fetchall()
 
+        filename = LIST_PATH + '/Pair_List_Complete' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
+
+        file = open(filename, 'w')
+        file.write('imei,' + 'imsi' + '\n')
+
         if chk_1:
-
-            filename = LIST_PATH + '/Pair_List' + '_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
-
-            file = open(filename, 'w')
 
             for qry in chk_1:
 
-                if qry[4]:
+                if qry[1] and qry[2] is None:
                     cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
                     chk_imei = cur.fetchone()
-                    file.write(chk_imei[0] + ',' + qry[4] + ',REMOVE\n')
-                    file.write(chk_imei[0] + ',' + qry[1] + ',ADD\n')
+                    file.write(chk_imei[0] + ',' + qry[1] + '\n')
 
-                else:
-                    cur.execute(""" select imei from imei where id = {} """.format(qry[0]))
+                elif qry[1] is None and qry[2]:
+                    cur.execute(""" select imei from imei where id = {} ;""".format(qry[0]))
                     chk_imei = cur.fetchone()
-                    file.write(chk_imei[0] + ',' + qry[1] + ',ADD\n')
+                    file.write(chk_imei[0] + ',' + qry[2] + '\n')
 
-            file.close()
-
-            cur.execute(""" update pairing set export_status = true , old_imsi = null
-                            where imsi is not null and change_type is not null and export_status = false """)
-
-            uniqe_pairs = set(open(filename).readlines())
-            file2 = open(filename, 'w')
-
-            for row in uniqe_pairs:
-                file2.write(row)
-
-            file2.close()
-
-        else:
-            filename = LIST_PATH + '\PairList_ERROR_' + strftime("%Y-%m-%d_%H-%M-%S") + '.csv'
-
-            file = open(filename, 'w')
-
-            file.write("No Record found / no new pair created.....")
-            file.close()
+        file.close()
 
         con.commit()
-
-        con.close()
 
         return
 
     except Exception as e:
-        print(e)
+        cur.close()
         con.close()
         return
 
     finally:
+        cur.close()
         con.close()
 
 
 if __name__ == "__main__":
-    pair_list_creation()
+    pair_list_complete()

@@ -167,6 +167,7 @@ def test_rel_single_pair_functionality_wrong_secondary_msisdn(flask_app, db, ses
 # noinspection PyShadowingNames,PyUnusedLocal
 def test_rel_single_pair_functionality_delete_primary_msisdn(flask_app, db, session):
     """ Verify that rel-single api doesn't allow deletion of primary pair """
+
     complete_db_insertion(session, db, 215, '923089923776', 215, 'Nokia-4 ', 'NOKIA', 'Sbqa7KpW', '2G,3G,4G',
                           'Ox4JTcst', 215, '910223947333344')
     first_pair_db_insertion(session, db, 220, '923216754889', 'warid', 215)
@@ -179,20 +180,76 @@ def test_rel_single_pair_functionality_delete_primary_msisdn(flask_app, db, sess
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
-def test_rel_single_pair_functionality_chk_db_insertion(flask_app, db, session):
-    """ Verify that rel-single api inserts correct values of change_type & export_status """
+def test_rel_single_pair_deletion_before_export_to_PairList(flask_app, db, session):
+    """ Verify the behaviour of rel-single api when secondary pair is not exported to
+        Pair-List at the time of deletion """
+
     complete_db_insertion(session, db, 216, '923098924476', 216, 'LUMIA ', 'NOKIA', 'S2w434a7hW', '2G,3G',
                           '4eUe5NaB', 216, '871022394555554')
     first_pair_db_insertion(session, db, 222, '923145892117', 'zong', 216)
     add_pair_db_insertion(session, db, 223, 222, '923018144773', 216)
 
-    session.execute(text("""UPDATE public.pairing SET imsi = '410015678987223', 
-                            add_pair_status = true WHERE msisdn = '923018144773';"""))
+    session.execute(text("""UPDATE public.pairing SET imsi = '410015678987223', change_type = 'add', 
+                            export_status = false, add_pair_status = true WHERE msisdn = '923018144773';"""))
 
     payload = {"Sender_No": "923145892117", "MSISDN": "923018144773"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    qry = session.execute(text("""SELECT * FROM public.pairing WHERE msisdn = '923018144773'; """)).fetchone()
-    print(qry.change_type, qry.export_status)
-    assert qry.change_type == 'REMOVE'
-    assert qry.export_status is False
+    q1 = session.execute(text("""SELECT * FROM public.pairing WHERE msisdn = '923018144773'; """)).fetchone()
+    print("\n-----Deleted Secondary-Pair-----\nmsisdn = {}\nend_date = {}\nchange_type = {}\nexport_status = {}".
+          format(q1.msisdn, q1.end_date, q1.change_type, q1.export_status))
+    assert q1.change_type is None
+    assert q1.export_status is None
+    assert q1.old_imsi is None
+
+
+# noinspection PyShadowingNames,PyUnusedLocal
+def test_rel_single_pair_deletion_after_export_to_PairList(flask_app, db, session):
+    """ Verify the behaviour of rel-single api when secondary pair is already exported to
+        Pair-List at the time of deletion """
+
+    complete_db_insertion(session, db, 217, '923098922234', 217, 'Nokia-4', 'NOKIA', 'Aq23rDTn8', '3G,4G',
+                          'S4vXXoMp', 217, '361022321334964')
+    first_pair_db_insertion(session, db, 224, '923138834564', 'zong', 217)
+    add_pair_db_insertion(session, db, 225, 224, '923479091924', 217)
+
+    session.execute(text("""UPDATE public.pairing SET imsi = '410029803775223', change_type = 'add', 
+                            export_status = true, add_pair_status = true WHERE msisdn = '923479091924';"""))
+
+    payload = {"Sender_No": "923138834564", "MSISDN": "923479091924"}
+    result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+
+    q1 = session.execute(text("""SELECT * FROM public.pairing WHERE msisdn = '923479091924'; """)).fetchone()
+    print("\n-----Deleted Secondary-Pair-----\nmsisdn = {}\nend_date = {}\nchange_type = {}\nexport_status = {}".
+          format(q1.msisdn, q1.end_date, q1.change_type, q1.export_status))
+
+    assert q1.change_type == 'remove'
+    assert not q1.export_status
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_rel_single_pair_exported_sim_changed_deleted_before_new_imsi(flask_app, db, session):
+    """ Verify the behaviour of rel-single api for special case where secondary pair is exported once and after
+        that SIM-Change is requested but before MNO provides new IMSI, Pair is deleted"""
+
+    complete_db_insertion(session, db, 218, '923098922556', 218, 'Nokia-6', 'NOKIA', 'Lk9Y6VVf', '3G,4G',
+                          'AxY7PiG8', 218, '451087529940964')
+    first_pair_db_insertion(session, db, 226, '923339125125', 'ufone', 218)
+    add_pair_db_insertion(session, db, 227, 226, '923337457869', 218)
+
+    session.execute(text("""UPDATE public.pairing SET old_imsi = '410079703451431', change_type = null,
+                                    export_status = null, add_pair_status = true WHERE msisdn = '923337457869';"""))
+
+    payload = {"Sender_No": "923339125125", "MSISDN": "923337457869"}
+    result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+
+    q1 = session.execute(text("""SELECT * FROM public.pairing WHERE msisdn = '923337457869'; """)).fetchone()
+    print("\n-----Deleted Secondary-Pair-----\nmsisdn = {}\nend_date = {}\nchange_type = {}\nexport_status = {}".
+          format(q1.msisdn, q1.end_date, q1.change_type, q1.export_status))
+
+    assert q1.change_type == 'remove'
+    assert not q1.export_status
+    assert q1.imsi == '410079703451431'
+    assert not q1.old_imsi

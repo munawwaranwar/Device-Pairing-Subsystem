@@ -187,9 +187,11 @@ def test_rel_all_pairs_functionality_repetitive_requests(flask_app, db, session)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app, db, session):
-    """ Verify that rel-single api inserts correct values of change_type & export_status """
-    complete_db_insertion(session, db, 317, '923099924433', 317, 'G5 ', 'LG', 'sDx5ue73M', '2G,3G',
+def test_rel_all_primary_without_secondary_deletion_before_export(flask_app, db, session):
+    """ Verify the behaviour of rel-all api when there is only primary-pair (having no secondary pairs) which is
+        not exported to Pair-List at the time of deletion"""
+
+    complete_db_insertion(session, db, 317, '923099924433', 317, 'G5', 'LG', 'sDx5ue73M', '2G,3G',
                           'X4fwY8ia', 317, '871024444488794')
     first_pair_db_insertion(session, db, 335, '923155432109', 'zong', 317)
 
@@ -199,26 +201,148 @@ def test_rel_all_pairs_functionality_chk_db_insertion_without_sec_pair(flask_app
     print(result.data)
 
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923155432109'; """)).fetchone()
-    print(qry.change_type, qry.export_status)
-    assert qry.change_type == 'REMOVE'
-    assert qry.export_status is False
+    print("change_type = {}  export_status = {}".format(qry.change_type, qry.export_status))
+    assert qry.change_type is None
+    assert qry.export_status is None
+    assert qry.old_imsi is None
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_rel_all_pairs_functionality_chk_db_insertion_with_sec_pair(flask_app, db, session):
-    """ Verify that rel-single api inserts correct values of change_type & export_status """
+def test_rel_all_primary_without_secondary_deletion_after_export(flask_app, db, session):
+    """ Verify the behaviour of rel-all api when there is only primary-pair (having no secondary pairs) which is
+        already exported to Pair-List at the time of deletion"""
+
+    complete_db_insertion(session, db, 319, '923081424455', 319, 'Note-9', 'Samsung', 'R99Buk73M', '4G,5G',
+                          'T4Fb98ia', 319, '981025555588794')
+    first_pair_db_insertion(session, db, 338, '923339259256', 'ufone', 319)
+    session.execute(text("""UPDATE public.pairing SET imsi = '410038861640906', change_type = 'add', 
+                            export_status = true WHERE msisdn = '923339259256';"""))
+    payload = {"Sender_No": "923339259256"}
+    result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+
+    qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923339259256'; """)).fetchone()
+    print("change_type = {}  export_status = {}".format(qry.change_type, qry.export_status))
+    assert qry.change_type == 'remove'
+    assert not qry.export_status
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_rel_all_primary_without_secondary_pair_exported_sim_changed_deleted_before_new_imsi(flask_app, db, session):
+    """ Verify the behaviour of rel-all api for special case where only primary pair (having no secondary pair) is
+        exported once and after that SIM-Change is requested but before MNO provides new IMSI, Pair is deleted"""
+
+    complete_db_insertion(session, db, 320, '923051423399', 320, 'Redmi', 'Xiaomi', 'Xaa0k9LwV', '3G,4G',
+                          '9cSr6Zi4', 320, '541021234588794')
+    first_pair_db_insertion(session, db, 339, '923065454649', 'jazz', 320)
+    session.execute(text("""UPDATE public.pairing SET old_imsi = '410076561643648', change_type = null, 
+                                export_status = null WHERE msisdn = '923065454649';"""))
+    payload = {"Sender_No": "923065454649"}
+    result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+
+    qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923065454649'; """)).fetchone()
+    print("IMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
+          format(qry.imsi, qry.old_imsi, qry.change_type, qry.export_status))
+    assert qry.change_type == 'remove'
+    assert not qry.export_status
+    assert qry.imsi == '410076561643648'
+    assert not qry.old_imsi
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_rel_all_primary_with_secondary_deletion_before_export(flask_app, db, session):
+    """ Verify the behaviour of rel-all api when there is a primary-pair with secondary pairs and are
+        not exported to Pair-List at the time of deletion"""
+
     complete_db_insertion(session, db, 318, '923219925555', 318, 'Z4', 'QMobile', 'Hj7w3p9U', '3G,4G',
                           'Lq6YHxG9', 318, '673394444483333')
     first_pair_db_insertion(session, db, 336, '923457819043', 'telenor', 318)
     add_pair_db_insertion(session, db, 337, 336, '923028432506', 318)
 
-    session.execute(text("""UPDATE public.pairing SET imsi = '410019876543210',
-                            add_pair_status = true WHERE msisdn = '923028432506';"""))
+    session.execute(text("""UPDATE public.pairing SET imsi = '410019876543210', change_type = 'add', 
+                            export_status = false, add_pair_status = true WHERE msisdn = '923028432506';"""))
     payload = {"Sender_No": "923457819043"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
+    q1 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923457819043'; """)).fetchone()
+    q2 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923028432506'; """)).fetchone()
+    print("-----Primary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+          format(q1.end_date, q1.change_type, q1.export_status))
+    print("-----Secondary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+          format(q1.end_date, q1.change_type, q1.export_status))
+    assert q1.change_type is None
+    assert q1.export_status is None
+    assert q1.old_imsi is None
+    assert q2.change_type is None
+    assert q2.export_status is None
+    assert q2.old_imsi is None
 
-    qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923028432506'; """)).fetchone()
-    print(qry.change_type, qry.export_status)
-    assert qry.change_type == 'REMOVE'
-    assert qry.export_status is False
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_rel_all_primary_with_secondary_deletion_after_export(flask_app, db, session):
+    """ Verify the behaviour of rel-all api when there is a primary-pair with secondary pairs and are
+        already exported to Pair-List at the time of deletion"""
+
+    complete_db_insertion(session, db, 321, '923219927640', 321, 'F6', 'OPPO', 'KiY56w3p9U', '3G,4G',
+                          'Q2wcYoP5', 321, '673395840287773')
+    first_pair_db_insertion(session, db, 340, '923121564111', 'zong', 321)
+    add_pair_db_insertion(session, db, 341, 340, '923121564222', 321)
+
+    session.execute(text("""UPDATE public.pairing SET imsi = '410089872245720', change_type = 'add', 
+                            export_status = true WHERE msisdn = '923121564111';"""))
+
+    session.execute(text("""UPDATE public.pairing SET imsi = '410089872245710', change_type = 'add',
+                            export_status = true, add_pair_status = true WHERE msisdn = '923121564222';"""))
+    payload = {"Sender_No": "923121564111"}
+    result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+
+    q1 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923121564111'; """)).fetchone()
+    q2 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923121564222'; """)).fetchone()
+    print("-----Primary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+          format(q1.end_date, q1.change_type, q1.export_status))
+    print("-----Secondary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+          format(q1.end_date, q1.change_type, q1.export_status))
+    assert q1.change_type == 'remove'
+    assert not q1.export_status
+    assert q2.change_type == 'remove'
+    assert not q2.export_status
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_rel_all_primary_with_secondary_pair_exported_sim_changed_deleted_before_new_imsi(flask_app, db, session):
+    """ Verify the behaviour of rel-all api for special case where primary pair with secondary pairs are
+        exported once and after that SIM-Change is requested but before MNO provides new IMSI, Pair is deleted"""
+
+    complete_db_insertion(session, db, 322, '923219927623', 322, 'Nokia-8', 'NOKIA', 'GrE456Kjy8', '3G,4G',
+                          'GPi9Hnft', 322, '673395840211153')
+    first_pair_db_insertion(session, db, 342, '923001234567', 'jazz', 322)
+    add_pair_db_insertion(session, db, 343, 342, '923007654321', 322)
+
+    session.execute(text("""UPDATE public.pairing SET old_imsi = '410076561667678', change_type = null, 
+                            export_status = null WHERE msisdn = '923001234567';"""))
+
+    session.execute(text("""UPDATE public.pairing SET old_imsi = '410074866996431', change_type = null,
+                                export_status = null, add_pair_status = true WHERE msisdn = '923007654321';"""))
+
+    payload = {"Sender_No": "923001234567"}
+    result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
+    print(result.data)
+
+    q1 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923001234567'; """)).fetchone()
+    q2 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923007654321'; """)).fetchone()
+
+    print("-----Primary-Pair-----\nIMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
+          format(q1.imsi, q1.old_imsi, q1.change_type, q1.export_status))
+    print("-----Secondary-Pair-----\nIMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
+          format(q2.imsi, q2.old_imsi, q2.change_type, q2.export_status))
+
+    assert q1.change_type == 'remove'
+    assert not q1.export_status
+    assert q1.imsi == '410076561667678'
+    assert not q1.old_imsi
+    assert q2.change_type == 'remove'
+    assert not q2.export_status
+    assert q2.imsi == '410074866996431'
+    assert not q2.old_imsi

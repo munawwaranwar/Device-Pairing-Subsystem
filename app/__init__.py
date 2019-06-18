@@ -59,7 +59,7 @@ app.config['SQLALCHEMY_MAX_OVERFLOW'] = int(conf['overflow_size'])
 app.config['SQLALCHEMY_POOL_TIMEOUT'] = int(conf['pool_timeout'])
 app.config['DPS_DOWNLOADS'] = conf['Download_Path']
 app.config['DPS_UPLOADS'] = conf['Upload_Path']
-app.config['BABEL_DEFAULT_LOCALE'] = conf['default_language']
+app.config['BABEL_DEFAULT_LOCALE'] = conf['supported_languages']['default_language']
 app.config['SUPPORTED_LANGUAGES'] = conf['supported_languages']
 
 db = SQLAlchemy()

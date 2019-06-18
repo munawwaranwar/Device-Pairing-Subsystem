@@ -246,6 +246,12 @@ def athrty_search():
             existance['serial_exist'] = True
         elif key == 'IMEI':
             existance['imei_exist'] = True
+        else:
+            data = {
+                "Error": "one or more parameters are not correct"
+            }
+            return Response(json.dumps(data), status=422, mimetype='application/json')
+
 
     count = len(req_data)
     msg, stat = SearchAuthority.authority_search(start, limit, req_data, count, existance)
