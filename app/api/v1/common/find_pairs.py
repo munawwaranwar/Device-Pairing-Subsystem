@@ -27,3 +27,64 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+from app import db
+from app.api.v1.models.pairings import Pairing
+import re
+
+
+def find_pairs(sender_no):
+    """ Function to verify number of pairs associated with any mobile device"""
+    try:
+        pair_info = []
+        status_list = []
+        msisdn_list = []
+
+        pattern_sender_no = re.compile(r'923\d{9,12}')
+        match_sender_no = pattern_sender_no.fullmatch(sender_no)
+
+        if match_sender_no:
+
+            chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_no),
+                                               Pairing.is_primary == True,
+                                               Pairing.add_pair_status == True,
+                                               Pairing.end_date == None).first()
+                                    # to check if request is made from primary-pair
+            if chk_primary:
+
+                chk_sec = Pairing.query.filter(Pairing.primary_id == '{}'.format(chk_primary.id),
+                                               Pairing.end_date == None).all()
+
+                for m in chk_sec:
+
+                    msisdn_list.append(m.msisdn)
+
+                    if m.add_pair_status:
+                        status_list.append('Confirmed Pair')
+
+                    else:
+                        status_list.append('Un-confirmed Pair')
+
+                for r in range(len(msisdn_list)):
+
+                    data = {
+                        "MSISDN": msisdn_list[r],
+                        "Status": status_list[r]
+                    }
+
+                    pair_info.append(data)
+
+            else:
+
+                return "({}) is not registered as Primary-Pair".format(sender_no)
+
+            return pair_info
+
+        elif not match_sender_no:
+            return "Sender MSISDN format is not correct"
+
+    except Exception as e:  # pragma: no cover
+        db.session.rollback()
+
+    finally:
+        db.session.close()

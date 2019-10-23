@@ -27,3 +27,15 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+import os
+
+
+def error_url(url):
+    """ Function to download error file  """
+
+    #if not os.path.exists(url):
+    if not os.path.isfile(url):
+        return "no file found"
+    else:
+        return url

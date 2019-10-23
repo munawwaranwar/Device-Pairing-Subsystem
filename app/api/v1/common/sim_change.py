@@ -27,3 +27,68 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+from app.api.v1.models.pairings import Pairing
+from app import db
+import re
+
+
+def sim_chg(sender_num, mno):
+    """ Function to delete IMSI for SIM replacement """
+    try:
+        rtn_msg = ""
+
+        pattern_mno = re.compile(r'[a-zA-Z0-9]{1,20}')
+        match_mno = pattern_mno.fullmatch(mno)
+
+        pattern_sender_no = re.compile(r'923\d{9,12}')
+        match_sender_no = pattern_sender_no.fullmatch(sender_num)
+
+        if match_mno and match_sender_no:  # if validations are passed
+
+            chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(sender_num))\
+                                         .filter(Pairing.end_date == None)\
+                                         .filter(Pairing.imsi != None)\
+                                         .filter(Pairing.add_pair_status == True).all()
+
+                                    # checking conditions for SIM replacement
+            if chk_all:
+
+                for q in chk_all:
+
+                    if q.export_status is True:
+
+                        q.old_imsi = q.imsi
+                        q.imsi = None
+                        q.export_status = None
+                        q.change_type = None
+                        q.operator_name = '{}'.format(mno)
+                        db.session.commit()
+
+                    else:
+                        q.imsi = None
+                        q.export_status = None
+                        q.change_type = None
+                        q.operator_name = '{}'.format(mno)
+                        db.session.commit()
+
+                rtn_msg = "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+
+            else:
+
+                rtn_msg = "MSISDN ({}) is not existed in any pair or SIM-Change request is already in process"\
+                    .format(sender_num)
+
+            return rtn_msg
+
+        elif not match_sender_no:
+            return "Sender MSISDN format is not correct"
+
+        elif not match_mno:
+            return "operator's name is not correct"
+
+    except Exception as e:
+        db.session.rollback()
+
+    finally:
+        db.session.close()

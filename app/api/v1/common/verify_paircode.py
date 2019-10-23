@@ -27,3 +27,55 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
+from app import db
+from app.api.v1.models.pairing_codes import Pairing_Codes
+from app.api.v1.models.imeis import Imei
+import re
+
+
+def vfy_paircode(pair_code, sms_imei):
+    """ Function to verify if provided pair-code is active and related to that particular mobile device"""
+    try:
+        rtn_rcv = ""
+
+        pattern_paircode = re.compile(r'[a-zA-Z0-9]{8}')
+        match_paircode = pattern_paircode.fullmatch(pair_code)
+
+        pattern_imei = re.compile(r'[A-F0-9]{14,16}')
+        match_imei = pattern_imei.fullmatch(sms_imei)
+
+        if match_paircode and match_imei:
+            chk_pc = Pairing_Codes.query.filter(Pairing_Codes.pair_code == '{}'.format(pair_code),
+                                                Pairing_Codes.is_active == True).first()
+
+                                    # checking pair-code's validity
+
+            if chk_pc:
+
+                chk_imei = Imei.query.filter(Imei.imei == '{}'.format(sms_imei),
+                                             Imei.device_id == '{}'.format(chk_pc.device_id)).all()
+
+                                # verify that IMEI is related to that pair-code
+
+                if chk_imei:
+                    rtn_rcv = "Pair-Code ({}) is active & associated with provided IMEI".format(pair_code)
+                else:
+                    rtn_rcv = "Pair-Code ({}) is not valid or not associated with provided IMEI".format(pair_code)
+
+            else:
+                rtn_rcv = "Pair-Code ({}) is not valid or not associated with provided IMEI".format(pair_code)
+
+            return rtn_rcv
+
+        elif not match_imei:
+            return "IMEI format is not correct"
+
+        elif not match_paircode:
+            return "Pair-Code format is not correct"
+
+    except Exception as e:
+       db.session.rollback()
+
+    finally:
+       db.session.close()
