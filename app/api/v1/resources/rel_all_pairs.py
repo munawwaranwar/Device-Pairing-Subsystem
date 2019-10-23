@@ -1,6 +1,4 @@
 """
-SPDX-License-Identifier: BSD-4-Clause-Clear
-
 Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
 
 All rights reserved.
@@ -9,65 +7,58 @@ Redistribution and use in source and binary forms, with or without modification,
 limitations in the disclaimer below) provided that the following conditions are met:
 
 * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-  disclaimer.
+disclaimer.
 * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
-  disclaimer in the documentation and/or other materials provided with the distribution.
-* All advertising materials mentioning features or use of this software, or any deployment of this software, or
-  documentation accompanying any distribution of this software, must display the trademark/logo as per the details
-  provided here: https://www.qualcomm.com/documents/dirbs-logo-and-brand-guidelines
+disclaimer in the documentation and/or other materials provided with the distribution.
 * Neither the name of Qualcomm Technologies, Inc. nor the names of its contributors may be used to endorse or promote
-  products derived from this software without specific prior written permission.
-
-SPDX-License-Identifier: ZLIB-ACKNOWLEDGEMENT
-
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
-
-This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable
-for any damages arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
-it and redistribute it freely, subject to the following restrictions:
-
-* The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If
-  you use this software in a product, an acknowledgment is required by displaying the trademark/logo as per the details
-  provided here: https://www.qualcomm.com/documents/dirbs-logo-and-brand-guidelines
+products derived from this software without specific prior written permission.
+* The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+If you use this software in a product, an acknowledgment is required by displaying the trademark/log as per the details
+provided here: https://www.qualcomm.com/documents/dirbs-logo-and-brand-guidelines
 * Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 * This notice may not be removed or altered from any source distribution.
 
 NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY
-THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
 """
 
-from time import strftime
-from app.api.v1.common.generate_paircode import gen_paircode
-from app.api.v1.models.pairing_codes import Pairing_Codes
-from app.api.v1.models.imeis import Imei
-from app.api.v1.models.pairings import Pairing
+
 from app import db
-import re
+from flask_babel import _
+from time import strftime
+from flask_restful import Resource
+from flask_apispec import use_kwargs
+from ..assets.response import *
+from ..models.imeis import Imei
+from ..models.pairings import Pairing
+from ..models.pairing_codes import Pairing_Codes
+from ..common.generate_paircode import gen_paircode
+from ..schema.input_schema import RelAllPairsSchema
+from ..assets.error_handlers import custom_text_response
 
 
-def rel_all(sender_no):
-    """ Function to remove all pairs simultaneously including the primary pair """
-    try:
-        rtn_msg = ""
-        rel_all_cond = 3
+# noinspection PyUnboundLocalVariable,PyUnusedLocal
+class ReleaseAllPairs(Resource):
+    """Flask resource to delete All-Pairs."""
 
-        pattern_msisdn = re.compile(r'923\d{9,12}')
-        match_primary = pattern_msisdn.fullmatch(sender_no)
+    @staticmethod
+    @use_kwargs(RelAllPairsSchema().fields_dict, locations=['json'])
+    def delete(**kwargs):
+        """method to delete/release All-Pairs"""
 
-        if match_primary:
+        try:
+            rtn_msg = ""
+            rel_all_cond = 3
+            chk_primary = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(kwargs['primary_msisdn']),
+                                                       Pairing.is_primary == True)).all()
+            # checking if request is originated from primary-pair
 
-            chk_primary = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(sender_no),
-                                               Pairing.is_primary == True)).all()
-
-                                    # checking if request is originated from primary-pair
             if chk_primary:
 
                 for q1 in chk_primary:
@@ -76,7 +67,7 @@ def rel_all(sender_no):
                         rel_all_cond = 1
                         q1.end_date = '{}'.format(strftime("%Y-%m-%d"))
 
-                        if q1.imsi is not None and q1.add_pair_status and q1.change_type == 'add'\
+                        if q1.imsi is not None and q1.add_pair_status and q1.change_type == 'add' \
                                 and q1.export_status is True:
 
                             # Condition checks only those pairs be exported as "removed" in pair-list
@@ -89,9 +80,9 @@ def rel_all(sender_no):
 
                             # Condition to avoid exporting this pair to DIRBS-CORE
 
-                            q1.export_status = None     # pragma: no cover
-                            q1.change_type = None       # pragma: no cover
-                            q1.old_imsi = None          # pragma: no cover
+                            q1.export_status = None  # pragma: no cover
+                            q1.change_type = None  # pragma: no cover
+                            q1.old_imsi = None  # pragma: no cover
 
                         elif q1.imsi is None and q1.export_status is None \
                                 and q1.change_type is None and q1.old_imsi is not None:
@@ -107,13 +98,13 @@ def rel_all(sender_no):
                         db.session.commit()
 
                         chk_sec_pairs = Pairing.query.filter(Pairing.primary_id == q1.id).all()
-                                                # checking if secondary pairs exist under primary
+                        # checking if secondary pairs exist under primary
 
                         if chk_sec_pairs:
 
                             for q2 in chk_sec_pairs:
 
-                                if q2.imsi is not None and q2.add_pair_status and q2.change_type == 'add'\
+                                if q2.imsi is not None and q2.add_pair_status and q2.change_type == 'add' \
                                         and q2.export_status and q2.end_date is None:
 
                                     # Condition checks only those pairs be exported as "removed" in pair-list
@@ -126,9 +117,9 @@ def rel_all(sender_no):
 
                                     # Condition to avoid exporting this pair to DIRBS-CORE
 
-                                    q2.export_status = None     # pragma: no cover
-                                    q2.change_type = None       # pragma: no cover
-                                    q2.old_imsi = None          # pragma: no cover
+                                    q2.export_status = None  # pragma: no cover
+                                    q2.change_type = None  # pragma: no cover
+                                    q2.old_imsi = None  # pragma: no cover
 
                                 elif q2.imsi is None and q2.export_status is None \
                                         and q2.change_type is None and q2.old_imsi is not None:
@@ -166,7 +157,7 @@ def rel_all(sender_no):
                 db.session.add(add_pc)
                 db.session.commit()
 
-                rtn_msg = "Release All-Pairs request is registered. New Pair Code is ({})".format(paircode)
+                rtn_msg = _("Release All-Pairs request is registered. New Pair Code is %(pc)s", pc=paircode)
 
             elif rel_all_cond == 2:
 
@@ -175,21 +166,17 @@ def rel_all(sender_no):
                 chk_paircode = Pairing_Codes.query.filter(Pairing_Codes.device_id == chk_dev_id.device_id,
                                                           Pairing_Codes.is_active == True).first()
 
-                rtn_msg = "Your new Pair-Code is ({}). " \
-                          "Release-All request is already registered and will be implemented within 24-48 hours"\
-                          .format(chk_paircode.pair_code)
+                rtn_msg = _("Your new Pair-Code is %(pc)s. Release-All request is already registered and will be implemented within 24-48 hours",
+                            pc=chk_paircode.pair_code)
 
             elif rel_all_cond == 3:
 
-                rtn_msg = "Release-All request not made by Primary-MSISDN"
+                rtn_msg = _("Release-All request not made by Primary-MSISDN")
 
-            return rtn_msg
+            return custom_text_response(rtn_msg, status=STATUS_CODES.get('OK'), mimetype=MIME_TYPES.get('TEXT'))
 
-        elif not match_primary:
-            return "Primary MSISDN format is not correct"
+        except Exception as e:
+            db.session.rollback()
 
-    except Exception as e:
-        db.session.rollback()
-
-    finally:
-        db.session.close()
+        finally:
+            db.session.close()

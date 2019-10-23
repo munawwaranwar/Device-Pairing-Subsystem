@@ -1,194 +1,280 @@
-# Spanish translations for PROJECT.
-# Copyright (C) 2019 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
+
+# Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
+# limitations in the disclaimer below) provided that the following conditions are met:
+
+# * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+# disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+# disclaimer in the documentation and/or other materials provided with the distribution.
+# * Neither the name of Qualcomm Technologies, Inc. nor the names of its contributors may be used to endorse or promote
+# products derived from this software without specific prior written permission.
+# * The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+# If you use this software in a product, an acknowledgment is required by displaying the trademark/log as per the details
+# provided here: https://www.qualcomm.com/documents/dirbs-logo-and-brand-guidelines
+# * Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+# * This notice may not be removed or altered from any source distribution.
+
+# NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY
+# THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-05-30 00:36+0500\n"
-"PO-Revision-Date: 2019-03-25 22:07+0500\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+
 "Language: es\n"
-"Language-Team: es <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.7.0\n"
 
-#: app/api/v1/common/athrty_inpt_form.py:94
-msgid "Device with same Serial number already exists"
-msgstr "El dispositivo con el mismo número de serie ya existe"
+#: app/api/v1/common/validations.py:45
+msgid "Pair-Code format is not correct"
+msgstr "El formato del código de par no es correcto"
 
-#: app/api/v1/common/athrty_inpt_form.py:166
-msgid "Device's information has been successfully loaded"
-msgstr "La información del dispositivo se ha cargado correctamente"
-
-#: app/api/v1/common/athrty_inpt_form.py:183
-#: app/api/v1/common/athrty_search_form.py:169
-msgid "Contact-MSISDN format is not correct"
-msgstr "El formato de contacto MSISDN no es correcto"
-
-#: app/api/v1/common/athrty_inpt_form.py:190
-msgid "Model format is not correct"
-msgstr "El formato del modelo no es correcto"
-
-#: app/api/v1/common/athrty_inpt_form.py:197
-msgid "Brand format is not correct"
-msgstr "Formato de marca no es correcto"
-
-#: app/api/v1/common/athrty_inpt_form.py:204
-msgid "RAT format is not correct"
-msgstr "El formato RAT no es correcto"
-
-#: app/api/v1/common/athrty_inpt_form.py:211
-#: app/api/v1/common/athrty_search_form.py:162
-msgid "Serial-Number format is not correct"
-msgstr "El formato del número de serie no es correcto"
-
-#: app/api/v1/common/athrty_inpt_form.py:218
-#: app/api/v1/common/athrty_search_form.py:155
-msgid "MAC format is not correct"
-msgstr "El formato MAC no es correcto"
-
-#: app/api/v1/common/athrty_inpt_form.py:225
-#: app/api/v1/common/athrty_search_form.py:176
-msgid "IMEI format is not correct"
-msgstr "El formato IMEI no es correcto"
-
-#: app/api/v1/common/athrty_search_form.py:183
-msgid "Start or Limit is not integer"
-msgstr "Inicio o Límite no es entero"
-
-#: app/api/v1/common/mno_bulk_upload.py:57
-msgid "improper Operator-name provided"
-msgstr "Nombre de operador incorrecto proporcionado"
-
-#: app/api/v1/common/mno_bulk_upload.py:75
-msgid "File type is not valid"
-msgstr "El tipo de archivo no es válido"
-
-#: app/api/v1/common/mno_bulk_upload.py:93
-msgid "File content is not Correct"
-msgstr "El contenido del archivo no es correcto"
-
-#: app/api/v1/common/mno_bulk_upload.py:103
-msgid "File headers are missing or incorrect"
-msgstr "Los encabezados de los archivos faltan o son incorrectos"
-
-#: app/api/v1/common/mno_bulk_upload.py:113
-msgid "File contains duplicated IMSIs"
-msgstr "El archivo contiene IMSI duplicados"
-
-#: app/api/v1/common/mno_bulk_upload.py:175
-msgid "No error file available"
-msgstr "No hay archivo de error disponible"
-
-#: app/api/v1/common/mno_bulk_upload.py:178
-msgid "File successfully loaded"
-msgstr "Archivo cargado correctamente"
-
-#: app/api/v1/common/mno_bulk_upload.py:189
-msgid "No file or improper file found"
-msgstr "Ningún archivo o archivo inadecuado encontrado"
-
-#: app/api/v1/common/mno_first_page.py:57
-msgid "improper Operator's name provided"
-msgstr "Nombre incorrecto del operador proporcionado"
-
-#: app/api/v1/common/mno_first_page.py:65
-msgid "Start or limit is not correct"
-msgstr "Inicio o límite no es correcto"
-
-#: app/api/v1/common/mno_first_page.py:117
-msgid "no record found"
-msgstr "ningún record fue encontrado"
-
-#: app/api/v1/common/mno_sngl_upload.py:59
-msgid "IMSI already exists"
-msgstr "IMSI ya existe"
-
-#: app/api/v1/common/mno_sngl_upload.py:66 app/api/v1/views/__init__.py:294
-msgid "Improper Operator-Name provided"
-msgstr "Nombre de operador incorrecto proporcionado"
-
-#: app/api/v1/common/mno_sngl_upload.py:79
+#: app/api/v1/common/validations.py:52
 msgid "MSISDN format is not correct"
 msgstr "El formato MSISDN no es correcto"
 
-#: app/api/v1/common/mno_sngl_upload.py:85
-msgid "IMSI format is not correct"
-msgstr "El formato IMSI no es correcto"
+#: app/api/v1/common/validations.py:59
+msgid "Model name is not correct"
+msgstr "El nombre del modelo no es correcto."
 
-#: app/api/v1/common/mno_sngl_upload.py:114
-msgid "IMSI added successfully"
-msgstr "IMSI agregado exitosamente"
+#: app/api/v1/common/validations.py:66
+msgid "Brand name is not correct"
+msgstr "La marca no es correcta"
 
-#: app/api/v1/common/mno_sngl_upload.py:117
-msgid "IMSI addition Failed"
-msgstr "Falló la adición de IMSI"
+#: app/api/v1/common/validations.py:73
+msgid "Serial Number is not correct"
+msgstr "El número de serie no es correcto"
 
-#: app/api/v1/views/__init__.py:187
+#: app/api/v1/common/validations.py:81
+msgid "MAC format is not correct"
+msgstr "El formato MAC no es correcto"
+
+#: app/api/v1/common/validations.py:88
+msgid "RAT is not correct"
+msgstr "RAT no es correcto"
+
+#: app/api/v1/common/validations.py:94
+msgid "Operator name is not correct"
+msgstr "El nombre del operador no es correcto."
+
+#: app/api/v1/common/validations.py:101 app/api/v1/common/validations.py:113
+msgid "IMEI is not correct"
+msgstr "IMEI no es correcto"
+
+#: app/api/v1/common/validations.py:107
+msgid "At least one IMEI is required"
+msgstr "Se requiere al menos un IMEI"
+
+#: app/api/v1/common/validations.py:109
 #, python-format
-msgid "%(key)s not found"
-msgstr "%(key)s no encontrado"
+msgid "Only %(var1)d IMEIs per device are allowed"
+msgstr "Solo se permiten %(var1)d IMEI por dispositivo"
 
-#: app/api/v1/views/__init__.py:196
-msgid "Country-Code not found"
-msgstr "Código de país no encontrado"
+#: app/api/v1/common/validations.py:120
+msgid "Confirmation String is not correct"
+msgstr "La cadena de confirmación no es correcta"
 
-#: app/api/v1/views/__init__.py:201
-msgid "Subscriber-Number not found"
-msgstr "Número de suscriptor no encontrado"
+#: app/api/v1/common/validations.py:128
+msgid "Start or Limit values are not correct"
+msgstr "Los valores de inicio o límite no son correctos"
 
-#: app/api/v1/views/__init__.py:224
+#: app/api/v1/common/validations.py:136
+msgid "IMSI is not correct"
+msgstr "IMSI no es correcto"
+
+#: app/api/v1/resources/additional_pairs.py:77
+msgid "Pairing limit breached: remove any existing pair first"
+msgstr "Límite de emparejamiento incumplido: elimine primero cualquier par existente"
+
+#: app/api/v1/resources/additional_pairs.py:83
 #, python-format
-msgid "Up to %(var1)s IMEIs per device are allowed only"
-msgstr "Solo se permiten hasta %(var1)s IMEI por dispositivo"
+msgid "MSISDN %(msisdn)s already paired with the device"
+msgstr "MSISDN %(msisdn)s ya emparejado con el dispositivo"
 
-#: app/api/v1/views/__init__.py:238
-msgid "search_args is not correct"
-msgstr "search_args no es correcto"
+#: app/api/v1/resources/additional_pairs.py:105
+#: app/api/v1/resources/additional_pairs.py:122
+#, python-format
+msgid "Secondary pair is added by %(primary)s. Confirmation is awaited from %(sec)s"
+msgstr "El par secundario se agrega por %(primary)s. Se espera confirmación de %(sec)s"
 
-#: app/api/v1/views/__init__.py:268 app/api/v1/views/__init__.py:332
-msgid "operator's name is missing"
-msgstr "Falta el nombre del operador"
+#: app/api/v1/resources/additional_pairs.py:129
+msgid "Request not made by Primary-Pair or number-to-be-added is Primary number"
+msgstr "La solicitud no realizada por Par primario o número a agregar es Número primario"
 
-#: app/api/v1/views/__init__.py:274
-msgid "start is missing"
-msgstr "falta el inicio"
+#: app/api/v1/resources/additional_pairs_confirm.py:77
+#, python-format
+msgid "Request of additional pair is rejected by %(sec)s"
+msgstr "La solicitud de par adicional es rechazada por %(sec)s"
 
-#: app/api/v1/views/__init__.py:280
-msgid "limit is missing"
-msgstr "falta el límite"
+#: app/api/v1/resources/additional_pairs_confirm.py:84
+#: app/api/v1/resources/additional_pairs_confirm.py:109
+msgid "Confirmation of additional pair request is not done by valid MSISDN"
+msgstr "El MSISDN válido no confirma la solicitud de par adicional"
 
-#: app/api/v1/views/__init__.py:299
+#: app/api/v1/resources/additional_pairs_confirm.py:102
+#, python-format
+msgid "Request of additional pair from %(prim)s is accepted by %(sec)s"
+msgstr "La solicitud de par adicional de %(prim)s es aceptada por %(sec)s"
+
+#: app/api/v1/resources/additional_pairs_confirm.py:112
+msgid "Wrong Primary number mentioned in SMS"
+msgstr "Número primario incorrecto mencionado en SMS"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:81
+msgid "File content is not Correct"
+msgstr "El contenido del archivo no es correcto"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:142
+msgid "File loaded successfully"
+msgstr "Archivo cargado correctamente"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:151
+msgid "File uploaded successfully without errors"
+msgstr "Archivo cargado exitosamente sin errores"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:154
+msgid "File contains duplicated IMSIs"
+msgstr "El archivo contiene IMSI duplicados"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:157
+msgid "File headers are incorrect"
+msgstr "Los encabezados de archivo son incorrectos"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:160
+msgid "System only accepts csv/txt files"
+msgstr "El sistema solo acepta archivos csv/txt"
+
+#: app/api/v1/resources/bulk_imsi_upload.py:166
+msgid "Please select csv/txt file"
+msgstr "Por favor seleccione el archivo csv/txt"
+
+#: app/api/v1/resources/bulk_msisdn_download.py:87
 msgid "No File found"
 msgstr "Archivo no encontrado"
 
-#: app/api/v1/views/__init__.py:319
-msgid "Country-Code is missing"
-msgstr "Falta el código del país"
+#: app/api/v1/resources/device_registration.py:61
+msgid "Device with same Serial number already exists"
+msgstr "El dispositivo con el mismo número de serie ya existe"
 
-#: app/api/v1/views/__init__.py:322
-msgid "Subscriber-Number is missing"
-msgstr "Falta el número de abonado"
+#: app/api/v1/resources/device_registration.py:100
+#, python-format
+msgid "Device has been registered with Authority. Your Activation Pair-Code is %(pc)s"
+msgstr "El dispositivo ha sido registrado con la Autoridad. Su código de par de activación es %(pc)s"
 
-#: app/api/v1/views/__init__.py:326
-msgid "MSISDN is missing"
-msgstr "Falta MSISDN"
+#: app/api/v1/resources/device_registration.py:109
+msgid "Device's information has been successfully loaded"
+msgstr "La información del dispositivo se ha cargado correctamente"
 
-#: app/api/v1/views/__init__.py:338
-msgid "IMSI is missing"
-msgstr "IMSI falta"
+#: app/api/v1/resources/device_search.py:118
+msgid "Please select any search parameter"
+msgstr "Por favor seleccione cualquier parámetro de búsqueda"
 
-#: app/api/v1/views/__init__.py:357
-msgid "URL is missing"
-msgstr "Falta la URL"
-
-#: app/api/v1/views/__init__.py:365
+#: app/api/v1/resources/download_error_file.py:53
 msgid "File not found"
 msgstr "Archivo no encontrado"
 
+#: app/api/v1/resources/download_error_file.py:59
+msgid "Error occurred while retrieving File."
+msgstr "Se produjo un error al recuperar el archivo."
+
+#: app/api/v1/resources/download_error_file.py:62
+msgid "Failed to retrieve Error File."
+msgstr "Error al recuperar el archivo de error."
+
+#: app/api/v1/resources/find_pairs.py:85
+#, python-format
+msgid "%(pm)s is not registered as Primary-Pair"
+msgstr "%(pm)s no está registrado como par primario"
+
+#: app/api/v1/resources/first_pair.py:83
+#, python-format
+msgid "PairCode %(v1)s is valid and your pair will be added in next 24 to 48 hours"
+msgstr "PairCode %(v1)s es válido y su par se agregará en las próximas 24 a 48 horas"
+
+#: app/api/v1/resources/first_pair.py:87
+msgid "MSISDN already exists as Primary-Pair"
+msgstr "MSISDN ya existe como par primario"
+
+#: app/api/v1/resources/first_pair.py:91
+#, python-format
+msgid "Pair Code %(pc)s is not Valid"
+msgstr "El código de par %(pc)s no es válido"
+
+#: app/api/v1/resources/mno_home_page.py:91
+msgid "no record found"
+msgstr "ningún record fue encontrado"
+
+#: app/api/v1/resources/rel_all_pairs.py:160
+#, python-format
+msgid "Release All-Pairs request is registered. New Pair Code is %(pc)s"
+msgstr "La solicitud de liberación de todos los pares está registrada. El nuevo código de par es %(pc)s"
+
+#: app/api/v1/resources/rel_all_pairs.py:169
+#, python-format
+msgid "Your new Pair-Code is %(pc)s. Release-All request is already registered and will be implemented within 24-48 hours"
+msgstr "Su nuevo código de par es %(pc)s. La solicitud Release-All ya está registrada y se implementará dentro de las 24-48 horas"
+
+#: app/api/v1/resources/rel_all_pairs.py:174
+msgid "Release-All request not made by Primary-MSISDN"
+msgstr "Solicitud Release-All no realizada por MSISDN primario"
+
+#: app/api/v1/resources/rel_single_pair.py:104
+msgid "Deletion request is successful. Pair will be removed in next 24 to 48 hours"
+msgstr "La solicitud de eliminación se realizó correctamente. El par se eliminará en las próximas 24 a 48 horas."
+
+#: app/api/v1/resources/rel_single_pair.py:107
+#, python-format
+msgid "MSISDN %(sec)s is not Paired with the device"
+msgstr "MSISDN %(sec)s no está emparejado con el dispositivo"
+
+#: app/api/v1/resources/rel_single_pair.py:109
+msgid "Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair"
+msgstr "El MSISDN primario no realiza la solicitud o el número que se va a eliminar pertenece al par primario"
+
+#: app/api/v1/resources/sim_change.py:79
+msgid "SIM Change request has been registered. The Pair will be active in 24 to 48 hours"
+msgstr "La solicitud de cambio de SIM ha sido registrada. El par estará activo en 24 a 48 horas."
+
+#: app/api/v1/resources/sim_change.py:83
+#, python-format
+msgid "MSISDN %(ms)s is not existed in any pair or SIM-Change request is already in process"
+msgstr "MSISDN %(ms)s no existe en ningún par o la solicitud de cambio de SIM ya está en proceso"
+
+#: app/api/v1/resources/single_imsi_upload.py:56
+msgid "IMSI already exists"
+msgstr "IMSI ya existe"
+
+#: app/api/v1/resources/single_imsi_upload.py:76
+msgid "IMSI added successfully"
+msgstr "IMSI agregado con éxito"
+
+#: app/api/v1/resources/single_imsi_upload.py:80
+msgid "IMSI addition Failed"
+msgstr "No se pudo agregar IMSI"
+
+#: app/api/v1/resources/verify_paircode.py:67
+#, python-format
+msgid "Pair-Code %(pc)s is active & associated with provided IMEI"
+msgstr "Pair-Code %(pc)s está activo y asociado con el IMEI proporcionado"
+
+#: app/api/v1/resources/verify_paircode.py:72
+#, python-format
+msgid "IMEI %(imei)s is not associated with Pair-Code %(paircode)s"
+msgstr "IMEI %(imei)s no está asociado con Pair-Code %(paircode)s"
+
+#: app/api/v1/resources/verify_paircode.py:78
+#, python-format
+msgid "Pair-Code %(pc)s is not valid"
+msgstr "El código de par %(pc)s no es válido"
