@@ -100,10 +100,14 @@ To Upgrade already installed database:
 python manage.py db upgrade
 ```
 
-
 To generate full pairing-list for DIRBS Core:
 ```bash
-python scripts/pairlist_generation.py
+python scripts/pairlist_gen_complete.py
+```
+
+To generate delta pairing-list for DIRBS Core:
+```bash
+python scripts/pairlist_gen_delta.py
 ```
 
 To delete un-confirmed pairs to clean-up main DB:
@@ -116,3 +120,20 @@ To run unit and regression tests:
 pytest -v -s
 ```
 
+To enable different languages & activate their translations from English
+```bash
+pybabel extract -F babel.cfg -k _l -o messages.pot .
+pybabel init -i messages.pot -d app/translations -l <language-code>
+```
+e.g to translate in Espanish 
+```bash
+pybabel init -i messages.pot -d app/translations -l es
+```
+Finally to compile the language
+```bash
+pybabel compile -d app/translations
+```
+To update any translation after compilation
+```bash
+pybabel update -i messages.pot -d app/translations -l es
+```
