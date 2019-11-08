@@ -32,6 +32,7 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 from .assets.error_handlers import *
 from flask_restful import Api
 from app import app
+from .resources.paircode_generation import PairCode
 from .resources.device_registration import DeviceRegistration
 from .resources.first_pair import FirstPair
 from .resources.additional_pairs import AdditionalPairs
@@ -50,13 +51,14 @@ from .resources.download_error_file import DownloadErrorFile
 
 api = Api(app, prefix='/api/v1')
 
+api.add_resource(PairCode, '/paircode')
 api.add_resource(FirstPair, '/first-pair')
 api.add_resource(DeviceRegistration, '/device-reg')
 api.add_resource(AdditionalPairs, '/secondary-pairs')
 api.add_resource(AdditionalPairsConfirmation, '/secondary-confirm')
 api.add_resource(ReleaseSinglePair, '/rel-single-pair')
 api.add_resource(ReleaseAllPairs, '/rel-all-pairs')
-api.add_resource(SimChange, '/sim-chg')
+api.add_resource(SimChange, '/sim-change')
 api.add_resource(VerifyPairCode, '/verify-paircode')
 api.add_resource(FindPairs, '/find-pairs')
 api.add_resource(DeviceSearch, '/device-search')

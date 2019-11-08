@@ -28,6 +28,7 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
+from app import conf
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 # noinspection PyProtectedMember
@@ -46,7 +47,7 @@ def test_first_pair_happy_case(flask_app, db, session):
     complete_db_insertion(session, db, 1, '923004171564', 1, 'Note5', 'Samsung', 'abcdefgh', '4G',
                           'OvfT4pGf', 1, '123456789098765')
 
-    payload = {"Pair_Code": 'OvfT4pGf', "Sender_No": "923040519777", "Operator": "jazz"}
+    payload = {"pair_code": 'OvfT4pGf', "sender_no": "923040519777", "operator": "jazz"}
     rslt = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload))
     print(rslt.data)
     assert rslt.status_code == 200
@@ -56,101 +57,142 @@ def test_first_pair_happy_case(flask_app, db, session):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_wrong_paircodes(flask_app, db):
     """ Verify that first-pair api accepts only valid pair-code """
-    pair_code_1 = 'pqZTDCgE4'
-    pair_code_2 = 'KliX6'
-    pair_code_3 = 'pqZ*DCgE'
-    payload_1 = {"Pair_Code": pair_code_1, "Sender_No": "923040519543", "Operator": "jazz"}
-    payload_2 = {"Pair_Code": pair_code_2, "Sender_No": "923040519543", "Operator": "jazz"}
-    payload_3 = {"Pair_Code": pair_code_3, "Sender_No": "923040519543", "Operator": "jazz"}
-    result_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
-    result_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
-    result_3 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_3))
-    assert result_1.status_code == 422
-    assert result_2.data == b"\"Pair-Code format is not correct\""
-    assert result_3.data == b"\"Pair-Code format is not correct\""
+
+    pair_codes = ["pqZTDCgE4", "KliX6", "pqZ*DCgE", "Ft#9J$k!"]
+    for pair_code in pair_codes:
+        payload = {"pair_code": pair_code, "sender_no": "923040519543", "operator": "jazz"}
+        result = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload))
+        print("Pair-Code =", pair_code, " : ", result.data)
+        assert result.status_code == 422
+        data = json.loads(result.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['pair_code'][0] == "Pair-Code format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['pair_code'][0] == "El formato del código de par no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['pair_code'][0] == "Format Pair-Code tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_valid_paircode(flask_app, db):
     """ Verify that first-pair api responds corectly when pair-code is valid """
+
     pair_code = 'pqZ5DCgE'
-    payload = {"Pair_Code": pair_code, "Sender_No": "923040519543", "Operator": "jazz"}
+    payload = {"pair_code": pair_code, "sender_no": "923040519543", "operator": "jazz"}
     rslt = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-    print(rslt.data)
-    assert not rslt.data == b"\"Pair-Code format is not correct\""
+    data = json.loads(rslt.data.decode('utf-8'))
+    print(data)
+    if conf['supported_languages']['default_language'] == 'en':
+        assert not data == "Pair-Code format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not data == "El formato del código de par no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert not data == "Format Pair-Code tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_wrong_sender_no(flask_app, db):
     """ Verify that first-pair api accepts only valid Sender_no """
-    sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
+    sender_no = ['9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
     for val in sender_no:
-        payload = {"Pair_Code": "pqZ5DCgE", "Sender_No": val, "Operator": "jazz"}
+        payload = {"pair_code": "pqZ5DCgE", "sender_no": val, "operator": "jazz"}
         rslt = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-        assert rslt.data == b"\"Sender MSISDN format is not correct\""
+        assert rslt.status_code == 422
+        data = json.loads(rslt.data.decode('utf-8'))
+        print("Sender_No =", val, " : ", data['message']['sender_no'][0])
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['sender_no'][0] == "MSISDN format is not correct"
+        if conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['sender_no'][0] == "El formato MSISDN no es correcto"
+        if conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['sender_no'][0] == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_first_pair_validations_valid_sender_no(flask_app, db):
-    """ Verify that first-pair api responds corectly when pair-code is valid """
+def test_first_pair_validations_valid_sender_no(flask_app, db, session):
+    """ Verify that first-pair api responds corectly when sender_no is valid """
+
+    complete_db_insertion(session, db, 999, '923004107404', 999, 'OnePlus5', 'OnePlus', 'abcdef999', '4G',
+                          'CACF0999', 999, '111111111111111')
     sender_no = '923008173629'
-    payload = {"Pair_Code": "pqZ5DCgE", "Sender_No": sender_no, "Operator": "jazz"}
+    payload = {"pair_code": "CACF0999", "sender_no": sender_no, "operator": "jazz"}
     rslt = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-    print(rslt.data)
-    assert not rslt.data == b"\"Sender MSISDN format is not correct\""
+    data = json.loads(rslt.data.decode('utf-8'))
+    print(data)
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "PairCode CACF0999 is valid and your pair will be added in next 24 to 48 hours"
+        assert not data == "MSISDN format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "PairCode CACF0999 es válido y su par se agregará en las próximas 24 a 48 horas"
+        assert not data == "El formato MSISDN no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "PairCode CACF0999 valid dan pasangan Anda akan ditambahkan dalam 24 hingga 48 jam ke depan"
+        assert not data == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_validations_operator_name(flask_app, db):
     """ Verify that first-pair api accepts only valid pair-code """
+
     mno_1 = 'j@zz'
     mno_2 = 'telenor'
-    payload_1 = {"Pair_Code": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": mno_1}
-    payload_2 = {"Pair_Code": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": mno_2}
+    payload_1 = {"pair_code": "pqZ5DCgE", "sender_no": "923040519543", "operator": mno_1}
+    payload_2 = {"pair_code": "pqZ5DCgE", "sender_no": "923040519543", "operator": mno_2}
     result_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     result_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
-    print(result_1.data)
+
+    assert result_1.status_code == 422
+    data = json.loads(result_1.data.decode('utf-8'))
     print(result_2.data)
-    assert result_1.data == b"\"MNO's name is not in correct format\""
-    assert not result_2.data == b"\"MNO's name is not in correct format\""
+    print("Operator =", mno_1, " : ", data['message']['operator'][0])
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data['message']['operator'][0] == "Operator name is not correct"
+        assert not result_2.data == b"\"Operator name is not correct\""
+    if conf['supported_languages']['default_language'] == 'es':
+        assert data['message']['operator'][0] == "El nombre del operador no es correcto."
+        assert not result_2.data == b"\"El nombre del operador no es correcto.\""
+    if conf['supported_languages']['default_language'] == 'id':
+        assert data['message']['operator'][0] == "Nama operator tidak benar"
+        assert not result_2.data == b"\"Nama operator tidak benar\""
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_missing_parameters(flask_app, db):
     """ Verify that first-pair api prompts when any parameter is missing """
-    payload_1 = {"Sender_No": "923040519543", "Operator": "jazz"}
-    payload_2 = {"Pair_Code": "pqZ5DCgE", "Operator": "jazz"}
-    payload_3 = {"Pair_Code": "pqZ5DCgE", "Sender_No": "923040519543"}
+    payload_1 = {"sender_no": "923040519543", "operator": "jazz"}
+    payload_2 = {"pair_code": "pqZ5DCgE", "operator": "jazz"}
+    payload_3 = {"pair_code": "pqZ5DCgE", "sender_no": "923040519543"}
     result_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     result_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
     result_3 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_3))
-    assert result_1.data == b"Pair-Code is missing in SMS"
-    assert result_2.data == b"sender number is missing in SMS"
-    assert result_3.data == b"operator's name is missing in SMS"
-
-
-# noinspection PyUnusedLocal,PyShadowingNames
-def test_first_pair_error_400_bad_request(flask_app, db):
-    """ Verify that first-pair api prompts when Error-400 is occurred """
-    payload = {"Pair_Co": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "ufone"}
-    result = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=payload)
-    print(result.data)
-    assert result.status_code == 400
+    data_1 = json.loads(result_1.data.decode('utf-8'))
+    data_2 = json.loads(result_2.data.decode('utf-8'))
+    data_3 = json.loads(result_3.data.decode('utf-8'))
+    assert data_1['message']['pair_code'][0] == "Missing data for required field."
+    assert result_1.status_code == 422
+    assert data_2['message']['sender_no'][0] == "Missing data for required field."
+    assert result_2.status_code == 422
+    assert data_3['message']['operator'][0] == "Missing data for required field."
+    assert result_3.status_code == 422
+    print(result_1.data)
+    print(result_2.data)
+    print(result_3.data)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_first_pair_error_404_wrong_api(flask_app, db):
     """ Verify that first-pair api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/firsttt-pairrrrr'
-    payload = {"Pair_Co": "pqZ5DCgE", "Sender_No": "923040519543", "Operator": "telenor"}
+    payload = {"pair_code": "pqZ5DCgE", "sender_no": "923040519543", "operator": "telenor"}
     result = flask_app.post(tmp_api, headers=HEADERS, data=payload)
     print(result.data)
     assert result.status_code == 404
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,DuplicatedCode
 def test_first_pair_error_405_method_not_allowed(flask_app, db):
     """ Verify that first-pair api prompts when Error-405 is occurred """
+
     res1 = flask_app.get(FIRST_PAIR_API)
     assert res1.status_code == 405
     res2 = flask_app.put(FIRST_PAIR_API)
@@ -161,7 +203,7 @@ def test_first_pair_error_405_method_not_allowed(flask_app, db):
     assert res4.status_code == 405
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,DuplicatedCode
 def test_first_pair_functionality_msisdn_already_exist(flask_app, db, session):
     """ verifying the first-pair doesn't allow duplicated primary MSISDN """
     complete_db_insertion(session, db, 2, '923004171565', 2, 'Note-8', 'Samsung', 'a1b2c3d4e5', '4G', 'AxT3pGf9', 2,
@@ -169,16 +211,21 @@ def test_first_pair_functionality_msisdn_already_exist(flask_app, db, session):
     complete_db_insertion(session, db, 3, '923458209871', 3, 'Note-9', 'Samsung', 'AaBbCcDdEe', '4G', 'GMiQ0D3w', 3,
                           '310987923089462')
 
-    payload_1 = {"Pair_Code": 'AxT3pGf9', "Sender_No": "923137248795", "Operator": "zong"}
+    payload_1 = {"pair_code": 'AxT3pGf9', "sender_no": "923137248795", "operator": "zong"}
     res_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     print(res_1.data)
-    payload_2 = {"Pair_Code": 'GMiQ0D3w', "Sender_No": "923137248795", "Operator": "zong"}
+    payload_2 = {"pair_code": 'GMiQ0D3w', "sender_no": "923137248795", "operator": "zong"}
     res_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
     print(res_2.data)
-    assert res_2.data == b"\"MSISDN already exists as Primary-Pair\""
+    if conf['supported_languages']['default_language'] == 'en':
+        assert res_2.data == b"\"MSISDN already exists as Primary-Pair\""
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert res_2.data == b"\"MSISDN ya existe como par primario\""
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert res_2.data == b"\"MSISDN sudah ada sebagai Pasangan Primer\""
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,DuplicatedCode
 def test_first_pair_functionality_invalid_paircode(flask_app, db, session):
     """ verifying the first-pair doesn't allow invalid pair-code or paircode not found in DB """
     complete_db_insertion(session, db, 4, '923004171565', 4, 'S-8', 'Samsung', 'a1b2c3d4uu', '3G,4G', 'A1b2C3d4', 4,
@@ -186,14 +233,28 @@ def test_first_pair_functionality_invalid_paircode(flask_app, db, session):
     complete_db_insertion(session, db, 5, '923458209871', 5, 'S-9', 'Samsung', 'AaBbCcDdvv', '3G,4G', 'GMiCTD3w', 5,
                           '310987923086789')
 
-    payload_1 = {"Pair_Code": 'A1b2C3d4', "Sender_No": "923146398444", "Operator": "zong"}
+    payload_1 = {"pair_code": 'A1b2C3d4', "sender_no": "923146398444", "operator": "zong"}
     res_1 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     print(res_1.data)
-    payload_2 = {"Pair_Code": 'A1b2C3d4', "Sender_No": "923218450713", "Operator": "warid"}
+
+    payload_2 = {"pair_code": 'A1b2C3d4', "sender_no": "923218450713", "operator": "warid"}
     res_2 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
-    print(res_2.data)
-    assert res_2.data == b"\"Pair Code (A1b2C3d4) is not Valid\""
-    payload_3 = {"Pair_Code": 'AaBbCcDd', "Sender_No": "923339014785", "Operator": "warid"}
+    data_2 = json.loads(res_2.data.decode('utf-8'))
+    print(data_2)
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data_2 == "Pair Code A1b2C3d4 is not Valid"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data_2 == "El código de par A1b2C3d4 no es válido"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data_2 == "Kode Pair A1b2C3d4 Tidak Valid"
+
+    payload_3 = {"pair_code": 'AaBbCcDd', "sender_no": "923339014785", "operator": "warid"}
     res_3 = flask_app.post(FIRST_PAIR_API, headers=HEADERS, data=json.dumps(payload_3))
+    data_3 = json.loads(res_3.data.decode('utf-8'))
     print(res_3.data)
-    assert res_3.data == b"\"Pair Code (AaBbCcDd) is not Valid\""  # pair-code not in database
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data_3 == "Pair Code AaBbCcDd is not Valid"   # pair-code not in database
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data_3 == "El código de par AaBbCcDd no es válido"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data_3 == "Kode Pair AaBbCcDd Tidak Valid"

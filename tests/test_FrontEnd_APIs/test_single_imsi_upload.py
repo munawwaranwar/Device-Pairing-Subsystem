@@ -37,28 +37,28 @@ import json
 from app import conf
 from sqlalchemy import text
 
-MNO_IMSI_UPLOAD = 'api/v1/mno-single-upload'
+MNO_IMSI_UPLOAD = 'api/v1/single-imsi-upload'
 HEADERS = {'Content-Type': "application/json"}
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_imsi_happy_case_primary_pair(flask_app, db, session):
-    """ Verify that mno-single-imsi api provides IMSI addition for primary pair """
+    """ Verify that single-imsi-upload api provides IMSI addition for primary pair """
 
     complete_db_insertion(session, db, 150, '923216778901', 150, 'G3', 'LG', 's5T98JhZx', '2G,3G',
                           'Z4Cghf6l', 150, '112233445566778')
     first_pair_db_insertion(session, db, 150, '923214567456', 'warid', 150)
-    payload = mno_imsi_upload('92', '3214567456', 'warid', '410049988776655')
+    payload = mno_imsi_upload('923214567456', 'warid', '410049988776655')
     rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(payload))
+    print("\n", rs.data)
     d1 = json.loads(rs.data.decode('utf-8'))
     assert rs.status_code == 200
-    print(d1)
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('msg') == 'IMSI added successfully'
+        assert d1.get('message') == 'IMSI added successfully'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('msg') == "IMSI agregado exitosamente"
+        assert d1.get('message') == "IMSI agregado con éxito"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('msg') == "IMSI berhasil ditambahkan"
+        assert d1.get('message') == "IMSI berhasil ditambahkan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -70,17 +70,17 @@ def test_mno_single_imsi_happy_case_secondary_pair(flask_app, db, session):
     first_pair_db_insertion(session, db, 152, '923145406911', 'zong', 151)
     add_pair_db_insertion(session, db, 153, 152, '923125840917', 151)
     add_pair_confrm_db_insertion(session, db, '923125840917', 152, 'zong')
-    payload = mno_imsi_upload('92', '3125840917', 'zong', '410071122334455')
+    payload = mno_imsi_upload('923125840917', 'zong', '410071122334455')
     rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(payload))
     d1 = json.loads(rs.data.decode('utf-8'))
     assert rs.status_code == 200
     print(d1)
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('msg') == 'IMSI added successfully'
+        assert d1.get('message') == 'IMSI added successfully'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('msg') == "IMSI agregado exitosamente"
+        assert d1.get('message') == "IMSI agregado con éxito"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('msg') == "IMSI berhasil ditambahkan"
+        assert d1.get('message') == "IMSI berhasil ditambahkan"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -93,52 +93,42 @@ def test_mno_single_imsi_functionality_imsi_duplication(flask_app, db, session):
                           'H9solPt5', 154, '723092217845603')
     first_pair_db_insertion(session, db, 154, '923462197056', 'telenor', 153)
     first_pair_db_insertion(session, db, 155, '923003819457', 'jazz', 154)
-    pl_1 = mno_imsi_upload('92', '3462197056', 'telenor', '410036667778889')
-    pl_2 = mno_imsi_upload('92', '3003819457', 'jazz', '410036667778889')
+    pl_1 = mno_imsi_upload('923462197056', 'telenor', '410036667778889')
+    pl_2 = mno_imsi_upload('923003819457', 'jazz', '410036667778889')
     rs_1 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_1))
     assert rs_1.status_code == 200
+    print("\n", rs_1.data)
     rs_2 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_2))
     assert rs_2.status_code == 422
     d1 = json.loads(rs_2.data.decode('utf-8'))
     print(d1)
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('Error') == 'IMSI already exists'
+        assert d1.get('message') == 'IMSI already exists'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('Error') == "IMSI ya existe"
+        assert d1.get('message') == "IMSI ya existe"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('Error') == "IMSI sudah ada"
+        assert d1.get('message') == "IMSI sudah ada"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_mno_single_imsi_validations_wrong_mno_and_msisdn(flask_app, db, session):
-    """ Verify that mno-single-imsi api doesn't allow IMSI updation for wrong operator name and MSISDN"""
+def test_mno_single_imsi_validations_wrong_mno(flask_app, db, session):
+    """ Verify that mno-single-imsi api doesn't allow IMSI updation for wrong operator name"""
 
     complete_db_insertion(session, db, 155, '923335888777', 155, 'iphone-8', 'Apple', 'GfT6YhD3', '2G,3G,4G',
                           'Sq3rU2tC', 155, '891264786729436')
     first_pair_db_insertion(session, db, 156, '923348960442', 'ufone', 155)
-    pl_1 = mno_imsi_upload('92', '3348960442', 'telenor', '410031111444466')
+    pl_1 = mno_imsi_upload('923348960442', 'telenor', '410031111444466')   # wrong operator name
     rs_1 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_1))
     assert rs_1.status_code == 422
     d1 = json.loads(rs_1.data.decode('utf-8'))
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('msg') == 'IMSI addition Failed'
+        assert d1.get('message') == 'IMSI addition Failed'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('msg') == "Falló la adición de IMSI"
+        assert d1.get('message') == "No se pudo agregar IMSI"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('msg') == "Penambahan IMSI Gagal"
-    print(d1)
+        assert d1.get('message') == "Penambahan IMSI Gagal"
+    print("\n", d1)
 
-    pl_2 = mno_imsi_upload('92', '3341111111', 'ufone', '410031111444466')  # wrong
-    rs_2 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_2))
-    assert rs_2.status_code == 422
-    d2 = json.loads(rs_2.data.decode('utf-8'))
-    if conf['supported_languages']['default_language'] == 'en':
-        assert d2.get('msg') == 'IMSI addition Failed'
-    elif conf['supported_languages']['default_language'] == 'es':
-        assert d2.get('msg') == "Falló la adición de IMSI"
-    elif conf['supported_languages']['default_language'] == 'id':
-        assert d2.get('msg') == "Penambahan IMSI Gagal"
-    print(d2)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -149,20 +139,20 @@ def test_mno_single_imsi_functionality_unconfirmed_pair(flask_app, db, session):
                           'g8Cad3kL', 156, '891264786729436')
     first_pair_db_insertion(session, db, 157, '923357788994', 'ufone', 156)
     add_pair_db_insertion(session, db, 158, 157, '923136783456', 156)
-    pl = mno_imsi_upload('92', '3136783456', 'zong', '410072334455667')
+    pl = mno_imsi_upload('923136783456', 'zong', '410072334455667')
     rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('msg') == 'IMSI addition Failed'
+        assert d1.get('message') == 'IMSI addition Failed'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('msg') == "Falló la adición de IMSI"
+        assert d1.get('message') == "No se pudo agregar IMSI"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('msg') == "Penambahan IMSI Gagal"
+        assert d1.get('message') == "Penambahan IMSI Gagal"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_mno_single_imsi_functionality_deleted_pair(flask_app, db, session):
     """ Verify that mno-single-imsi api doesn't allow IMSI updation for deleted-pairs"""
 
@@ -170,17 +160,17 @@ def test_mno_single_imsi_functionality_deleted_pair(flask_app, db, session):
                           'Gh6Ei9oS', 157, '891264786729436')
     first_pair_db_insertion(session, db, 159, '923226510989', 'warid', 157)
     session.execute(text("""UPDATE public.pairing SET end_date = '2018-11-18' WHERE msisdn = '923226510989';"""))
-    pl = mno_imsi_upload('92', '3226510989', 'warid', '410054443332221')
+    pl = mno_imsi_upload('923226510989', 'warid', '410054443332221')
     rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('msg') == 'IMSI addition Failed'
+        assert d1.get('message') == 'IMSI addition Failed'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('msg') == "Falló la adición de IMSI"
+        assert d1.get('message') == "No se pudo agregar IMSI"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('msg') == "Penambahan IMSI Gagal"
+        assert d1.get('message') == "Penambahan IMSI Gagal"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -188,7 +178,7 @@ def test_mno_single_imsi_error_404_wrong_api(flask_app, db):
     """ Verify that mno-single-imsi api prompts when Error-404 is occurred """
 
     tmp_api = 'api/v1/mnoooo-singleeee-uploadddd'
-    pl = mno_imsi_upload('92', '3226510989', 'warid', '410054443332221')
+    pl = mno_imsi_upload('923226510989', 'warid', '410054443332221')
     rs = flask_app.put(tmp_api, headers=HEADERS, data=json.dumps(pl))
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
@@ -210,58 +200,62 @@ def test_mno_single_imsi_error_405_method_not_allowed(flask_app, db):
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_mno_single_validations_invalid_counrty_code(flask_app, db):
-    """Verify that mno-single-imsi api doesn't allow invalid country-code"""
-    country_code = '0971'
-    pl = mno_imsi_upload(country_code, '3226510989', 'warid', '410054443332221')
-    rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
-    assert rs.status_code == 422
-    d1 = json.loads(rs.data.decode('utf-8'))
-    print(d1)
-    if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('Error') == 'MSISDN format is not correct'
-    elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('Error') == "El formato MSISDN no es correcto"
-    elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('Error') == "Format MSISDN tidak benar"
-
-
-# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_validations_invalid_subscriber_no(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow invalid subscriber-number """
 
-    sn = ['30021619047892364', '30a21D19x4', '30@216!904$']
+    sn = ['9230021619047892364', '30014', '30a21D19x4', '30@216!904$', '']
     for val in sn:
-        pl = mno_imsi_upload('92', val, 'warid', '410054443332221')
+        pl = mno_imsi_upload(val, 'warid', '410054443332221')
         rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, val)
         if conf['supported_languages']['default_language'] == 'en':
-            assert d1.get('Error') == 'MSISDN format is not correct'
+            assert d1['message']['msisdn'][0] == 'MSISDN format is not correct'
         elif conf['supported_languages']['default_language'] == 'es':
-            assert d1.get('Error') == "El formato MSISDN no es correcto"
+            assert d1['message']['msisdn'][0] == "El formato MSISDN no es correcto"
         elif conf['supported_languages']['default_language'] == 'id':
-            assert d1.get('Error') == "Format MSISDN tidak benar"
+            assert d1['message']['msisdn'][0] == "Format MSISDN tidak benar"
 
 
-        # noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames
+def test_mno_single_imsi_validations_msisdn(flask_app, db, session):
+    """ Verify that mno-single-imsi api doesn't allow IMSI updation for wrong MSISDN"""
+
+    complete_db_insertion(session, db, 175, '923335888777', 175, 'iphone-8', 'Apple', 'GfT6YhD3', '2G,3G,4G',
+                          'GhTr12tC', 175, '891264786729436')
+    first_pair_db_insertion(session, db, 176, '923348960442', 'ufone', 175)
+
+    pl_2 = mno_imsi_upload('923341111111', 'ufone', '410031111444466')      # wrong MSISDN
+    rs_2 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_2))
+    assert rs_2.status_code == 422
+    d2 = json.loads(rs_2.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d2.get('message') == 'IMSI addition Failed'
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d2.get('message') == "No se pudo agregar IMSI"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d2.get('message') == "Penambahan IMSI Gagal"
+    print("\n", d2)
+
+
+# noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_validations_invalid_imsi(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow invalid IMSI """
 
-    imsi = ['4100181', '410048956738902536', '41OO12l6o4z6a9N', '4!00|2l6@4^6#9&']
+    imsi = ['4100181', '410048956738902536', '41OO12l6o4z6a9N', '4!00|2l6@4^6#9&', '']
     for val in imsi:
-        pl = mno_imsi_upload('92', '3226510989', 'warid', val)
+        pl = mno_imsi_upload('923226510989', 'warid', val)
         rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, val)
         if conf['supported_languages']['default_language'] == 'en':
-            assert d1.get('Error') == 'IMSI format is not correct'
+            assert d1['message']['imsi'][0] == 'IMSI is not correct'
         elif conf['supported_languages']['default_language'] == 'es':
-            assert d1.get('Error') == "El formato IMSI no es correcto"
+            assert d1['message']['imsi'][0] == "IMSI no es correcto"
         elif conf['supported_languages']['default_language'] == 'id':
-            assert d1.get('Error') == "Format IMSI tidak benar"
+            assert d1['message']['imsi'][0] == "IMSI tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -269,74 +263,48 @@ def test_mno_single_validations_operator_names(flask_app, db):
     """Verify that mno-single-imsi api doesn't allow mno names other than mentioned in configuration file"""
 
     mno = ['jazz', 'telenor', 'zong', 'ufone', 'warid']
-    f_mno = ['j@zz', 'Vodafone', 'T-Mobile', 'Orange', 'wariid']
+    f_mno = ['j@zz', 'Vodafone', 'T-Mobile', 'Orange', 'wariid', 'UF0n3', '']
 
     for val in mno:
-        pl = mno_imsi_upload('92', '3226510989', val, '410054443332221')
+        pl = mno_imsi_upload('923226510989', val, '410054443332221')
         rs = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         d1 = json.loads(rs.data.decode('utf-8'))
         print('correct operator name: ', val)
+        print(rs.data)
         if conf['supported_languages']['default_language'] == 'en':
-            assert not d1.get('Error') == "Improper Operator-Name provided"
+            assert not d1.get('message') == "Operator name is not correct"
         elif conf['supported_languages']['default_language'] == 'es':
-            assert not d1.get('Error') == "Nombre de operador incorrecto proporcionado"
+            assert not d1.get('message') == "Nombre de operador incorrecto proporcionado"
         elif conf['supported_languages']['default_language'] == 'id':
-            assert not d1.get('Error') == "Nama Operator yang Tidak Benar disediakan"
+            assert not d1.get('message') == "Nama Operator yang Tidak Benar disediakan"
 
     for v in f_mno:
-        pl = mno_imsi_upload('92', '3226510989', v, '410054443332221')
+        pl = mno_imsi_upload('923226510989', v, '410054443332221')
         rs_1 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl))
         f_d1 = json.loads(rs_1.data.decode('utf-8'))
-        print(f_d1, v)
+        print('\nIncorrect operator name: ', v)
+        print(rs_1.data)
         if conf['supported_languages']['default_language'] == 'en':
-            assert f_d1.get('Error') == "Improper Operator-Name provided"
+            assert f_d1['message']['operator'][0] == "Operator name is not correct"
         elif conf['supported_languages']['default_language'] == 'es':
-            assert f_d1.get('Error') == "Nombre de operador incorrecto proporcionado"
+            assert f_d1['message']['operator'][0] == "El nombre del operador no es correcto."
         elif conf['supported_languages']['default_language'] == 'id':
-            assert f_d1.get('Error') == "Nama Operator yang Tidak Benar disediakan"
+            assert f_d1['message']['operator'][0] == "Nama operator tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_mno_single_missing_parameters(flask_app, db):
     """ Verify that mno-single-imsi api prompts when any parameter is missing """
-    for cond in range(1, 6):
-        pl_1 = mno_imsi_upload('92', '3226510989', 'telenor', '410054443332221', cond)
+    for cond in range(1, 4):
+        pl_1 = mno_imsi_upload('923226510989', 'telenor', '410054443332221', cond)
         rs_1 = flask_app.put(MNO_IMSI_UPLOAD, headers=HEADERS, data=json.dumps(pl_1))
         assert rs_1.status_code == 422
         d1 = json.loads(rs_1.data.decode('utf-8'))
-        print(d1)
-        if conf['supported_languages']['default_language'] == 'en':
-            if cond == 1:
-                assert d1.get('Error') == 'Country-Code is missing'
-            elif cond == 2:
-                assert d1.get('Error') == 'Subscriber-Number is missing'
-            elif cond == 3:
-                assert d1.get('Error') == "operator's name is missing"
-            elif cond == 4:
-                assert d1.get('Error') == "IMSI is missing"
-            elif cond == 5:
-                assert d1.get('Error') == "MSISDN is missing"
+        print("\n", d1)
 
-        elif conf['supported_languages']['default_language'] == 'es':
-            if cond == 1:
-                assert d1.get('Error') == "Falta el código del país"
-            elif cond == 2:
-                assert d1.get('Error') == "Falta el número de abonado"
-            elif cond == 3:
-                assert d1.get('Error') == "Falta el nombre del operador"
-            elif cond == 4:
-                assert d1.get('Error') == "IMSI falta"
-            elif cond == 5:
-                assert d1.get('Error') == "Falta MSISDN"
-
-        elif conf['supported_languages']['default_language'] == 'id':
-            if cond == 1:
-                assert d1.get('Error') == "Kode Negara tidak ada"
-            elif cond == 2:
-                assert d1.get('Error') == "Nomor Pelanggan tidak ada"
-            elif cond == 3:
-                assert d1.get('Error') == "nama operator tidak ada"
-            elif cond == 4:
-                assert d1.get('Error') == "IMSI tidak ada"
-            elif cond == 5:
-                assert d1.get('Error') == "MSISDN tidak ada"
+        if cond == 1:
+            assert d1['message']['msisdn'][0] == "Missing data for required field."
+        elif cond == 2:
+            assert d1['message']['operator'][0] == "Missing data for required field."
+        elif cond == 3:
+            assert d1['message']['imsi'][0] == "Missing data for required field."

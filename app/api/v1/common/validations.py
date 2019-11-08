@@ -75,7 +75,8 @@ class Validations:
     @staticmethod
     def validate_mac(mac):
         """Validates MAC Name."""
-        if mac is not "" and not mac and mac is not None:
+
+        if mac is not "" or not mac or mac is not None:
             match_mac = re.match(conf['validation_regex']['mac'], mac)
             if match_mac is None:
                 raise ValidationError(_('MAC format is not correct'))

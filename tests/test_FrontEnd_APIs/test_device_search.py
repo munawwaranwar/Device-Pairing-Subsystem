@@ -35,19 +35,25 @@ from tests._helpers import *
 import json
 from app import conf
 
-ATHTY_SEARCH = 'api/v1/authority-search'
+DEVICE_SEARCH = 'api/v1/device-search'
 HEADERS = {'Content-Type': "application/json"}
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_happy_case(flask_app, db, session):
-    """ Verify that athty-serach provides correct search result """
+    """ Verify that device-search provides correct search result """
 
-    athty_search_db_insertion(session, db, 701, '923145309633', 701, 'Note5', 'Samsung', '1234GHb4y', '3G,4G',
-                              'g8qquEVQ', 701, ['111111111111111'], "20:AB:56:AF:44:C4")
+    contact = "923145309633"
+    mac = "20:AB:56:AF:44:C4"
+    serial_no = "1234GHb4y"
+    imei = "111111111111111"
 
-    payload = athty_search_payload(0, 5, "111111111111111", "20:AB:56:AF:44:C4", "1234GHb4y", "923145309633", 0)
-    rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+    athty_search_db_insertion(session, db, 701, contact, 701, 'Note5', 'Samsung', serial_no, '3G,4G',
+                              'g8qquEVQ', 701, [imei], mac)
+    url = '{api}?start=0&limit=5&contact={msisdn}&imei={imei}&mac={mac}&serial_no={sno}'.\
+           format(api=DEVICE_SEARCH, msisdn=contact, imei=imei, mac=mac, sno=serial_no)
+
+    rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     assert rs.status_code == 200
@@ -58,16 +64,21 @@ def test_athty_search_happy_case(flask_app, db, session):
 def test_athty_search_functionality_missing_parameters(flask_app, db, session):
     """ Verify that athty-serach supports search by any parameter """
 
-    athty_search_db_insertion(session, db, 702, '923158154773', 702, 'F-6', 'OPPO', '1234GHAAA', '4G',
-                              'kyDCAmL1', 702, ['222222222222222'], "20:AB:5C:AF:44:AD")
+    contact = "923158154773"
+    mac = "20:AB:5C:AF:44:AD"
+    serial_no = "1234GHAAA"
+    imei = "222222222222222"
+
+    athty_search_db_insertion(session, db, 702, contact, 702, 'F-6', 'OPPO', serial_no, '4G',
+                              'kyDCAmL1', 702, [imei], mac)
 
     for val in range(1, 5):
-        payload = athty_search_payload(0, 5, "222222222222222", "20:AB:5C:AF:44:AD", "1234GHAAA", "923158154773", val)
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+        url = athty_search_payload(0, 5, "222222222222222", "20:AB:5C:AF:44:AD", "1234GHAAA", "923158154773", val)
+        rs = flask_app.get(url)
         d1 = json.loads(rs.data.decode('utf-8'))
         assert rs.status_code == 200
         assert d1['cases'] != []
-    print(d1)
+        print("\n", d1)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -76,13 +87,14 @@ def test_athty_search_functionality_single_parameter_search(flask_app, db, sessi
 
     athty_search_db_insertion(session, db, 703, '923006819263', 703, 'RedMi', 'Xiamo', 'U87Hsr',
                               '3G,4G', 'QBADXNGZ', 703, ['333333333333333'], "F0:CB:AD:EF:84:FD")
+
     for val in range(5, 9):
-        payload = athty_search_payload(0, 5, "333333333333333", "F0:CB:AD:EF:84:FD", "U87Hsr", "923006819263", val)
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+        url = athty_search_payload(0, 5, "333333333333333", "F0:CB:AD:EF:84:FD", "U87Hsr", "923006819263", val)
+        rs = flask_app.get(url)
         d1 = json.loads(rs.data.decode('utf-8'))
         assert rs.status_code == 200
         assert d1['cases'] != []
-    print(d1)
+        print(d1)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -91,13 +103,17 @@ def test_athty_search_functionality_no_search_parameter(flask_app, db, session):
 
     athty_search_db_insertion(session, db, 704, '923218965339', 704, 'Nokia-8', 'NOKIA', '0oa36Th7Fe',
                               '3G,4G', 'm9p4dViX', 704, ['444444444444444'], "78:C3:AD:54:84:FD")
-    payload = athty_search_payload(0, 5, "444444444444444", "78:C3:AD:54:84:FD", "0oa36Th7Fe", "923218965339", 9)
-    rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+    url = athty_search_payload(0, 5, "444444444444444", "78:C3:AD:54:84:FD", "0oa36Th7Fe", "923218965339", 9)
+    rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
-    assert rs.status_code == 200
-    assert d1['cases'] == []
-
+    assert rs.status_code == 404
+    if conf['supported_languages']['default_language'] == 'en':
+        assert d1['message'] == "Please select any search parameter"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert d1['message'] == "Por favor seleccione cualquier parámetro de búsqueda"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert d1['message'] == "Silakan pilih parameter pencarian apa pun"
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_functionality_wrong_search_parameter(flask_app, db, session):
@@ -105,8 +121,8 @@ def test_athty_search_functionality_wrong_search_parameter(flask_app, db, sessio
 
     athty_search_db_insertion(session, db, 705, '(23457091287', 705, 'Nokia-2', 'NOKIA', 'Kj8sR56h',
                               '3G,4G', 'HP0nCrc9', 705, ['555555555555555'], "AD:C3:99:54:84:88")
-    payload = athty_search_payload(0, 5, "545454545454545", "12:C3:34:54:56:78", "a1b2c3d4", "923149988770")
-    rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+    url = athty_search_payload(0, 5, "545454545454545", "12:C3:34:54:56:78", "a1b2c3d4", "923149988770")
+    rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     assert rs.status_code == 200
@@ -120,67 +136,65 @@ def test_athty_search_functionality_grouped_imeis(flask_app, db, session):
     imei = ['555555555555555', '666666666666666']
     athty_search_db_insertion(session, db, 706, '923457091247', 706, 'Nokia-2', 'NOKIA', 'G6Tre4kl',
                               '3G,4G', 'FrfxlfLk', 706, imei, "AD:C3:99:54:84:88")
-    payload = athty_search_payload(0, 5, "555555555555555", "AD:C3:99:54:84:88", "G6Tre4kl", "923457091247", 6)
-    rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+    url = athty_search_payload(0, 5, "555555555555555", "AD:C3:99:54:84:88", "G6Tre4kl", "923457091247", 6)
+    rs = flask_app.get(url)
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1['cases'])
     assert rs.status_code == 200
     assert d1['cases'] != []
-    assert d1['cases'][0]['imei'] == '555555555555555,666666666666666'
+    assert d1['cases'][0]['imei'] == '666666666666666,555555555555555'
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_mac(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid MAC"""
+
     mac = ['T~68_F*eP`q', 'K0@2a6!M04$']
     for val in mac:
-        payload = athty_search_payload(0, 5, "545454545454545", val, "Kj8sw5ry6h", "923149988990")
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
-        assert rs.status_code == 422
+        url = athty_search_payload(0, 5, "545454545454545", val, "Kj8sw5ry6h", "923149988990")
+        rs = flask_app.get(url)
+        # print(rs.data)
+        assert rs.status_code == 200
         d1 = json.loads(rs.data.decode('utf-8'))
         print(d1, "MAC=", val)
-        if conf['supported_languages']['default_language'] == 'en':
-            assert d1.get('Error') == 'MAC format is not correct'
-        elif conf['supported_languages']['default_language'] == 'es':
-            assert d1.get('Error') == "El formato MAC no es correcto"
-        elif conf['supported_languages']['default_language'] == 'id':
-            assert d1.get('Error') == "Format MAC tidak benar"
+        assert d1['cases'] == []
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_serial_no(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid serial number"""
-    serial = ['$erI@||n<>?b#', 'G&!@6!T04$']
+
+    serial = ['$erI@||n<>?b#', 'G-!@6!T04$']
     for val in serial:
-        payload = athty_search_payload(0, 5, "545454545454545", "FE:C3:AD:54:BC:88", val, "923149988990")
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+        url = athty_search_payload(0, 5, "545454545454545", "FE:C3:AD:54:BC:88", val, "923149988990")
+        rs = flask_app.get(url)
+        print("\nSerial_No=", val, "\n", rs.data)
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
-        print(d1, "Serial_No=", val)
         if conf['supported_languages']['default_language'] == 'en':
-            assert d1.get('Error') == 'Serial-Number format is not correct'
+            assert d1['message']['serial_no'][0] == 'Serial Number is not correct'
         elif conf['supported_languages']['default_language'] == 'es':
-            assert d1.get('Error') == "El formato del número de serie no es correcto"
+            assert d1['message']['serial_no'][0] == "El número de serie no es correcto"
         elif conf['supported_languages']['default_language'] == 'id':
-            assert d1.get('Error') == "Format Serial-Number tidak benar"
+            assert d1['message']['serial_no'][0] == "Nomor seri tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_contact_no(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid contact number"""
-    contact = ['30a21D19x4', '30@216!904$']
+    contact = ['30a21D19x4', '30@216!904$', '92345634567890876543', '30054', '']
     for val in contact:
-        payload = athty_search_payload(0, 5, "545454545454545", "FE:C3:AD:54:BC:88", "Zxd465ty9", val)
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+        url = athty_search_payload(0, 5, "545454545454545", "FE:C3:AD:54:BC:88", "Zxd465ty9", val)
+        rs = flask_app.get(url)
         assert rs.status_code == 422
         d1 = json.loads(rs.data.decode('utf-8'))
-        print(d1, "Contact_No=", val)
+        print("\nContact_No=", val, "\n", d1)
         if conf['supported_languages']['default_language'] == 'en':
-            assert d1.get('Error') == 'Contact-MSISDN format is not correct'
+            assert d1['message']['contact'][0] == 'MSISDN format is not correct'
         elif conf['supported_languages']['default_language'] == 'es':
-            assert d1.get('Error') == "El formato de contacto MSISDN no es correcto"
+            assert d1['message']['contact'][0] == "El formato MSISDN no es correcto"
         elif conf['supported_languages']['default_language'] == 'id':
-            assert d1.get('Error') == "Format kontak-MSISDN tidak benar"
+            assert d1['message']['contact'][0] == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -188,49 +202,31 @@ def test_athty_search_validations_invalid_imei(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid contact number"""
     imei = ["313789$", "31!937A6%81478C5", "31678@8&909*1#6", "7~b9{f1a7,d|9?c8)3/e"]
     for val in imei:
-        payload = athty_search_payload(0, 5, val, "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650")
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
-        assert rs.status_code == 422
+        url = athty_search_payload(0, 5, val, "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650")
+        rs = flask_app.get(url)
+        assert rs.status_code == 200
         d1 = json.loads(rs.data.decode('utf-8'))
-        print(d1, "IMEI=", val)
-        if conf['supported_languages']['default_language'] == 'en':
-            assert d1.get('Error') == 'IMEI format is not correct'
-        elif conf['supported_languages']['default_language'] == 'es':
-            assert d1.get('Error') == "El formato IMEI no es correcto"
-        elif conf['supported_languages']['default_language'] == 'id':
-            assert d1.get('Error') == "Format IMEI tidak benar"
+        print("\nIMEI=", val, "\n", d1)
+        assert d1['cases'] == []
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_validations_invalid_start_limit(flask_app, db):
     """Verify that athty-serach api doesn't allow invalid contact number"""
-    payload = athty_search_payload('F', '$', "123456789098765", "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650")
-    rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+    url = athty_search_payload('F', '$', "123456789098765", "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650")
+    rs = flask_app.get(url)
     assert rs.status_code == 422
     d1 = json.loads(rs.data.decode('utf-8'))
     print(d1)
     if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('Error') == 'Start or Limit is not integer'
+        assert d1['message']['start'][0] == 'Start or Limit values are not correct'
+        assert d1['message']['limit'][0] == 'Start or Limit values are not correct'
     elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('Error') == "Inicio o Límite no es entero"
+        assert d1['message']['start'][0] == "Los valores de inicio o límite no son correctos"
+        assert d1['message']['limit'][0] == "Los valores de inicio o límite no son correctos"
     elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('Error') == "Mulai atau Batasi bukan bilangan bulat"
-
-
-# noinspection PyUnusedLocal,PyShadowingNames
-def test_athty_search_validations_invalid_search_arguments(flask_app, db):
-    """Verify that athty-serach api doesn't allow invalid Search Arguments"""
-    payload = athty_search_payload(0, 5, "123456789098765", "FE:C3:AD:54:BC:88", "Zxd465ty9", "923006763650", 10)
-    rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
-    assert rs.status_code == 422
-    d1 = json.loads(rs.data.decode('utf-8'))
-    print(d1)
-    if conf['supported_languages']['default_language'] == 'en':
-        assert d1.get('Error') == "search_args is not correct"
-    elif conf['supported_languages']['default_language'] == 'es':
-        assert d1.get('Error') == "search_args no es correcto"
-    elif conf['supported_languages']['default_language'] == 'id':
-        assert d1.get('Error') == "search_args tidak benar"
+        assert d1['message']['start'][0] == "Nilai Mulai atau Batas tidak benar"
+        assert d1['message']['limit'][0] == "Nilai Mulai atau Batas tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -247,13 +243,14 @@ def test_athty_search_error__404_wrong_api(flask_app, db):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_athty_search_error_405_method_not_allowed(flask_app, db):
     """ Verify that athty-serach api prompts when Error-405 is occurred """
-    res1 = flask_app.get(ATHTY_SEARCH)
+
+    res1 = flask_app.post(DEVICE_SEARCH)
     assert res1.status_code == 405
-    res2 = flask_app.put(ATHTY_SEARCH)
+    res2 = flask_app.put(DEVICE_SEARCH)
     assert res2.status_code == 405
-    res3 = flask_app.delete(ATHTY_SEARCH)
+    res3 = flask_app.delete(DEVICE_SEARCH)
     assert res3.status_code == 405
-    res4 = flask_app.patch(ATHTY_SEARCH)
+    res4 = flask_app.patch(DEVICE_SEARCH)
     assert res4.status_code == 405
 
 
@@ -272,10 +269,9 @@ def test_athty_search_offset_limit_chk(flask_app, db, session):
                               'g8qquY04', 7021, ['112233445566774'], "20:AB:56:AF:44:AD")
 
     for val in range(0, 4):
-        payload = athty_search_payload(val, 4, "112233445566774", "20:AB:56:AF:44:AD", "1XcFGHb03", contact_no[val], 5)
-        rs = flask_app.post(ATHTY_SEARCH, headers=HEADERS, data=json.dumps(payload))
+        url = athty_search_payload(val, 4, "112233445566774", "20:AB:56:AF:44:AD", "1XcFGHb03", contact_no[val], 5)
+        rs = flask_app.get(url)
         d1 = json.loads(rs.data.decode('utf-8'))
-        print(d1)
+        print("\n", d1, "\n")
         assert rs.status_code == 200
         assert d1['cases'] != []
-        assert d1['cases'][0]['contact'] == contact_no[val]

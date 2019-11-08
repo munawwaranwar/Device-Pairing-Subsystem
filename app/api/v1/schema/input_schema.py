@@ -64,7 +64,7 @@ class DeviceRegistrationSchema(Schema):
     model = fields.String(required=True, validate=Validations.validate_model)
     brand = fields.String(required=True, validate=Validations.validate_brand)
     serial_no = fields.String(required=True, validate=Validations.validate_serial_no)
-    mac = fields.String(required=False, validate=Validations.validate_mac)
+    mac = fields.String(required=False, missing="00:00:00:00", validate=Validations.validate_mac)
     rat = fields.String(required=True, validate=Validations.validate_rat)
     imei = fields.List(fields.String(), required=True, validate=Validations.validate_imeis)
 

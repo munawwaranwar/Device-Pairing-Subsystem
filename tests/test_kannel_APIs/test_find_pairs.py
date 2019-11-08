@@ -28,7 +28,7 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-
+from app import conf
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 # noinspection PyProtectedMember
@@ -41,38 +41,52 @@ HEADERS = {'Content-Type': "application/json"}
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_validation_invalid_sender_no(flask_app, db):
     """ Verify that find-pairs api doesn't accept invalid sender number """
-    sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
+    sender_no = ['9230028460937724', '92321417g9C21', '92345@769#564&8', '923004', '']
     for val in sender_no:
-        url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API, msisdn=val)
+        url = '{api}?primary_msisdn={msisdn}'.format(api=FIND_PAIRS_API, msisdn=val)
         rslt = flask_app.get(url)
-        print(rslt.data, val)
-        assert rslt.data == b"\"Sender MSISDN format is not correct\""
+        data = json.loads(rslt.data.decode('utf-8'))
+        print("\nPrimary_MSISDN :", val, "\n", rslt.data)
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['primary_msisdn'][0] == "MSISDN format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['primary_msisdn'][0] == "El formato MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['primary_msisdn'][0] == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_validation_valid_sender_no(flask_app, db):
     """ Verify that find-pairs api only accept valid sender number """
     sender_no = '923002131415'
-    url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API, msisdn=sender_no)
+    url = '{api}?primary_msisdn={msisdn}'.format(api=FIND_PAIRS_API, msisdn=sender_no)
     rslt = flask_app.get(url)
+    data = json.loads(rslt.data.decode('utf-8'))
     print(rslt.data)
-    assert not rslt.data == b"\"Sender MSISDN format is not correct\""
+    if conf['supported_languages']['default_language'] == 'en':
+        assert not data == "MSISDN format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not data == "El formato MSISDN no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert not data == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_missing_parameter(flask_app, db):
     """ Verify that find-pairs api prompts when any parameter is missing """
-    url = '{api}?Sender_No='.format(api=FIND_PAIRS_API)
+    url = '{api}'.format(api=FIND_PAIRS_API)
     rslt = flask_app.get(url)
     print(rslt.data)
-    assert rslt.data == b"Sender number is missing in SMS"
+    data = json.loads(rslt.data.decode('utf-8'))
+    print("\n", rslt.data)
+    assert data['message']['primary_msisdn'][0] == "Missing data for required field."
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_error_404_wrong_api(flask_app, db):
     """ Verify that find-pairs api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/finddd-pairssss'
-    url = '{api}?Sender_No=923367790512'.format(api=tmp_api)
+    url = '{api}?primary_msisdn=923367790512'.format(api=tmp_api)
     rslt = flask_app.get(url)
     print(rslt.data)
     assert rslt.status_code == 404
@@ -81,15 +95,19 @@ def test_find_pairs_error_404_wrong_api(flask_app, db):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_find_pairs_error_405_method_not_allowed(flask_app, db):
     """ Verify that find-pairs api prompts when Error-405 is occurred """
-    url = '{api}?Sender_No=923367790512'.format(api=FIND_PAIRS_API)
+    url = '{api}?primary_msisdn=923367790512'.format(api=FIND_PAIRS_API)
     res1 = flask_app.post(url)
     assert res1.status_code == 405
+    print("HTTP-Method : POST \n msg : ", res1.data)
     res2 = flask_app.put(url)
     assert res2.status_code == 405
+    print("HTTP-Method : PUT \n msg : ", res2.data)
     res3 = flask_app.delete(url)
     assert res3.status_code == 405
+    print("HTTP-Method : DELETE \n msg : ", res3.data)
     res4 = flask_app.patch(url)
     assert res4.status_code == 405
+    print("HTTP-Method : PATCH \n msg : ", res4.data)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -102,7 +120,7 @@ def test_find_pairs_happy_case(flask_app, db, session):
     add_pair_db_insertion(session, db, 613, 612, '923115840917', 611)
     add_pair_db_insertion(session, db, 614, 612, '923339701290', 611)
     add_pair_confrm_db_insertion(session, db, '923339701290', 612, 'ufone')
-    url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API, msisdn=primary)
+    url = '{api}?primary_msisdn={msisdn}'.format(api=FIND_PAIRS_API, msisdn=primary)
     rslt = flask_app.get(url)
     print(rslt.data)
     assert b"MSISDN" in rslt.data
@@ -117,10 +135,16 @@ def test_find_pairs_functionality_wrong_primary_no(flask_app, db, session):
                           'gB8DGsL4', 612, '910223945867106')
     first_pair_db_insertion(session, db, 615, '923145406911', 'zong', 612)
     add_pair_db_insertion(session, db, 616, 615, '923125840917', 612)
-    url = '{api}?Sender_No={msisdn}'.format(api=FIND_PAIRS_API, msisdn=wrong_primary)
+    url = '{api}?primary_msisdn={msisdn}'.format(api=FIND_PAIRS_API, msisdn=wrong_primary)
     rslt = flask_app.get(url)
     print(rslt.data)
-    assert rslt.data == b"\"(923008171615) is not registered as Primary-Pair\""
+    data = json.loads(rslt.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "923008171615 is not registered as Primary-Pair"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "923008171615 no está registrado como par primario"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "923008171615 tidak terdaftar sebagai Pasangan Primer"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -129,7 +153,8 @@ def test_find_pairs_functionality_primary_with_no_sec_pairs(flask_app, db, sessi
     complete_db_insertion(session, db, 613, '923057930229', 613, 'MI MIX 2S ', 'XIAOMI', 'SN1i9KpW', '3G,4G',
                           '89tjXN42', 613, '910223947111222')
     first_pair_db_insertion(session, db, 617, '923158191645', 'zong', 613)
-    url = '{api}?Sender_No=923158191645'.format(api=FIND_PAIRS_API)
+    url = '{api}?primary_msisdn=923158191645'.format(api=FIND_PAIRS_API)
     rslt = flask_app.get(url)
     print(rslt.data)
-    assert rslt.data == b"\"No Pair is associated with (923158191645)\""
+    data = json.loads(rslt.data.decode('utf-8'))
+    assert data == "No Pair is associated with 923158191645"

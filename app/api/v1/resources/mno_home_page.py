@@ -92,9 +92,7 @@ class MnoHomePage(Resource):
                                             status=STATUS_CODES.get('NOT_FOUND'),
                                             mimetype=MIME_TYPES.get('JSON'))
 
-            return kwargs
-
-        except Exception as e:
+        except Exception as e:          # pragma: no cover
             db.session.rollback()
 
         finally:

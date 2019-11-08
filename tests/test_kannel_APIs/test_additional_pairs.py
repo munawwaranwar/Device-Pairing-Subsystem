@@ -28,85 +28,101 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-
+from app import conf
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 # noinspection PyProtectedMember
 from tests._helpers import *
 
-ADD_PAIR_API = 'api/v1/add-pair'
+ADD_PAIR_API = 'api/v1/secondary-pairs'
 HEADERS = {'Content-Type': "application/json"}
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_add_pair_validations_wrong_sender_no(flask_app, db):
+def test_add_pair_validations_wrong_primary_msisdn(flask_app, db):
     """ Verify that add-pair api doesn't accept invalid primary number """
-    sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
+    sender_no = ['9230028460937724', '92321417g9C21', '92345@769#564&8', '923004', ""]
     for val in sender_no:
-        payload = {"Sender_No": val, "MSISDN": "923003294857"}
+        payload = {"primary_msisdn": val, "secondary_msisdn": "923003294857"}
         rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-        assert rslt.data == b"Primary MSISDN format is not correct"
+        data = json.loads(rslt.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['primary_msisdn'][0] == "MSISDN format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['primary_msisdn'][0] == "El formato MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['primary_msisdn'][0] == "Format MSISDN tidak benar"
+        print("Primary-MSISDN =", val, " : ", data['message']['primary_msisdn'][0])
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_add_pair_validations_valid_sender_no(flask_app, db):
+def test_add_pair_validations_valid_primary_msisdn(flask_app, db):
     """ Verify that add-pair api only accepts valid primary number """
     sender_no = '923458179437'
-    payload = {"Sender_No": sender_no, "MSISDN": "923003294857"}
+    payload = {"primary_msisdn": sender_no, "secondary_msisdn": "923003294857"}
     rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-    assert not rslt.data == b"Primary MSISDN format is not correct"
+    print(rslt.data)
+    data = json.loads(rslt.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert not data == b"MSISDN format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not data == "El formato MSISDN no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert not data == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_add_pair_validations_wrong_msisdn(flask_app, db):
+def test_add_pair_validations_wrong_secondary_msisdn(flask_app, db):
     """ Verify that add-pair api doesn't accept invalid primary number """
-    msisdn = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
+    msisdn = ['9230028460937724', '923x1417k9C21', '92345@769#564&8', '923004', ""]
     for val in msisdn:
-        payload = {"Sender_No": "923003294857", "MSISDN": val}
+        payload = {"primary_msisdn": "923003294857", "secondary_msisdn": val}
         rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-        assert rslt.data == b"Secondary MSISDN format is not correct"
+        data = json.loads(rslt.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['secondary_msisdn'][0] == "MSISDN format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['secondary_msisdn'][0] == "El formato MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['secondary_msisdn'][0] == "Format MSISDN tidak benar"
+        print("Secondary_MSISDN =", val, " : ", data['message']['secondary_msisdn'][0])
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_add_pair_validations_valid_msisdn(flask_app, db):
+def test_add_pair_validations_valid_secondary_msisdn(flask_app, db):
     """ Verify that add-pair api only accepts valid secondary number """
     sender_no = '923458179437'
-    payload = {"Sender_No": "923003294857", "MSISDN": sender_no}
+    payload = {"primary_msisdn": "923003294857", "secondary_msisdn": sender_no}
     rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-    assert not rslt.data == b"Primary MSISDN format is not correct"
+    print(rslt.data)
+    data = json.loads(rslt.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert not data == b"MSISDN format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not data == "El formato MSISDN no es correcto"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert not data == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_missing_parameters(flask_app, db):
     """ Verify that add-pair api prompts when any parameter is missing """
-    payload_1 = {"Sender_No": "", "MSISDN": "923003294857"}
-    payload_2 = {"MSISDN": "923003294857"}
-    payload_3 = {"Sender_No": "923003294857", "MSISDN": ""}
-    payload_4 = {"Sender_No": "923003294857"}
+    payload_1 = {"secondary_msisdn": "923003294857"}
+    payload_2 = {"primary_msisdn": "923003294857"}
     result_1 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     result_2 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
-    result_3 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_3))
-    result_4 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_4))
-    assert result_1.data == b"primary number is missing in SMS"
-    assert result_2.data == b"primary number is missing in SMS"
-    assert result_3.data == b"secondary number is missing in SMS"
-    assert result_4.data == b"secondary number is missing in SMS"
-
-
-# noinspection PyUnusedLocal,PyShadowingNames
-def test_add_pair_error_400_bad_request(flask_app, db):
-    """ Verify that add-pair api prompts when Error-400 is occurred """
-    payload = {"Sender_No": "923458179437", "MSISDN": "923003294857"}
-    result = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=payload)
-    print(result.data)
-    assert result.status_code == 400
+    data_1 = json.loads(result_1.data.decode('utf-8'))
+    data_2 = json.loads(result_2.data.decode('utf-8'))
+    assert data_1['message']['primary_msisdn'][0] == "Missing data for required field."
+    assert data_2['message']['secondary_msisdn'][0] == "Missing data for required field."
+    print(data_1, "\n", data_2)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_error_404_wrong_api(flask_app, db):
     """ Verify that add-pair api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/adddd-pairrr'
-    payload = {"Sender_No": "923458179437", "MSISDN": "923003294857"}
+    payload = {"primary_msisdn": "923458179437", "secondary_msisdn": "923003294857"}
     result = flask_app.post(tmp_api, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.status_code == 404
@@ -128,11 +144,11 @@ def test_add_pair_error_405_method_not_allowed(flask_app, db):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_happy_case(flask_app, db, session):
     """ Verify that add-pair api responds correctly when all parameters are valid"""
+
     complete_db_insertion(session, db, 6, '923004171564', 6, 'Note5', 'Samsung', 'abcdefgh', '3G,4G',
                           'O1G64pGf', 6, '123456789098765')
     first_pair_db_insertion(session, db, 7, '923459146387', 'telenor', 6)
-
-    payload = {"Sender_No": "923459146387", "MSISDN": "923117658111"}
+    payload = {"primary_msisdn": "923459146387", "secondary_msisdn": "923117658111"}
     rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
     print(rslt.data)
     assert rslt.status_code == 200
@@ -141,10 +157,17 @@ def test_add_pair_happy_case(flask_app, db, session):
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_wrong_primary_msisdn(flask_app, db, session):
     """ Verify that add-pair api doesn't allow wrong primary MSISDN"""
-    payload = {"Sender_No": "923348617409", "MSISDN": "923128649052"}
+    payload = {"primary_msisdn": "923348617409", "secondary_msisdn": "923128649052"}
     rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-    print(rslt.data)
-    assert rslt.data == b"Request not made by Primary-Pair or number-to-be-added is Primary number"
+    data = json.loads(rslt.data.decode('utf-8'))
+    print(data)
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Request not made by Primary-Pair or number-to-be-added is Primary number"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "La solicitud no realizada por Par primario o número a agregar es Número primario"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Permintaan tidak dibuat oleh Pasangan Utama atau nomor yang akan ditambahkan adalah nomor " \
+                       "Pratama"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -153,11 +176,17 @@ def test_add_pair_functionality_same_primary_and_secondary_msisdn(flask_app, db,
     complete_db_insertion(session, db, 7, '923346181454', 7, 'iphone-max', 'Apple', 'P8go7tdR', '4G',
                           'CuYg4fzD', 7, '987654321012333')
     first_pair_db_insertion(session, db, 9, '923086190554', 'jazz', 7)
-    # here 3 is pairing-id because 2 is already used for secondary pair in happy case
-    payload = {"Sender_No": "923086190554", "MSISDN": "923086190554"}
+    payload = {"primary_msisdn": "923086190554", "secondary_msisdn": "923086190554"}
     rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
-    print(rslt.data)
-    assert rslt.data == b"Request not made by Primary-Pair or number-to-be-added is Primary number"
+    data = json.loads(rslt.data.decode('utf-8'))
+    print(data)
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Request not made by Primary-Pair or number-to-be-added is Primary number"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "La solicitud no realizada por Par primario o número a agregar es Número primario"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Permintaan tidak dibuat oleh Pasangan Utama atau nomor yang akan ditambahkan adalah nomor " \
+                       "Pratama"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -166,52 +195,89 @@ def test_add_pair_functionality_already_paired_msisdn(flask_app, db, session):
     complete_db_insertion(session, db, 8, '923228450691', 8, 'iphone-7', 'Apple', 'ASX0Yh317933', '3G,4G',
                           'ELAI5hqq', 8, '378510893448902')
     first_pair_db_insertion(session, db, 10, '923469988554', 'telenor', 8)
-    payload_1 = {"Sender_No": "923469988554", "MSISDN": "923086190554"}
+    payload_1 = {"primary_msisdn": "923469988554", "secondary_msisdn": "923086190554"}
     rslt_1 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
     print(rslt_1.data)
-    payload_2 = {"Sender_No": "923469988554", "MSISDN": "923086190554"}
+    payload_2 = {"primary_msisdn": "923469988554", "secondary_msisdn": "923086190554"}
     rslt_2 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
     print(rslt_2.data)
-    assert rslt_2.data == b"MSISDN (923086190554)already paired with the device"
+    data = json.loads(rslt_2.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "MSISDN 923086190554 already paired with the device"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "MSISDN 923086190554 ya emparejado con el dispositivo"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "MSISDN 923086190554 sudah dipasangkan dengan perangkat"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_add_pair_functionality_pairing_limit(flask_app, db, session):
     """ Verify that add-pair api doesn't allow secondary pairs more than pre-configured limit"""
-    complete_db_insertion(session, db, 9, '923238450807', 9, 'REDMI', 'Xiaomi', 'Xr4q9irgTj', '2G,3G,4G',
+
+    complete_db_insertion(session, db, 9, '923238450807', 9, 'REDMI', 'Xiaomi', 'Xr4q9irgTj', '3G,4G',
                           '3Bdzs1sx', 9, '809762846310927')
     first_pair_db_insertion(session, db, 12, '923337788991', 'ufone', 9)
 
     msisdn = ["923017986111", "923027986222", "923037986333", "923047986444"]
     for val in msisdn:
-        payload = {"Sender_No": "923337788991", "MSISDN": val}
+        payload = {"primary_msisdn": "923337788991", "secondary_msisdn": val}
         rslt = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
         print(rslt.data)
-        assert not rslt.data == b"Pairing limit breached: need to remove any existing pair"
+        if conf['supported_languages']['default_language'] == 'en':
+            assert not rslt.data == "Pairing limit breached: need to remove any existing pair"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert not rslt.data == "Límite de emparejamiento incumplido: elimine primero cualquier par existente"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert not rslt.data == "Batas pasangan dilanggar: hilangkan pasangan yang ada terlebih dahulu"
 
     msisdn_overlimit = '923057986555'
-    payload_2 = {"Sender_No": "923337788991", "MSISDN": msisdn_overlimit}
+    payload_2 = {"primary_msisdn": "923337788991", "secondary_msisdn": msisdn_overlimit}
     rslt_2 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
     print(rslt_2.data)
-    assert rslt_2.data == b"Pairing limit breached: need to remove any existing pair"
+    data = json.loads(rslt_2.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Pairing limit breached: remove any existing pair first"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "Límite de emparejamiento incumplido: elimine primero cualquier par existente"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Batas pasangan dilanggar: hilangkan pasangan yang ada terlebih dahulu"
+    print("msg: ", data)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_add_pair_functionality_single_secondary_msisdn_many_primary_pairs(flask_app, db, session):
-    """ Verify that add-pair api allows one secondary-MSISDN to pair with many primary-pairs """
-    complete_db_insertion(session, db, 10, '923024455667', 10, 'J7-prime', 'Samsung', 'Xrt7oPa9', '3G,4G',
-                          'DvY5wPZb', 10, '547190887376107')
-    complete_db_insertion(session, db, 11, '923033981065', 11, 'Nokia-8', 'Nokia', 'Qaw34dc6y', '2G,3G,4G',
-                          'MIm1auUA', 11, '547190887376107')
-    first_pair_db_insertion(session, db, 26, '923049298687', 'jazz', 10)
-    first_pair_db_insertion(session, db, 28, '923468921445', 'telenor', 11)
-
-    payload_1 = {"Sender_No": "923049298687", "MSISDN": "923334445556"}
-    rslt_1 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_1))
-    print(rslt_1.data)
-    assert rslt_1.data == b"Secondary pair is added by (923049298687). Confirmation is awaited from (923334445556)"
-
-    payload_2 = {"Sender_No": "923468921445", "MSISDN": "923334445556"}
-    rslt_2 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
-    print(rslt_2.data)
-    assert rslt_2.data == b"Secondary pair is added by (923468921445). Confirmation is awaited from (923334445556)"
+# def test_add_pair_functionality_single_msisdn_with_many_primary_pairs(flask_app, db, session):
+#     """ Verify that add-pair api allows one secondary-MSISDN to pair with many primary-pairs """
+#
+#     complete_db_insertion(session, db, 80, '923023008790', 80, 'J7prime', 'Samsung', 'Xrt7oPa9u8', '3G,4G',
+#                           'F4Rd9iKu', 80, '547190887376107')
+#     complete_db_insertion(session, db, 81, '923138301663', 81, 'Nokia8', 'Nokia', 'Qaw34dc7t6y', '4G',
+#                           'MIm1auUA', 81, '547190887376108')
+#     first_pair_db_insertion(session, db, 88, '923079298687', 'jazz', 80)
+#     first_pair_db_insertion(session, db, 89, '923498921445', 'telenor', 81)
+#
+#     payload = {"primary_msisdn": "923337788991", "secondary_msisdn": "923330005596"}
+#     rslt_1 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload))
+#     print(rslt_1.data)
+#     assert rslt_1.status_code == 200
+#
+#     data1 = json.loads(rslt_1.data.decode('utf-8'))
+#     # print("\nprimary_msisdn: 923049298687", "secondary_msisdn: 923330005596\n msg: ", data1)
+#     if conf['supported_languages']['default_language'] == 'en':
+#         assert data1 == "Secondary pair is added by 923079298687. Confirmation is awaited from 923330005596"
+#     elif conf['supported_languages']['default_language'] == 'es':
+#         assert data1 == "El par secundario se agrega por 923079298687. Se espera confirmación de 923330005596"
+#     elif conf['supported_languages']['default_language'] == 'id':
+#         assert data1 == "Pasangan sekunder ditambahkan oleh 923079298687. Konfirmasi ditunggu dari 923330005596"
+#
+#     payload_2 = {"primary_msisdn": "923498921445", "secondary_msisdn": "923330005596"}
+#     rslt_2 = flask_app.post(ADD_PAIR_API, headers=HEADERS, data=json.dumps(payload_2))
+#     assert rslt_2.status_code == 200
+#
+#     data2 = json.loads(rslt_2.data.decode('utf-8'))
+#     print("\nprimary_msisdn: 923468921445", "secondary_msisdn: 923334445556\n msg: ", data2)
+#     if conf['supported_languages']['default_language'] == 'en':
+#         assert data2 == "Secondary pair is added by 923498921445. Confirmation is awaited from 923330005596"
+#     elif conf['supported_languages']['default_language'] == 'es':
+#         assert data2 == "El par secundario se agrega por 923498921445. Se espera confirmación de 923330005596"
+#     elif conf['supported_languages']['default_language'] == 'id':
+#         assert data2 == "Pasangan sekunder ditambahkan oleh 923498921445. Konfirmasi ditunggu dari 923330005596"

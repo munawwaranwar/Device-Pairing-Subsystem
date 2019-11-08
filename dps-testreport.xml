@@ -1,0 +1,965 @@
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skipped="0" tests="185" time="32.153"><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="43" name="test_bulk_upload_happy_case_proper_file" time="1.776"><system-out>b&apos;{&quot;message&quot;: &quot;File uploaded successfully without errors&quot;, &quot;status_code&quot;: 200}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="67" name="test_bulk_upload_file_duplicated_imsis" time="0.018"><system-out>b&apos;{&quot;message&quot;: &quot;File contains duplicated IMSIs&quot;, &quot;status_code&quot;: 403}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="91" name="test_bulk_upload_file_incorrect_content" time="0.013"><system-out>b&apos;{&quot;message&quot;: &quot;File content is not Correct&quot;, &quot;status_code&quot;: 403}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="115" name="test_bulk_upload_file_with_errors" time="0.451"><system-out>b&apos;{&quot;msg&quot;: &quot;File loaded successfully&quot;, &quot;Total_Records&quot;: 10, &quot;Successful_Records&quot;: 3, &quot;Deleted_Record&quot;: 7, &quot;link&quot;: &quot;/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/downloads/Error-Records_jazz_2019-11-08_15-19-12.csv&quot;}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="140" name="test_bulk_upload_file_headers_incorrect" time="0.012"><system-out>b&apos;{&quot;message&quot;: &quot;File headers are incorrect&quot;, &quot;status_code&quot;: 403}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="164" name="test_bulk_upload_file_type_invalid" time="0.007"><system-out>b&apos;{&quot;message&quot;: &quot;File content is not Correct&quot;, &quot;status_code&quot;: 403}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="188" name="test_bulk_upload_no_file_or_incorrect" time="0.005"><system-out>b&apos;{&quot;message&quot;: &quot;Please select csv/txt file&quot;, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="212" name="test_bulk_upload_validation_invalid_mno" time="0.005"><system-out>b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="236" name="test_bulk_upload_validation_txt_file" time="0.439"><system-out>{&apos;msg&apos;: &apos;File loaded successfully&apos;, &apos;Total_Records&apos;: 8, &apos;Successful_Records&apos;: 6, &apos;Deleted_Record&apos;: 2, &apos;link&apos;: &apos;/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/downloads/Error-Records_telenor_2019-11-08_15-19-12.csv&apos;}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="260" name="test_bulk_upload_validation_wrong_extention_file" time="0.006"><system-out>{&apos;message&apos;: &apos;Please select csv/txt file&apos;, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="284" name="test_bulk_upload_error__404_wrong_api" time="0.004"><system-out>{&apos;message&apos;: None, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_imsi_upload" file="tests/test_FrontEnd_APIs/test_bulk_imsi_upload.py" line="298" name="test_bulk_upload_error__405_method_not_allowed" time="0.005"></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="46" name="test_bulk_download_functionality_no_records" time="1.328"><system-out>
+ {&apos;message&apos;: &apos;No File found&apos;, &apos;status_code&apos;: 404} jazz
+
+ {&apos;message&apos;: &apos;No File found&apos;, &apos;status_code&apos;: 404} telenor
+
+ {&apos;message&apos;: &apos;No File found&apos;, &apos;status_code&apos;: 404} zong
+
+ {&apos;message&apos;: &apos;No File found&apos;, &apos;status_code&apos;: 404} ufone
+
+ {&apos;message&apos;: &apos;No File found&apos;, &apos;status_code&apos;: 404} warid
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="65" name="test_bulk_download_happy_case_primary_pairs_only" time="0.023"><system-out>b&apos;MSISDN,IMSI\n923007112391,\n923007112390&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="80" name="test_bulk_download_happy_case_all_pairs" time="0.029"><system-out>b&apos;MSISDN,IMSI\n923018112222,\n923006565747,\n923007575848,\n923018113333&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="102" name="test_bulk_download_happy_case_no_unconfirmed_pairs" time="0.015"><system-out>b&apos;MSISDN,IMSI\n923457611029&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="121" name="test_bulk_download_validations_operator_names" time="0.038"><system-out>correct operator name:  jazz
+correct operator name:  telenor
+correct operator name:  zong
+correct operator name:  ufone
+correct operator name:  warid
+
+Incorrect operator name:  j@zz 
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Operator name is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Incorrect operator name:  Vodafone 
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Operator name is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Incorrect operator name:  T-Mobile 
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Operator name is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Incorrect operator name:  Orange 
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Operator name is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Incorrect operator name:  wariid 
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Operator name is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Incorrect operator name:   
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Operator name is not correct&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="143" name="test_bulk_download_error_404_wrong_api" time="0.003"><system-out>{&apos;message&apos;: None, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_bulk_msisdn_download" file="tests/test_FrontEnd_APIs/test_bulk_msisdn_download.py" line="154" name="test_bulk_download_error_405_method_not_allowed" time="0.006"></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="44" name="test_athty_input_happy_case" time="1.262"><system-out>b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;pEAABajI&quot;}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="63" name="test_athty_functionality_unique_serial_no" time="0.009"><system-out>b&apos;{&quot;message&quot;: &quot;Device with same Serial number already exists&quot;, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: &quot;Device with same Serial number already exists&quot;, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="83" name="test_athty_input_validations_invalid_contact_no" time="0.013"><system-out>
+Contact_No :  9230021619047892364 
+ b&apos;{&quot;message&quot;: {&quot;contact_no&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Contact_No :  0O9230a21D19x4 
+ b&apos;{&quot;message&quot;: {&quot;contact_no&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Contact_No :  30@216!904$ 
+ b&apos;{&quot;message&quot;: {&quot;contact_no&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Contact_No :   
+ b&apos;{&quot;message&quot;: {&quot;contact_no&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="104" name="test_athty_input_validations_invalid_rat_formats" time="0.046"><system-out>
+RAT :  5G,6G 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  6G 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  6g 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  GSM 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  GSM,WCDMA 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  GSM,LTE 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  GSM,WCDMA,LTE 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  gsm,wcdma,lte 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  LTE 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  2G:3G:4G 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  2G-3G-4G 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  2G/3G 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  3G;4G 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  2g,3g,4g 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :   
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+RAT :  @ny_0th3r sTr!ng 
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;RAT is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="125" name="test_athty_input_validations_valid_rat_formats" time="0.063"><system-out>valid RAT format:  2G
+valid RAT format:  3G
+valid RAT format:  4G
+valid RAT format:  5G
+valid RAT format:  5G,3G
+valid RAT format:  2G,4G
+valid RAT format:  2G,5G
+valid RAT format:  3G,4G
+valid RAT format:  3G,5G
+valid RAT format:  4G,5G
+valid RAT format:  2G,3G,4G
+valid RAT format:  3G,4G,5G
+valid RAT format:  4G,5G,2G
+valid RAT format:  2G,3G,4G,5G
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="146" name="test_athty_input_validations_valid_mac_formats" time="0.059"><system-out>
+Valid MAC format:  AA:AA:AA:FF:FF:FF
+b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;5JrBr5W5&quot;}&apos;
+
+Valid MAC format:  AA-AA-AA-FF-FF-FF
+b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;TNFIuV2g&quot;}&apos;
+
+Valid MAC format:  AAA.AAA.FFF.FFF
+b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;cjGZ7SNw&quot;}&apos;
+
+Valid MAC format:  00:25:96:FF:FE:12:34:56
+b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;4yoQTJis&quot;}&apos;
+
+Valid MAC format:  0025:96FF:FE12:3456
+b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;j7Kkfv7Z&quot;}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="164" name="test_athty_input_validations_invalid_mac_english_msg" time="0.040"><system-out>
+ MAC : AC:AA:aH:FF:FF:8n 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AA:AA::AA:FF:FF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : Aa-AA-AA-Ff-FF-FF-FF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AAA.AAA.FFF.FFF.AAAAA 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AAA.AAA.FFF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 00:25:96:FF:FE:12:34:56:FE 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0025:96FF:FE12 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AL-@M-AA-XX-7$-d&amp; 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 00:25:96:GH:%E:12:YZ:5# 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0A2T:9@Fv:Fz1?:34|6 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : A:4:B:C:5 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 12345:ABCDE 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0025:96FF:FE12:3456:A1CE:FD6C:5561:ABCD:1234 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AB:BC 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="182" name="test_athty_input_invalid_mac_espanish_msg" time="0.039"><system-out>
+ MAC : AC:AA:aH:FF:FF:8n 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AA:AA::AA:FF:FF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : Aa-AA-AA-Ff-FF-FF-FF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AAA.AAA.FFF.FFF.AAAAA 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AAA.AAA.FFF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 00:25:96:FF:FE:12:34:56:FE 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0025:96FF:FE12 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AL-@M-AA-XX-7$-d&amp; 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 00:25:96:GH:%E:12:YZ:5# 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0A2T:9@Fv:Fz1?:34|6 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : A:4:B:C:5 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 12345:ABCDE 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0025:96FF:FE12:3456:A1CE:FD6C:5561:ABCD:1234 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AB:BC 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="202" name="test_athty_input_invalid_mac_indonesian_msg" time="0.037"><system-out>
+ MAC : AC:AA:aH:FF:FF:8n 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AA:AA::AA:FF:FF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : Aa-AA-AA-Ff-FF-FF-FF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AAA.AAA.FFF.FFF.AAAAA 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AAA.AAA.FFF 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 00:25:96:FF:FE:12:34:56:FE 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0025:96FF:FE12 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AL-@M-AA-XX-7$-d&amp; 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 00:25:96:GH:%E:12:YZ:5# 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0A2T:9@Fv:Fz1?:34|6 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : A:4:B:C:5 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 12345:ABCDE 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : 0025:96FF:FE12:3456:A1CE:FD6C:5561:ABCD:1234 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : AB:BC 
+ b&apos;{&quot;message&quot;: {&quot;mac&quot;: [&quot;MAC format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="222" name="test_athty_input_valid_model_names" time="0.023"><system-out>
+Valid Model Format:  Note-5
+b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;LlAsh5gD&quot;}&apos;
+
+Valid Model Format:  Samsung&apos;s Model
+b&apos;{&quot;message&quot;: &quot;Device with same Serial number already exists&quot;, &quot;status_code&quot;: 422}&apos;
+
+Valid Model Format:  LG (ligHt)
+b&apos;{&quot;message&quot;: &quot;Device with same Serial number already exists&quot;, &quot;status_code&quot;: 422}&apos;
+
+Valid Model Format:  ViVo&apos;s V-3 (super-cam)
+b&apos;{&quot;message&quot;: &quot;Device with same Serial number already exists&quot;, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="242" name="test_athty_input_invalid_model_names" time="0.019"><system-out>
+ MAC : Nok!@-2 
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Model name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : Q_Mobile Z4 
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Model name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : ViVo.V3 
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Model name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : LG%g3 
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Model name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : Opp0^H4 
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Model name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ MAC : Xi&amp;oM!*, X$$ 
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Model name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="262" name="test_athty_input_invalid_brand_names" time="0.026"><system-out>b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Nok!@
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; HU@we!
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; S0Ny~~
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Q:Mob!()Le+
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Vi#$Vo0
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Opp&amp;*O
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Xi@0M%Ee
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Q_Mobil3
+b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Brand name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; Xiaom`i
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="281" name="test_athty_input_valid_brand_names" time="0.023"><system-out>Valid Brand format(s):  Hua wei
+Device&apos;s information has been successfully loaded
+Valid Brand format(s):  N0k-iA
+Device with same Serial number already exists
+Valid Brand format(s):  QMobil3
+Device with same Serial number already exists
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="302" name="test_athty_input_validations_imei_formats" time="0.013"><system-out>
+ IMEI : 313789A 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ IMEI : 3100937A6881478C5 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ IMEI : 819G63455K18RT6 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ IMEI : 31678@8&amp;909*1#6F 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ IMEI : 7b9f1a7d99c8d3e 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="320" name="test_athty_input_validations_invalid_serial_no" time="0.007"><system-out>
+ Serial_No : T68-FePq 
+ b&apos;{&quot;message&quot;: {&quot;serial_no&quot;: [&quot;Serial Number is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ Serial_No : K0@2a6!M04$ 
+ b&apos;{&quot;message&quot;: {&quot;serial_no&quot;: [&quot;Serial Number is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="340" name="test_athty_input_validations_valid_serial_no" time="0.047"><system-out>
+ Serial_No : T68FePqG4B0 
+ Device&apos;s information has been successfully loaded
+
+ Serial_No : 12345678 
+ Device&apos;s information has been successfully loaded
+
+ Serial_No : abcdefgh 
+ Device&apos;s information has been successfully loaded
+
+ Serial_No : ABCDEVWXYZ 
+ Device&apos;s information has been successfully loaded
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="360" name="test_athty_input_error__404_wrong_api" time="0.002"><system-out>{&apos;message&apos;: None, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="372" name="test_athty_input_error_405_method_not_allowed" time="0.005"><system-out>
+HTTP-Method : GET 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : DELETE 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="389" name="test_athty_input_missing_parameters" time="0.017"><system-out>
+ b&apos;{&quot;message&quot;: {&quot;contact_no&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ b&apos;{&quot;message&quot;: {&quot;model&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ b&apos;{&quot;message&quot;: {&quot;brand&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ b&apos;{&quot;message&quot;: {&quot;serial_no&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ b&apos;{&quot;message&quot;: {&quot;rat&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="417" name="test_athty_input_missing_mac" time="0.010"><system-out>b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;BFYRdhIB&quot;}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="435" name="test_athty_input_functionality_single_contact_multiple_devices" time="0.034"><system-out>
+ {&apos;message&apos;: &quot;Device&apos;s information has been successfully loaded&quot;, &apos;pair-code&apos;: &apos;500FlOXP&apos;} 
+ {&apos;message&apos;: &quot;Device&apos;s information has been successfully loaded&quot;, &apos;pair-code&apos;: &apos;IgpqXkYE&apos;} 
+ {&apos;message&apos;: &quot;Device&apos;s information has been successfully loaded&quot;, &apos;pair-code&apos;: &apos;UNHs6txA&apos;}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_registration" file="tests/test_FrontEnd_APIs/test_device_registration.py" line="471" name="test_athty_input_functionality_max_imeis_per_device" time="0.019"><system-out>b&apos;{&quot;message&quot;: &quot;Device\&apos;s information has been successfully loaded&quot;, &quot;pair-code&quot;: &quot;sd73QZMY&quot;}&apos;
+b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;Only 5 IMEIs per device are allowed&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="42" name="test_athty_search_happy_case" time="1.292"><system-out>{&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923145309633&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note5&apos;, &apos;serial_no&apos;: &apos;1234GHb4y&apos;, &apos;imei&apos;: &apos;111111111111111&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:C4&apos;, &apos;pair_code&apos;: &apos;g8qquEVQ&apos;, &apos;is_active&apos;: True}]}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="63" name="test_athty_search_functionality_missing_parameters" time="0.033"><system-out>
+ {&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923158154773&apos;, &apos;brand&apos;: &apos;OPPO&apos;, &apos;model&apos;: &apos;F-6&apos;, &apos;serial_no&apos;: &apos;1234GHAAA&apos;, &apos;imei&apos;: &apos;222222222222222&apos;, &apos;mac&apos;: &apos;20:AB:5C:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;kyDCAmL1&apos;, &apos;is_active&apos;: True}]}
+
+ {&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923158154773&apos;, &apos;brand&apos;: &apos;OPPO&apos;, &apos;model&apos;: &apos;F-6&apos;, &apos;serial_no&apos;: &apos;1234GHAAA&apos;, &apos;imei&apos;: &apos;222222222222222&apos;, &apos;mac&apos;: &apos;20:AB:5C:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;kyDCAmL1&apos;, &apos;is_active&apos;: True}]}
+
+ {&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923158154773&apos;, &apos;brand&apos;: &apos;OPPO&apos;, &apos;model&apos;: &apos;F-6&apos;, &apos;serial_no&apos;: &apos;1234GHAAA&apos;, &apos;imei&apos;: &apos;222222222222222&apos;, &apos;mac&apos;: &apos;20:AB:5C:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;kyDCAmL1&apos;, &apos;is_active&apos;: True}]}
+
+ {&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923158154773&apos;, &apos;brand&apos;: &apos;OPPO&apos;, &apos;model&apos;: &apos;F-6&apos;, &apos;serial_no&apos;: &apos;1234GHAAA&apos;, &apos;imei&apos;: &apos;222222222222222&apos;, &apos;mac&apos;: &apos;20:AB:5C:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;kyDCAmL1&apos;, &apos;is_active&apos;: True}]}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="84" name="test_athty_search_functionality_single_parameter_search" time="0.021"><system-out>{&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923006819263&apos;, &apos;brand&apos;: &apos;Xiamo&apos;, &apos;model&apos;: &apos;RedMi&apos;, &apos;serial_no&apos;: &apos;U87Hsr&apos;, &apos;imei&apos;: &apos;333333333333333&apos;, &apos;mac&apos;: &apos;F0:CB:AD:EF:84:FD&apos;, &apos;pair_code&apos;: &apos;QBADXNGZ&apos;, &apos;is_active&apos;: True}]}
+{&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923006819263&apos;, &apos;brand&apos;: &apos;Xiamo&apos;, &apos;model&apos;: &apos;RedMi&apos;, &apos;serial_no&apos;: &apos;U87Hsr&apos;, &apos;imei&apos;: &apos;333333333333333&apos;, &apos;mac&apos;: &apos;F0:CB:AD:EF:84:FD&apos;, &apos;pair_code&apos;: &apos;QBADXNGZ&apos;, &apos;is_active&apos;: True}]}
+{&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923006819263&apos;, &apos;brand&apos;: &apos;Xiamo&apos;, &apos;model&apos;: &apos;RedMi&apos;, &apos;serial_no&apos;: &apos;U87Hsr&apos;, &apos;imei&apos;: &apos;333333333333333&apos;, &apos;mac&apos;: &apos;F0:CB:AD:EF:84:FD&apos;, &apos;pair_code&apos;: &apos;QBADXNGZ&apos;, &apos;is_active&apos;: True}]}
+{&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;5&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923006819263&apos;, &apos;brand&apos;: &apos;Xiamo&apos;, &apos;model&apos;: &apos;RedMi&apos;, &apos;serial_no&apos;: &apos;U87Hsr&apos;, &apos;imei&apos;: &apos;333333333333333&apos;, &apos;mac&apos;: &apos;F0:CB:AD:EF:84:FD&apos;, &apos;pair_code&apos;: &apos;QBADXNGZ&apos;, &apos;is_active&apos;: True}]}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="100" name="test_athty_search_functionality_no_search_parameter" time="0.012"><system-out>{&apos;message&apos;: &apos;Please select any search parameter&apos;, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="118" name="test_athty_search_functionality_wrong_search_parameter" time="0.009"><system-out>{&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="132" name="test_athty_search_functionality_grouped_imeis" time="0.012"><system-out>[{&apos;contact&apos;: &apos;923457091247&apos;, &apos;brand&apos;: &apos;NOKIA&apos;, &apos;model&apos;: &apos;Nokia-2&apos;, &apos;serial_no&apos;: &apos;G6Tre4kl&apos;, &apos;imei&apos;: &apos;666666666666666,555555555555555&apos;, &apos;mac&apos;: &apos;AD:C3:99:54:84:88&apos;, &apos;pair_code&apos;: &apos;FrfxlfLk&apos;, &apos;is_active&apos;: True}]
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="148" name="test_athty_search_validations_invalid_mac" time="0.012"><system-out>{&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;} MAC= T~68_F*eP`q
+{&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;} MAC= K0@2a6!M04$
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="163" name="test_athty_search_validations_invalid_serial_no" time="0.006"><system-out>
+Serial_No= $erI@||n&lt;&gt;?b# 
+ b&apos;{&quot;message&quot;: {&quot;serial_no&quot;: [&quot;Serial Number is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Serial_No= G-!@6!T04$ 
+ b&apos;{&quot;message&quot;: {&quot;serial_no&quot;: [&quot;Serial Number is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="182" name="test_athty_search_validations_invalid_contact_no" time="0.015"><system-out>
+Contact_No= 30a21D19x4 
+ {&apos;message&apos;: {&apos;contact&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Contact_No= 30@216!904$ 
+ {&apos;message&apos;: {&apos;contact&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Contact_No= 92345634567890876543 
+ {&apos;message&apos;: {&apos;contact&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Contact_No= 30054 
+ {&apos;message&apos;: {&apos;contact&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Contact_No=  
+ {&apos;message&apos;: {&apos;contact&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="200" name="test_athty_search_validations_invalid_imei" time="0.019"><system-out>
+IMEI= 313789$ 
+ {&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;}
+
+IMEI= 31!937A6%81478C5 
+ {&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;}
+
+IMEI= 31678@8&amp;909*1#6 
+ {&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;}
+
+IMEI= 7~b9{f1a7,d|9?c8)3/e 
+ {&apos;start&apos;: &apos;0&apos;, &apos;cases&apos;: [], &apos;count&apos;: 0, &apos;limit&apos;: &apos;5&apos;}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="213" name="test_athty_search_validations_invalid_start_limit" time="0.005"><system-out>{&apos;message&apos;: {&apos;limit&apos;: [&apos;Start or Limit values are not correct&apos;], &apos;start&apos;: [&apos;Start or Limit values are not correct&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="232" name="test_athty_search_error__404_wrong_api" time="0.003"><system-out>{&apos;message&apos;: None, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="243" name="test_athty_search_error_405_method_not_allowed" time="0.008"></testcase><testcase classname="tests.test_FrontEnd_APIs.test_device_search" file="tests/test_FrontEnd_APIs/test_device_search.py" line="257" name="test_athty_search_offset_limit_chk" time="0.037"><system-out>
+ {&apos;start&apos;: &apos;0&apos;, &apos;limit&apos;: &apos;4&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923028432601&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note4&apos;, &apos;serial_no&apos;: &apos;1XcFGHb02&apos;, &apos;imei&apos;: &apos;112233445566772&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY02&apos;, &apos;is_active&apos;: True}, {&apos;contact&apos;: &apos;923028432603&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note6&apos;, &apos;serial_no&apos;: &apos;1XcFGHb04&apos;, &apos;imei&apos;: &apos;112233445566774&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY04&apos;, &apos;is_active&apos;: True}, {&apos;contact&apos;: &apos;923028432602&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note5&apos;, &apos;serial_no&apos;: &apos;1XcFGHb03&apos;, &apos;imei&apos;: &apos;112233445566773&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY03&apos;, &apos;is_active&apos;: True}, {&apos;contact&apos;: &apos;923028432600&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note3&apos;, &apos;serial_no&apos;: &apos;1XcFGHb01&apos;, &apos;imei&apos;: &apos;112233445566771&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY01&apos;, &apos;is_active&apos;: True}]} 
+
+
+ {&apos;start&apos;: &apos;1&apos;, &apos;limit&apos;: &apos;4&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923028432603&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note6&apos;, &apos;serial_no&apos;: &apos;1XcFGHb04&apos;, &apos;imei&apos;: &apos;112233445566774&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY04&apos;, &apos;is_active&apos;: True}, {&apos;contact&apos;: &apos;923028432602&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note5&apos;, &apos;serial_no&apos;: &apos;1XcFGHb03&apos;, &apos;imei&apos;: &apos;112233445566773&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY03&apos;, &apos;is_active&apos;: True}, {&apos;contact&apos;: &apos;923028432600&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note3&apos;, &apos;serial_no&apos;: &apos;1XcFGHb01&apos;, &apos;imei&apos;: &apos;112233445566771&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY01&apos;, &apos;is_active&apos;: True}]} 
+
+
+ {&apos;start&apos;: &apos;2&apos;, &apos;limit&apos;: &apos;4&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923028432602&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note5&apos;, &apos;serial_no&apos;: &apos;1XcFGHb03&apos;, &apos;imei&apos;: &apos;112233445566773&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY03&apos;, &apos;is_active&apos;: True}, {&apos;contact&apos;: &apos;923028432600&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note3&apos;, &apos;serial_no&apos;: &apos;1XcFGHb01&apos;, &apos;imei&apos;: &apos;112233445566771&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY01&apos;, &apos;is_active&apos;: True}]} 
+
+
+ {&apos;start&apos;: &apos;3&apos;, &apos;limit&apos;: &apos;4&apos;, &apos;count&apos;: 0, &apos;cases&apos;: [{&apos;contact&apos;: &apos;923028432600&apos;, &apos;brand&apos;: &apos;Samsung&apos;, &apos;model&apos;: &apos;Note3&apos;, &apos;serial_no&apos;: &apos;1XcFGHb01&apos;, &apos;imei&apos;: &apos;112233445566771&apos;, &apos;mac&apos;: &apos;20:AB:56:AF:44:AD&apos;, &apos;pair_code&apos;: &apos;g8qquY01&apos;, &apos;is_active&apos;: True}]} 
+
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_download_error_file" file="tests/test_FrontEnd_APIs/test_download_error_file.py" line="44" name="test_mno_error_file_happy_case" time="1.235"><system-out>b&apos;MSISDN,IMSI\n923332A222341,410033000171771\n9233-32277292,41003300023?864\n92314:5309688,410012233445566\n923332223107,4100@3000173800\n923332293464,41003300A25999875\n923332347599,dfdfere232435\n923333152305,410031370\n&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_download_error_file" file="tests/test_FrontEnd_APIs/test_download_error_file.py" line="55" name="test_mno_error_file_not_found" time="0.003"><system-out>{&apos;message&apos;: &apos;File not found&apos;, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_download_error_file" file="tests/test_FrontEnd_APIs/test_download_error_file.py" line="72" name="test_mno_error_file_missing_url" time="0.003"><system-out>{&apos;message&apos;: {&apos;url&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_download_error_file" file="tests/test_FrontEnd_APIs/test_download_error_file.py" line="83" name="test_mno_error_file_error_404_wrong_api" time="0.003"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_download_error_file" file="tests/test_FrontEnd_APIs/test_download_error_file.py" line="94" name="test_mno_error_file__error_405_method_not_allowed" time="0.006"></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="44" name="test_mno_first_page_happy_case_multiple_record" time="1.342"><system-out>
+ b&apos;{&quot;start&quot;: &quot;0&quot;, &quot;limit&quot;: &quot;20&quot;, &quot;count&quot;: 8, &quot;cases&quot;: [{&quot;Req_id&quot;: &quot;VNc4NCGi&quot;, &quot;MSISDN&quot;: &quot;923458888111&quot;}, {&quot;Req_id&quot;: &quot;X0k79mZe&quot;, &quot;MSISDN&quot;: &quot;923458888222&quot;}, {&quot;Req_id&quot;: &quot;TEU6qUfu&quot;, &quot;MSISDN&quot;: &quot;923458888333&quot;}, {&quot;Req_id&quot;: &quot;SRUmGIWd&quot;, &quot;MSISDN&quot;: &quot;923458888444&quot;}, {&quot;Req_id&quot;: &quot;8EyEFrIr&quot;, &quot;MSISDN&quot;: &quot;923479999111&quot;}, {&quot;Req_id&quot;: &quot;tzjerTpl&quot;, &quot;MSISDN&quot;: &quot;923479999222&quot;}, {&quot;Req_id&quot;: &quot;4B98xiaH&quot;, &quot;MSISDN&quot;: &quot;923479999333&quot;}, {&quot;Req_id&quot;: &quot;IEY079F5&quot;, &quot;MSISDN&quot;: &quot;923479999444&quot;}]}&apos;
+
+ b&apos;{&quot;start&quot;: &quot;1&quot;, &quot;limit&quot;: &quot;6&quot;, &quot;count&quot;: 8, &quot;cases&quot;: [{&quot;Req_id&quot;: &quot;SQvF4kah&quot;, &quot;MSISDN&quot;: &quot;923458888222&quot;}, {&quot;Req_id&quot;: &quot;WUKYyNsr&quot;, &quot;MSISDN&quot;: &quot;923458888333&quot;}, {&quot;Req_id&quot;: &quot;rdRPgJeA&quot;, &quot;MSISDN&quot;: &quot;923458888444&quot;}, {&quot;Req_id&quot;: &quot;8At6lum8&quot;, &quot;MSISDN&quot;: &quot;923479999111&quot;}, {&quot;Req_id&quot;: &quot;XTwqyYP6&quot;, &quot;MSISDN&quot;: &quot;923479999222&quot;}, {&quot;Req_id&quot;: &quot;s4h3CGmd&quot;, &quot;MSISDN&quot;: &quot;923479999333&quot;}]}&apos;
+
+ b&apos;{&quot;start&quot;: &quot;3&quot;, &quot;limit&quot;: &quot;3&quot;, &quot;count&quot;: 8, &quot;cases&quot;: [{&quot;Req_id&quot;: &quot;TNlxrhUF&quot;, &quot;MSISDN&quot;: &quot;923458888444&quot;}, {&quot;Req_id&quot;: &quot;ieMZngy8&quot;, &quot;MSISDN&quot;: &quot;923479999111&quot;}, {&quot;Req_id&quot;: &quot;Yu2CZiIB&quot;, &quot;MSISDN&quot;: &quot;923479999222&quot;}]}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="90" name="test_mno_first_page_happy_case_single_record" time="0.019"><system-out>b&apos;{&quot;start&quot;: &quot;1&quot;, &quot;limit&quot;: &quot;2&quot;, &quot;count&quot;: 2, &quot;cases&quot;: [{&quot;Req_id&quot;: &quot;kvS4RLZr&quot;, &quot;MSISDN&quot;: &quot;923227648092&quot;}]}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="108" name="test_mno_first_page_missing_parameters" time="0.010"><system-out>
+ {&apos;message&apos;: {&apos;start&apos;: [&apos;Start or Limit values are not correct&apos;]}, &apos;status_code&apos;: 422} 
+ {&apos;message&apos;: {&apos;limit&apos;: [&apos;Start or Limit values are not correct&apos;]}, &apos;status_code&apos;: 422} 
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="140" name="test_mno_first_page_validations_start_and_limit" time="0.008"><system-out>
+ {&apos;message&apos;: {&apos;limit&apos;: [&apos;Start or Limit values are not correct&apos;]}, &apos;status_code&apos;: 422} 
+ {&apos;message&apos;: {&apos;start&apos;: [&apos;Start or Limit values are not correct&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="164" name="test_mno_first_page_validations_operator_name" time="0.060"><system-out>correct operator name:  jazz
+b&apos;{&quot;message&quot;: &quot;no record found&quot;, &quot;status_code&quot;: 404}&apos;
+correct operator name:  telenor
+b&apos;{&quot;start&quot;: &quot;1&quot;, &quot;limit&quot;: &quot;10&quot;, &quot;count&quot;: 8, &quot;cases&quot;: [{&quot;Req_id&quot;: &quot;jkT1G5Ft&quot;, &quot;MSISDN&quot;: &quot;923458888222&quot;}, {&quot;Req_id&quot;: &quot;klywtrHf&quot;, &quot;MSISDN&quot;: &quot;923458888333&quot;}, {&quot;Req_id&quot;: &quot;T8ILRZBn&quot;, &quot;MSISDN&quot;: &quot;923458888444&quot;}, {&quot;Req_id&quot;: &quot;Blb2njxg&quot;, &quot;MSISDN&quot;: &quot;923479999111&quot;}, {&quot;Req_id&quot;: &quot;n8z6dLeG&quot;, &quot;MSISDN&quot;: &quot;923479999222&quot;}, {&quot;Req_id&quot;: &quot;4OExc9yt&quot;, &quot;MSISDN&quot;: &quot;923479999333&quot;}, {&quot;Req_id&quot;: &quot;hhsFuwDD&quot;, &quot;MSISDN&quot;: &quot;923479999444&quot;}]}&apos;
+correct operator name:  zong
+b&apos;{&quot;message&quot;: &quot;no record found&quot;, &quot;status_code&quot;: 404}&apos;
+correct operator name:  ufone
+b&apos;{&quot;message&quot;: &quot;no record found&quot;, &quot;status_code&quot;: 404}&apos;
+correct operator name:  warid
+b&apos;{&quot;start&quot;: &quot;1&quot;, &quot;limit&quot;: &quot;10&quot;, &quot;count&quot;: 2, &quot;cases&quot;: [{&quot;Req_id&quot;: &quot;hNXvV2Yi&quot;, &quot;MSISDN&quot;: &quot;923227648092&quot;}]}&apos;
+
+Incorrect operator name:  j@zz
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  Vodafone
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  UF0n3
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  T-Mobile
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  Orange
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  wariid
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="199" name="test_mno_first_page_functionality_no_records" time="0.009"><system-out>{&apos;message&apos;: &apos;no record found&apos;, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="215" name="test_mno_first_page_error_404_wrong_api" time="0.003"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_mno_home_page" file="tests/test_FrontEnd_APIs/test_mno_home_page.py" line="225" name="test_mno_first_page_error_405_method_not_allowed" time="0.006"></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="44" name="test_mno_single_imsi_happy_case_primary_pair" time="1.251"><system-out>
+ b&apos;{&quot;message&quot;: &quot;IMSI added successfully&quot;, &quot;status_code&quot;: 200}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="64" name="test_mno_single_imsi_happy_case_secondary_pair" time="0.021"><system-out>{&apos;message&apos;: &apos;IMSI added successfully&apos;, &apos;status_code&apos;: 200}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="86" name="test_mno_single_imsi_functionality_imsi_duplication" time="0.026"><system-out>
+ b&apos;{&quot;message&quot;: &quot;IMSI added successfully&quot;, &quot;status_code&quot;: 200}&apos;
+{&apos;message&apos;: &apos;IMSI already exists&apos;, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="113" name="test_mno_single_imsi_validations_wrong_mno" time="0.013"><system-out>
+ {&apos;message&apos;: &apos;IMSI addition Failed&apos;, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="134" name="test_mno_single_imsi_functionality_unconfirmed_pair" time="0.014"><system-out>{&apos;message&apos;: &apos;IMSI addition Failed&apos;, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="155" name="test_mno_single_imsi_functionality_deleted_pair" time="0.013"><system-out>{&apos;message&apos;: &apos;IMSI addition Failed&apos;, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="176" name="test_mno_single_imsi_error_404_wrong_api" time="0.002"><system-out>{&apos;message&apos;: None, &apos;status_code&apos;: 404}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="188" name="test_mno_single_imsi_error_405_method_not_allowed" time="0.006"></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="202" name="test_mno_single_validations_invalid_subscriber_no" time="0.014"><system-out>{&apos;message&apos;: {&apos;msisdn&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422} 9230021619047892364
+{&apos;message&apos;: {&apos;msisdn&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422} 30014
+{&apos;message&apos;: {&apos;msisdn&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422} 30a21D19x4
+{&apos;message&apos;: {&apos;msisdn&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422} 30@216!904$
+{&apos;message&apos;: {&apos;msisdn&apos;: [&apos;MSISDN format is not correct&apos;]}, &apos;status_code&apos;: 422} 
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="221" name="test_mno_single_imsi_validations_msisdn" time="0.013"><system-out>
+ {&apos;message&apos;: &apos;IMSI addition Failed&apos;, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="242" name="test_mno_single_validations_invalid_imsi" time="0.014"><system-out>{&apos;message&apos;: {&apos;imsi&apos;: [&apos;IMSI is not correct&apos;]}, &apos;status_code&apos;: 422} 4100181
+{&apos;message&apos;: {&apos;imsi&apos;: [&apos;IMSI is not correct&apos;]}, &apos;status_code&apos;: 422} 410048956738902536
+{&apos;message&apos;: {&apos;imsi&apos;: [&apos;IMSI is not correct&apos;]}, &apos;status_code&apos;: 422} 41OO12l6o4z6a9N
+{&apos;message&apos;: {&apos;imsi&apos;: [&apos;IMSI is not correct&apos;]}, &apos;status_code&apos;: 422} 4!00|2l6@4^6#9&amp;
+{&apos;message&apos;: {&apos;imsi&apos;: [&apos;IMSI is not correct&apos;]}, &apos;status_code&apos;: 422} 
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="261" name="test_mno_single_validations_operator_names" time="0.049"><system-out>correct operator name:  jazz
+b&apos;{&quot;message&quot;: &quot;IMSI addition Failed&quot;, &quot;status_code&quot;: 422}&apos;
+correct operator name:  telenor
+b&apos;{&quot;message&quot;: &quot;IMSI addition Failed&quot;, &quot;status_code&quot;: 422}&apos;
+correct operator name:  zong
+b&apos;{&quot;message&quot;: &quot;IMSI addition Failed&quot;, &quot;status_code&quot;: 422}&apos;
+correct operator name:  ufone
+b&apos;{&quot;message&quot;: &quot;IMSI addition Failed&quot;, &quot;status_code&quot;: 422}&apos;
+correct operator name:  warid
+b&apos;{&quot;message&quot;: &quot;IMSI addition Failed&quot;, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  j@zz
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  Vodafone
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  T-Mobile
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  Orange
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  wariid
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  UF0n3
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Incorrect operator name:  
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_FrontEnd_APIs.test_single_imsi_upload" file="tests/test_FrontEnd_APIs/test_single_imsi_upload.py" line="295" name="test_mno_single_missing_parameters" time="0.007"><system-out>
+ {&apos;message&apos;: {&apos;msisdn&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422}
+
+ {&apos;message&apos;: {&apos;operator&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422}
+
+ {&apos;message&apos;: {&apos;imsi&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_db_models.test_models_indexes" file="tests/test_db_models/test_models_indexes.py" line="44" name="test_owner_index" time="1.259"><system-out>owner_contact_index
+</system-out></testcase><testcase classname="tests.test_db_models.test_models_indexes" file="tests/test_db_models/test_models_indexes.py" line="60" name="test_device_indexes" time="0.008"><system-out>owner_pkey
+devices_pkey
+imei_pkey
+pairing_codes_pkey
+pairing_pkey
+owner_contact_index
+devices_serialno_index
+devices_mac_index
+devices_model_index
+devices_brand_index
+</system-out></testcase><testcase classname="tests.test_db_models.test_models_indexes" file="tests/test_db_models/test_models_indexes.py" line="82" name="test_pairing_codes_index" time="0.004"><system-out>devices_paircodes_index
+</system-out></testcase><testcase classname="tests.test_db_models.test_models_indexes" file="tests/test_db_models/test_models_indexes.py" line="98" name="test_imei_index" time="0.007"><system-out>devices_imei_index
+</system-out></testcase><testcase classname="tests.test_db_models.test_models_indexes" file="tests/test_db_models/test_models_indexes.py" line="114" name="test_pairing_indexes" time="0.008"><system-out>owner_pkey
+devices_pkey
+imei_pkey
+pairing_codes_pkey
+pairing_pkey
+owner_contact_index
+devices_serialno_index
+devices_mac_index
+devices_model_index
+devices_brand_index
+devices_paircodes_index
+devices_imei_index
+devices_msisdn_index
+devices_imsi_index
+devices_creation_date_index
+devices_end_date_index
+devices_operator_index
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="43" name="test_add_confirm_validations_wrong_secondary_msisdn" time="1.272"><system-out>Secondary_MSISDN = 9230028460937724  :  MSISDN format is not correct
+Secondary_MSISDN = 92321417g9C21  :  MSISDN format is not correct
+Secondary_MSISDN = 92345@769#564&amp;8  :  MSISDN format is not correct
+Secondary_MSISDN = 923004  :  MSISDN format is not correct
+Secondary_MSISDN =   :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="63" name="test_add_confirm_validations_wrong_primary_msisdn" time="0.013"><system-out>Primary_MSISDN = 9230028460937724  :  MSISDN format is not correct
+Primary_MSISDN = 92321417g9C21  :  MSISDN format is not correct
+Primary_MSISDN = 92345@769#564&amp;8  :  MSISDN format is not correct
+Primary_MSISDN = 923004  :  MSISDN format is not correct
+Primary_MSISDN =   :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="83" name="test_add_confirm_validations_valid_sender_no" time="0.008"><system-out>b&apos;&quot;Wrong Primary number mentioned in SMS&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="99" name="test_add_confirm_validations_operator_name" time="0.014"><system-out>
+ b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; 
+ b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; 
+ b&apos;&quot;Wrong Primary number mentioned in SMS&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="133" name="test_add_confirm_validations_yes_no" time="0.043"><system-out>
+Confirmation-String :  yes 
+msg : Wrong Primary number mentioned in SMS
+
+Confirmation-String :  no 
+msg :  Wrong Primary number mentioned in SMS
+
+Confirmation-String :  Yes 
+msg : Wrong Primary number mentioned in SMS
+
+Confirmation-String :  No 
+msg :  Wrong Primary number mentioned in SMS
+
+Confirmation-String :  YES 
+msg : Wrong Primary number mentioned in SMS
+
+Confirmation-String :  NO 
+msg :  Wrong Primary number mentioned in SMS
+
+Confirmation-String :  yEs 
+msg : {&apos;message&apos;: {&apos;confirm&apos;: [&apos;Confirmation String is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Confirmation-String :  nO 
+msg :  {&apos;message&apos;: {&apos;confirm&apos;: [&apos;Confirmation String is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Confirmation-String :   
+msg : {&apos;message&apos;: {&apos;confirm&apos;: [&apos;Confirmation String is not correct&apos;]}, &apos;status_code&apos;: 422}
+
+Confirmation-String :   
+msg :  {&apos;message&apos;: {&apos;confirm&apos;: [&apos;Confirmation String is not correct&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="172" name="test_add_confirm_missing_parameters" time="0.011"><system-out>b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;secondary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;confirm&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="196" name="test_add_confirm_error_405_method_not_allowed" time="0.005"><system-out>
+HTTP-Method : GET 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : DELETE 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="214" name="test_add_confirm_error_404_bad_request" time="0.002"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="226" name="test_add_confirm_happy_case_yes" time="0.150"><system-out>b&apos;&quot;Request of additional pair from 923478190264 is accepted by 923115840917&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="242" name="test_add_confirm_happy_case_no" time="0.074"><system-out>b&apos;&quot;Request of additional pair is rejected by 923125840817&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="258" name="test_add_confirm_functionality_confirmation_via_invalid_msisdn_no" time="0.014"><system-out>
+Confirmation-String : NO , msg :  b&apos;&quot;Confirmation of additional pair request is not done by valid MSISDN&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="282" name="test_add_confirm_functionality_confirmation_via_invalid_msisdn_yes" time="0.019"><system-out>
+Confirmation-String : YES , msg :  b&apos;&quot;Confirmation of additional pair request is not done by valid MSISDN&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_add_pair_confirmation" file="tests/test_kannel_APIs/test_add_pair_confirmation.py" line="306" name="test_add_confirm_functionality_wrong_primary_msisdn" time="0.013"><system-out>
+Primary_MSISDN : 923458333333 , msg :  b&apos;&quot;Wrong Primary number mentioned in SMS&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="41" name="test_add_pair_validations_wrong_primary_msisdn" time="1.276"><system-out>Primary-MSISDN = 9230028460937724  :  MSISDN format is not correct
+Primary-MSISDN = 92321417g9C21  :  MSISDN format is not correct
+Primary-MSISDN = 92345@769#564&amp;8  :  MSISDN format is not correct
+Primary-MSISDN = 923004  :  MSISDN format is not correct
+Primary-MSISDN =   :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="58" name="test_add_pair_validations_valid_primary_msisdn" time="0.005"><system-out>b&apos;&quot;Request not made by Primary-Pair or number-to-be-added is Primary number&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="74" name="test_add_pair_validations_wrong_secondary_msisdn" time="0.017"><system-out>Secondary_MSISDN = 9230028460937724  :  MSISDN format is not correct
+Secondary_MSISDN = 923x1417k9C21  :  MSISDN format is not correct
+Secondary_MSISDN = 92345@769#564&amp;8  :  MSISDN format is not correct
+Secondary_MSISDN = 923004  :  MSISDN format is not correct
+Secondary_MSISDN =   :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="91" name="test_add_pair_validations_valid_secondary_msisdn" time="0.006"><system-out>b&apos;&quot;Request not made by Primary-Pair or number-to-be-added is Primary number&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="107" name="test_add_pair_missing_parameters" time="0.007"><system-out>{&apos;message&apos;: {&apos;primary_msisdn&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422} 
+ {&apos;message&apos;: {&apos;secondary_msisdn&apos;: [&apos;Missing data for required field.&apos;]}, &apos;status_code&apos;: 422}
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="121" name="test_add_pair_error_404_wrong_api" time="0.002"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="131" name="test_add_pair_error_405_method_not_allowed" time="0.005"></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="144" name="test_add_pair_happy_case" time="0.136"><system-out>b&apos;&quot;Secondary pair is added by 923459146387. Confirmation is awaited from 923117658111&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="157" name="test_add_pair_functionality_wrong_primary_msisdn" time="0.008"><system-out>Request not made by Primary-Pair or number-to-be-added is Primary number
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="173" name="test_add_pair_functionality_same_primary_and_secondary_msisdn" time="0.014"><system-out>Request not made by Primary-Pair or number-to-be-added is Primary number
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="192" name="test_add_pair_functionality_already_paired_msisdn" time="0.183"><system-out>b&apos;&quot;Secondary pair is added by 923469988554. Confirmation is awaited from 923086190554&quot;&apos;
+b&apos;&quot;MSISDN 923086190554 already paired with the device&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_additional_pairs" file="tests/test_kannel_APIs/test_additional_pairs.py" line="213" name="test_add_pair_functionality_pairing_limit" time="0.301"><system-out>b&apos;&quot;Secondary pair is added by 923337788991. Confirmation is awaited from 923017986111&quot;&apos;
+b&apos;&quot;Secondary pair is added by 923337788991. Confirmation is awaited from 923027986222&quot;&apos;
+b&apos;&quot;Secondary pair is added by 923337788991. Confirmation is awaited from 923037986333&quot;&apos;
+b&apos;&quot;Secondary pair is added by 923337788991. Confirmation is awaited from 923047986444&quot;&apos;
+b&apos;&quot;Pairing limit breached: remove any existing pair first&quot;&apos;
+msg:  Pairing limit breached: remove any existing pair first
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="41" name="test_find_pairs_validation_invalid_sender_no" time="1.261"><system-out>
+Primary_MSISDN : 9230028460937724 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Primary_MSISDN : 92321417g9C21 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Primary_MSISDN : 92345@769#564&amp;8 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Primary_MSISDN : 923004 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Primary_MSISDN :  
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="58" name="test_find_pairs_validation_valid_sender_no" time="0.005"><system-out>b&apos;&quot;923002131415 is not registered as Primary-Pair&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="74" name="test_find_pairs_missing_parameter" time="0.003"><system-out>b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="85" name="test_find_pairs_error_404_wrong_api" time="0.002"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="95" name="test_find_pairs_error_405_method_not_allowed" time="0.006"><system-out>HTTP-Method : POST 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : DELETE 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="113" name="test_find_pairs_happy_case" time="0.028"><system-out>b&apos;[{&quot;MSISDN&quot;:&quot;923339701290&quot;,&quot;Status&quot;:&quot;Confirmed Pair&quot;},{&quot;MSISDN&quot;:&quot;923115840917&quot;,&quot;Status&quot;:&quot;Un-confirmed Pair&quot;}]\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="130" name="test_find_pairs_functionality_wrong_primary_no" time="0.012"><system-out>b&apos;&quot;923008171615 is not registered as Primary-Pair&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_find_pairs" file="tests/test_kannel_APIs/test_find_pairs.py" line="150" name="test_find_pairs_functionality_primary_with_no_sec_pairs" time="0.012"><system-out>b&apos;&quot;No Pair is associated with 923158191645&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="41" name="test_first_pair_happy_case" time="1.265"><system-out>b&apos;&quot;PairCode OvfT4pGf is valid and your pair will be added in next 24 to 48 hours&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="57" name="test_first_pair_validations_wrong_paircodes" time="0.010"><system-out>Pair-Code = pqZTDCgE4  :  b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+Pair-Code = KliX6  :  b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+Pair-Code = pqZ*DCgE  :  b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+Pair-Code = Ft#9J$k!  :  b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="76" name="test_first_pair_validations_valid_paircode" time="0.008"><system-out>Pair Code pqZ5DCgE is not Valid
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="93" name="test_first_pair_validations_wrong_sender_no" time="0.013"><system-out>Sender_No = 9230028460937724  :  MSISDN format is not correct
+Sender_No = 92321417g9C21  :  MSISDN format is not correct
+Sender_No = 92345@769#564&amp;8  :  MSISDN format is not correct
+Sender_No = 923004  :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="111" name="test_first_pair_validations_valid_sender_no" time="0.013"><system-out>PairCode CACF0999 is valid and your pair will be added in next 24 to 48 hours
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="133" name="test_first_pair_validations_operator_name" time="0.007"><system-out>b&apos;&quot;Pair Code pqZ5DCgE is not Valid&quot;&apos;
+Operator = j@zz  :  Operator name is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="159" name="test_first_pair_missing_parameters" time="0.008"><system-out>b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;sender_no&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="182" name="test_first_pair_error_404_wrong_api" time="0.002"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="192" name="test_first_pair_error_405_method_not_allowed" time="0.005"></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="206" name="test_first_pair_functionality_msisdn_already_exist" time="0.029"><system-out>b&apos;&quot;PairCode AxT3pGf9 is valid and your pair will be added in next 24 to 48 hours&quot;&apos;
+b&apos;&quot;MSISDN already exists as Primary-Pair&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_first_pair" file="tests/test_kannel_APIs/test_first_pair.py" line="228" name="test_first_pair_functionality_invalid_paircode" time="0.027"><system-out>b&apos;&quot;PairCode A1b2C3d4 is valid and your pair will be added in next 24 to 48 hours&quot;&apos;
+Pair Code A1b2C3d4 is not Valid
+b&apos;&quot;Pair Code AaBbCcDd is not Valid&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_generate_pair_code" file="tests/test_kannel_APIs/test_generate_pair_code.py" line="35" name="test_generate_paircode" time="1.249"><system-out>b&apos;{&quot;message&quot;: &quot;Pair-Code consists of 8 characters&quot;, &quot;pair-code&quot;: &quot;2AAlRxyc&quot;}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_generate_pair_code" file="tests/test_kannel_APIs/test_generate_pair_code.py" line="45" name="test_validate_paircode_length" time="0.004"><system-out>
+Pair-Code : a55SBTux
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="43" name="test_rel_all_pairs_validation_wrong_sender_no" time="1.277"><system-out>
+primary_msisdn : 9230028460937724 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn : 92321417g9C21 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn : 92345@769#564&amp;8 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn : 923004 
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn :  
+ b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="60" name="test_rel_all_pairs_validations_valid_sender_no" time="0.005"><system-out>b&apos;&quot;Release-All request not made by Primary-MSISDN&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="76" name="test_rel_all_pairs_missing_parameters" time="0.003"><system-out>b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="87" name="test_rel_all_pairs_error_404_wrong_api" time="0.003"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="97" name="test_rel_all_pairs_error_405_method_not_allowed" time="0.005"><system-out>
+HTTP-Method : GET 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : POST 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="114" name="test_rel_all_pairs_happy_case_without_sec_pairs" time="0.032"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is HwzNpAZY&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="133" name="test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair" time="0.025"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is ym0hUItO&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="153" name="test_rel_all_pairs_happy_case_with_confirmed_sec_pair" time="0.025"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is nfsPKwmp&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="174" name="test_rel_all_pairs_happy_case_with_maximum_sec_pairs" time="0.036"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is uYrLyg3L&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="198" name="test_rel_all_pairs_functionality_wrong_primary_msisdn" time="0.013"><system-out>b&apos;&quot;Release-All request not made by Primary-MSISDN&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="218" name="test_rel_all_pairs_functionality_repetitive_requests" time="0.046"><system-out>
+ b&apos;&quot;Release All-Pairs request is registered. New Pair Code is kWRCUSEr&quot;&apos;
+b&apos;&quot;Your new Pair-Code is kWRCUSEr. Release-All request is already registered and will be implemented within 24-48 hours&quot;&apos;
+b&apos;&quot;Your new Pair-Code is kWRCUSEr. Release-All request is already registered and will be implemented within 24-48 hours&quot;&apos;
+b&apos;&quot;Your new Pair-Code is kWRCUSEr. Release-All request is already registered and will be implemented within 24-48 hours&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="252" name="test_rel_all_primary_without_secondary_deletion_before_export" time="0.023"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is 6qgclpqE&quot;&apos;
+change_type = None 
+export_status = None
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="273" name="test_rel_all_primary_without_secondary_deletion_after_export" time="0.022"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is 6nQg4xEU&quot;&apos;
+change_type = remove 
+export_status = False
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="293" name="test_rel_all_primary_without_secondary_pair_exported_sim_changed_deleted_before_new_imsi" time="0.022"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is aBQiSHL2&quot;&apos;
+IMSI = 410076561643648
+OLD_IMSI = None
+change_type = remove
+export_status = False
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="316" name="test_rel_all_primary_with_secondary_deletion_before_export" time="0.026"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is L94K4Fu9&quot;&apos;
+
+-----Primary-Pair-----
+end_date = 2019-11-08 
+change_type = None 
+export_status = None
+
+-----Secondary-Pair-----
+end_date = 2019-11-08 
+change_type = None 
+export_status = None
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="345" name="test_rel_all_primary_with_secondary_deletion_after_export" time="0.025"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is QgqGwQUT&quot;&apos;
+
+-----Primary-Pair-----
+end_date = 2019-11-08 
+change_type = remove 
+export_status = False
+
+-----Secondary-Pair-----
+end_date = 2019-11-08 
+change_type = remove 
+export_status = False
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_all_pairs" file="tests/test_kannel_APIs/test_rel_all_pairs.py" line="376" name="test_rel_all_primary_with_secondary_pair_exported_sim_changed_deleted_before_new_imsi" time="0.025"><system-out>b&apos;&quot;Release All-Pairs request is registered. New Pair Code is jWGnNJPI&quot;&apos;
+
+-----Primary-Pair-----
+IMSI = 410076561667678
+OLD_IMSI = None
+change_type = remove
+export_status = False
+
+-----Secondary-Pair-----
+IMSI = 410074866996431
+OLD_IMSI = None
+change_type = remove
+export_status = False
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="43" name="test_rel_single_pair_validations_wrong_primary_msisdn" time="1.250"><system-out>primary_msisdn : 9230028460937724 
+ msg :  MSISDN format is not correct
+primary_msisdn : 92321417g9C21 
+ msg :  MSISDN format is not correct
+primary_msisdn : 92345@769#564&amp;8 
+ msg :  MSISDN format is not correct
+primary_msisdn : 923004 
+ msg :  MSISDN format is not correct
+primary_msisdn :  
+ msg :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="62" name="test_rel_single_pair_validations_wrong_secondary_msisdn" time="0.014"><system-out>secondary_msisdn : 9230028460937724 
+ msg :  MSISDN format is not correct
+secondary_msisdn : 92321417g9C21 
+ msg :  MSISDN format is not correct
+secondary_msisdn : 92345@769#564&amp;8 
+ msg :  MSISDN format is not correct
+secondary_msisdn : 923004 
+ msg :  MSISDN format is not correct
+secondary_msisdn :  
+ msg :  MSISDN format is not correct
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="81" name="test_rel_single_pair_validations_valid_sender_no" time="0.007"><system-out>b&apos;&quot;Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="97" name="test_rel_single_pair_missing_parameters" time="0.007"><system-out>b&apos;{&quot;message&quot;: {&quot;primary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;secondary_msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="114" name="test_rel_single_pair_error_404_wrong_api" time="0.002"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="124" name="test_rel_single_pair_error_405_method_not_allowed" time="0.006"><system-out>
+HTTP-Method : GET 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : POST 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="141" name="test_rel_single_pair_happy_case_unconfirmed_pair" time="0.023"><system-out>b&apos;&quot;Deletion request is successful. Pair will be removed in next 24 to 48 hours&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="163" name="test_rel_single_pair_happy_case_confirmed_pair" time="0.018"><system-out>b&apos;&quot;Deletion request is successful. Pair will be removed in next 24 to 48 hours&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="185" name="test_rel_single_pair_functionality_wrong_primary_msisdn" time="0.015"><system-out>b&apos;&quot;Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="206" name="test_rel_single_pair_functionality_wrong_secondary_msisdn" time="0.012"><system-out>b&apos;&quot;MSISDN 923137848888 is not Paired with the device&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="226" name="test_rel_single_pair_functionality_delete_primary_msisdn" time="0.014"><system-out>b&apos;&quot;Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="248" name="test_rel_single_pair_deletion_before_export_to_PairList" time="0.016"><system-out>b&apos;&quot;Deletion request is successful. Pair will be removed in next 24 to 48 hours&quot;&apos;
+
+-----Deleted Secondary-Pair-----
+msisdn = 923018144773
+end_date = 2019-11-08
+change_type = None
+export_status = None
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="272" name="test_rel_single_pair_deletion_after_export_to_PairList" time="0.018"><system-out>b&apos;&quot;Deletion request is successful. Pair will be removed in next 24 to 48 hours&quot;&apos;
+
+-----Deleted Secondary-Pair-----
+msisdn = 923479091924
+end_date = 2019-11-08
+change_type = remove
+export_status = False
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_rel_single" file="tests/test_kannel_APIs/test_rel_single.py" line="297" name="test_rel_single_pair_exported_sim_changed_deleted_before_new_imsi" time="0.018"><system-out>b&apos;&quot;Deletion request is successful. Pair will be removed in next 24 to 48 hours&quot;&apos;
+
+-----Deleted Secondary-Pair-----
+msisdn = 923337457869
+end_date = 2019-11-08
+change_type = remove
+export_status = False
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="41" name="test_sim_change_validation_wrong_sender_no" time="1.273"><system-out>
+primary_msisdn : 9230028460937724 
+ b&apos;{&quot;message&quot;: {&quot;msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn : 92321417g9C21 
+ b&apos;{&quot;message&quot;: {&quot;msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn : 92345@769#564&amp;8 
+ b&apos;{&quot;message&quot;: {&quot;msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn : 923004 
+ b&apos;{&quot;message&quot;: {&quot;msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+primary_msisdn :  
+ b&apos;{&quot;message&quot;: {&quot;msisdn&quot;: [&quot;MSISDN format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="58" name="test_sim_change_validation_valid_sender_no" time="0.006"><system-out>b&apos;&quot;MSISDN 923069590281 is not existed in any pair or SIM-Change request is already in process&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="74" name="test_sim_change_validation_operator_name" time="0.013"><system-out>
+ b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; 
+ b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Operator name is not correct&quot;]}, &quot;status_code&quot;: 422}&apos; 
+ b&apos;&quot;MSISDN 923468292404 is not existed in any pair or SIM-Change request is already in process&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="105" name="test_sim_change_missing_parameters" time="0.008"><system-out>b&apos;{&quot;message&quot;: {&quot;msisdn&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+b&apos;{&quot;message&quot;: {&quot;operator&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="122" name="test_sim_change_error_404_wrong_api" time="0.003"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="132" name="test_sim_change_error_405_method_not_allowed" time="0.008"><system-out>
+HTTP-Method : GET 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : POST 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="149" name="test_sim_change_happy_case" time="0.023"><system-out>b&apos;&quot;SIM Change request has been registered. The Pair will be active in 24 to 48 hours&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="162" name="test_sim_change_functionality_before_export_to_PairList" time="0.014"><system-out>b&apos;&quot;SIM Change request has been registered. The Pair will be active in 24 to 48 hours&quot;&apos;
+
+-----Pair Status-----
+Old IMSI = None
+New IMSI = None
+change_type = None
+export_status = None
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="185" name="test_sim_change_functionality_after_export_to_PairList" time="0.017"><system-out>b&apos;&quot;SIM Change request has been registered. The Pair will be active in 24 to 48 hours&quot;&apos;
+
+-----Pair Status-----
+Old IMSI = 410049007345128
+New IMSI = None
+change_type = None
+export_status = None
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="211" name="test_sim_change_functionality_wrong_sender_no" time="0.010"><system-out>b&apos;&quot;MSISDN 923113306922 is not existed in any pair or SIM-Change request is already in process&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="229" name="test_sim_change_functionality_request_from_unconfirmed_sec_pair" time="0.012"><system-out>b&apos;&quot;MSISDN 923125840917 is not existed in any pair or SIM-Change request is already in process&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_sim_change" file="tests/test_kannel_APIs/test_sim_change.py" line="249" name="test_sim_change_functionality_request_from_confirmed_sec_pair" time="0.018"><system-out>b&apos;&quot;SIM Change request has been registered. The Pair will be active in 24 to 48 hours&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="42" name="test_vfy_paircode_validation_invalid_paircodes" time="1.262"><system-out>
+Pair-Code : pqZTDCgE4 
+ b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Pair-Code : KliX6 
+ b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Pair-Code : pqZ*C3gE 
+ b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+Pair-Code :  
+ b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Pair-Code format is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="59" name="test_vfy_paircode_validation_invalid_imeis" time="0.012"><system-out>
+IMEI : 12345 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+IMEI : 123456789098765433 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+IMEI : 123456acg789098 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+IMEI : 111111@#*111111 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+
+IMEI :  
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;IMEI is not correct&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="76" name="test_vfy_paircode_validation_valid_paircode" time="0.008"><system-out>b&apos;&quot;Pair-Code pqZ4DCgE is not valid&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="91" name="test_vfy_paircode_validation_valid_imei" time="0.006"><system-out>b&apos;&quot;Pair-Code pqZ4DCgE is not valid&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="106" name="test_vfy_paircode_missing_parameters" time="0.007"><system-out>
+ b&apos;{&quot;message&quot;: {&quot;pair_code&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos; 
+ b&apos;{&quot;message&quot;: {&quot;imei&quot;: [&quot;Missing data for required field.&quot;]}, &quot;status_code&quot;: 422}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="120" name="test_vfy_paircode_error_404_wrong_api" time="0.002"><system-out>b&apos;{&quot;message&quot;: null, &quot;status_code&quot;: 404}&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="130" name="test_vfy_paircode_error_405_method_not_allowed" time="0.006"><system-out>HTTP-Method : POST 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PUT 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : DELETE 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+HTTP-Method : PATCH 
+ msg :  b&apos;{&quot;message&quot;: &quot;The method is not allowed for the requested URL.&quot;}\n&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="148" name="test_vfy_paircode_happy_case" time="0.016"><system-out>b&apos;&quot;Pair-Code PuPnag6D is active &amp; associated with provided IMEI&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="162" name="test_vfy_paircode_functionality_wrong_paircode" time="0.011"><system-out>b&apos;&quot;Pair-Code A1B2C3D4 is not valid&quot;&apos;
+</system-out></testcase><testcase classname="tests.test_kannel_APIs.test_verify_paircode" file="tests/test_kannel_APIs/test_verify_paircode.py" line="181" name="test_vfy_paircode_functionality_wrong_imei" time="2.683"><system-out>b&apos;&quot;IMEI 111111111111111 is not associated with Pair-Code L8vP3haD&quot;&apos;
+</system-out></testcase></testsuite>

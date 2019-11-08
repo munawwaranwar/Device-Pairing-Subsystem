@@ -67,12 +67,12 @@ class DeviceSearch(Resource):
                     elif p == "serial_no" and not fst:
                         qry = qry + """{} = '{}' """.format(p, (kwargs.get(p)))
                         fst = True
-                    elif p == "serial_no" and fst:
+                    elif p == "serial_no" and fst:      # pragma: no cover
                         qry = qry + """ and {} = '{}' """.format(p, (kwargs.get(p)))
                     elif p == "mac" and not fst:
                         qry = qry + """{} = '{}' """.format(p, (kwargs.get(p)))
                         fst = True
-                    elif p == "mac" and fst:  # pragma: no cover
+                    elif p == "mac" and fst:            # pragma: no cover
                         qry = qry + """ and {} = '{}' """.format(p, (kwargs.get(p)))
                     elif p == "contact" and not fst:
                         qry = qry + """{} = '{}' """.format(p, (kwargs.get(p)))
@@ -120,7 +120,7 @@ class DeviceSearch(Resource):
                                             mimetype=MIME_TYPES.get('JSON'))
 
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()           # pragma: no cover
 
         finally:
             db.session.close()

@@ -86,10 +86,14 @@ class FindPairs(Resource):
                                             status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
                                             mimetype=MIME_TYPES.get('TEXT'))
 
-            return pair_info
-
+            if pair_info:
+                return pair_info
+            else:
+                return custom_text_response(_("No Pair is associated with %(pm)s", pm=kwargs['primary_msisdn']),
+                                            status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
+                                            mimetype=MIME_TYPES.get('TEXT'))
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()       # pragma: no cover
 
         finally:
             db.session.close()

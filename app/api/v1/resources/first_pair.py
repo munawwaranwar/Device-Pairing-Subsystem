@@ -80,7 +80,8 @@ class FirstPair(Resource):
                     db.session.flush()
                     db.session.commit()
 
-                    return custom_text_response(_("PairCode %(v1)s is valid and your pair will be added in next 24 to 48 hours", v1=kwargs['pair_code']),
+                    return custom_text_response(_("PairCode %(v1)s is valid and your pair will be added in next 24 to "
+                                                  "48 hours", v1=kwargs['pair_code']),
                                                 status=STATUS_CODES.get('OK'),
                                                 mimetype=MIME_TYPES.get('TEXT'))
                 else:
@@ -91,8 +92,9 @@ class FirstPair(Resource):
                 return custom_text_response(_("Pair Code %(pc)s is not Valid", pc=kwargs['pair_code']),
                                             status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
                                             mimetype=MIME_TYPES.get('TEXT'))
+
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()        # pragma: no cover
 
         finally:
             db.session.close()

@@ -111,7 +111,7 @@ class ReleaseSinglePair(Resource):
             return custom_text_response(rtn_msg, status=STATUS_CODES.get('OK'), mimetype=MIME_TYPES.get('TEXT'))
 
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()           # pragma: no cover
 
         finally:
             db.session.close()

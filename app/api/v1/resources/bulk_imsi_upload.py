@@ -158,7 +158,7 @@ class BulkImsiUpload(Resource):
                                                         STATUS_CODES.get('FORBIDDEN'), MIME_TYPES.get('JSON'))
                     else:
                         return custom_json_response(_("System only accepts csv/txt files"),
-                                                    STATUS_CODES.get('FORBIDDEN'), MIME_TYPES.get('JSON'))
+                                                    STATUS_CODES.get('FORBIDDEN'), MIME_TYPES.get('JSON'))  # pragma: no cover
 
                 finally:
                     rmtree(tmp_dir)
@@ -168,7 +168,7 @@ class BulkImsiUpload(Resource):
                                             MIME_TYPES.get('JSON'))
 
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()       # pragma: no cover
 
         finally:
             db.session.close()

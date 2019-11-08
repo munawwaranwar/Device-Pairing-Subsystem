@@ -89,7 +89,7 @@ class BulkMsisdnDownload(Resource):
                                             mimetype=MIME_TYPES.get('JSON'))
 
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()       # pragma: no cover
 
         finally:
             db.session.close()

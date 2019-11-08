@@ -50,9 +50,9 @@ class SimChange(Resource):
         try:
 
             chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(kwargs['msisdn'])) \
-                .filter(Pairing.end_date == None) \
-                .filter(Pairing.imsi != None) \
-                .filter(Pairing.add_pair_status == True).all()
+                                   .filter(Pairing.end_date == None) \
+                                   .filter(Pairing.imsi != None) \
+                                   .filter(Pairing.add_pair_status == True).all()
 
             # checking conditions for SIM replacement
 
@@ -86,7 +86,7 @@ class SimChange(Resource):
                                             mimetype=MIME_TYPES.get('TEXT'))
 
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()       # pragma: no cover
 
         finally:
             db.session.close()

@@ -28,14 +28,23 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import os
+
+from flask_babel import _
+from ..assets.response import *
+from flask_restful import Resource
+from ..common.generate_paircode import gen_paircode
+from ..assets.error_handlers import custom_paircode_response
 
 
-def error_url(url):
-    """ Function to download error file  """
+class PairCode(Resource):
+    """Flask resource for creation of Pair-Codes."""
 
-    #if not os.path.exists(url):
-    if not os.path.isfile(url):
-        return "no file found"
-    else:
-        return url
+    @staticmethod
+    def get():
+        """method to create pair-codes"""
+
+        pc = gen_paircode()
+
+        return custom_paircode_response(_("Pair-Code consists of 8 characters"),
+                                        pc, status=STATUS_CODES.get('OK'),
+                                        mimetype=MIME_TYPES.get('JSON'))

@@ -150,7 +150,7 @@ msgstr "File berisi duplikasi IMSI"
 
 #: app/api/v1/resources/bulk_imsi_upload.py:157
 msgid "File headers are incorrect"
-msgstr "Los encabezados de archivo son incorrectos"
+msgstr "Header file salah"
 
 #: app/api/v1/resources/bulk_imsi_upload.py:160
 msgid "System only accepts csv/txt files"

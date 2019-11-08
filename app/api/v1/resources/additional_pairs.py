@@ -143,13 +143,13 @@ class AdditionalPairs(Resource):
 
                 requests.get(conf['kannel_sms'], params=payload)
 
-                cnfm_sms = False
+                cnfm_sms = False        # pragma: no cover
 
             return custom_text_response(rtn_msg, status=STATUS_CODES.get('OK'),
                                         mimetype=MIME_TYPES.get('TEXT'))
 
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()            # pragma: no cover
 
         finally:
             db.session.close()

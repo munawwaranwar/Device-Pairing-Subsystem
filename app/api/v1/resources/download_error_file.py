@@ -55,7 +55,7 @@ class DownloadErrorFile(Resource):
             else:
                 return send_file(kwargs['url'], as_attachment=True)
 
-        except Exception as e:
+        except Exception as e:      # pragma: no cover
             app.logger.info(_("Error occurred while retrieving File."))
             app.logger.exception(e)
 

@@ -79,7 +79,7 @@ class VerifyPairCode(Resource):
                                             status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
                                             mimetype=MIME_TYPES.get('TEXT'))
 
-        except Exception as e:
+        except Exception as e:          # pragma: no cover
             db.session.rollback()
 
         finally:

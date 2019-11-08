@@ -46,7 +46,7 @@ def not_found(error=None):
 
 # noinspection PyUnusedLocal
 @app.errorhandler(STATUS_CODES.get('BAD_REQUEST'))
-def bad_request(error=None):
+def bad_request(error=None):        # pragma: no cover
     """handle app's 400 error"""
     resp = Response(json.dumps({"message": MESSAGES.get('BAD_REQUEST'),
                                 "status_code": STATUS_CODES.get('BAD_REQUEST')}),
@@ -56,7 +56,7 @@ def bad_request(error=None):
 
 # noinspection PyUnusedLocal
 @app.errorhandler(STATUS_CODES.get('INTERNAL_SERVER_ERROR'))
-def internal_error(error=None):
+def internal_error(error=None):     # pragma: no cover
     """handle app's 500 error"""
     resp = Response(json.dumps({"message": MESSAGES.get('INTERNAL_SERVER_ERROR'),
                                 "status_code": STATUS_CODES.get('INTERNAL_SERVER_ERROR')}),
@@ -67,7 +67,7 @@ def internal_error(error=None):
 
 # noinspection PyUnusedLocal
 @app.errorhandler(STATUS_CODES.get('METHOD_NOT_ALLOWED'))
-def method_not_allowed(error=None):
+def method_not_allowed(error=None):     # pragma: no cover
     """handle app's 405 error"""
     resp = Response(json.dumps({"message": MESSAGES.get('METHOD_NOT_ALLOWED'),
                                 "status_code": STATUS_CODES.get('METHOD_NOT_ALLOWED')}),

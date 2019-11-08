@@ -47,7 +47,7 @@ global:
     imsi: '\d{15}'
     mno: '^.{1,50}$'
     start_limit: '\d+'
-    serial_no: '^.{1,100}$'
+    serial_no: '^[0-9a-zA-Z]{1,100}$'
     mac: '^([0-9A-F]{2,4}[.:-]){3,7}([0-9A-F]{2,4})$'
     rat: '^(2G|3G|4G|5G)[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?$'
     date: '^((19|20)\d{2})\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$'
@@ -95,7 +95,7 @@ global:
   Upload_Path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/uploads'
 
   # path for test-documents
-  test_doc_path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/'
+  test_doc_path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem//tests/unittest_data/sample_files/'
 
   # SMS Texts
   # Additional-Pair Messages
@@ -104,7 +104,7 @@ global:
   # Multi-Language Support
   supported_languages:
     languages: ['es', 'id', 'en']
-    default_language: 'es'
+    default_language: 'en'
 
   regex:
     id:

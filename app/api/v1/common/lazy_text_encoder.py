@@ -37,8 +37,8 @@ from speaklater import _LazyString
 class JSON_Encoder(BaseEncoder):
     """Custom serializer to serialize lazystring"""
 
-    def default(self, o):
+    def default(self, o):       # pragma: no cover
         if isinstance(o, _LazyString):
-            return text_type(o)   # pragma: no cover
+            return text_type(o)
 
         return BaseEncoder.default(self, o)
