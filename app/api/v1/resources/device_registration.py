@@ -97,14 +97,14 @@ class DeviceRegistration(Resource):
                 db.session.flush()
                 db.session.commit()
 
-                # message = _("Device has been registered with Authority. Your Activation Pair-Code is %(pc)s",
-                #             pc=pair_code)
-                #
-                # payload = {'username': conf['kannel_username'], 'password': conf['kannel_password'],
-                #            'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': kwargs['contact_no'],
-                #            'text': message}
-                #
-                # requests.get(conf['kannel_sms'], params=payload)
+                message = _("Device has been registered with Authority. Your Activation Pair-Code is %(pc)s",
+                            pc=pair_code)
+
+                payload = {'username': conf['kannel_username'], 'password': conf['kannel_password'],
+                           'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': kwargs['contact_no'],
+                           'text': message}
+
+                requests.get(conf['kannel_sms'], params=payload)
 
                 return custom_paircode_response(_("Device's information has been successfully loaded"),
                                                 pair_code, status=STATUS_CODES.get('OK'),
