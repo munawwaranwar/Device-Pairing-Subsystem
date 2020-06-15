@@ -125,7 +125,7 @@ To enable different languages & activate their translations from English
 pybabel extract -F babel.cfg -k _l -o messages.pot .
 pybabel init -i messages.pot -d app/translations -l <language-code>
 ```
-e.g to translate in Espanish 
+e.g to translate in Spanish 
 ```bash
 pybabel init -i messages.pot -d app/translations -l es
 ```
