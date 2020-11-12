@@ -33,21 +33,27 @@ from flask_babel import _
 from time import strftime
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.imeis import Imei
 from ..models.pairings import Pairing
 from ..models.pairing_codes import Pairing_Codes
 from ..schema.input_schema import FirstPairSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyComparisonWithNone,PyBroadException,PyUnusedLocal
 class FirstPair(Resource):
     """Flask resource for creation of First-Pair."""
 
-    @staticmethod
     @use_kwargs(FirstPairSchema().fields_dict, locations=['json'])
-    def post(**kwargs):
+    def post(self, **kwargs):
+        """method to call static-method to create primary-pairs"""
+
+        rst = self.first_pair_creation(kwargs)
+        return rst
+
+    @staticmethod
+    def first_pair_creation(kwargs):
         """method to create primary/first pair"""
 
         try:

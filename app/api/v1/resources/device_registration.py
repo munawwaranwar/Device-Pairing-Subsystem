@@ -33,14 +33,14 @@ from flask_restful import Resource
 from flask_apispec import use_kwargs
 from app import db, conf
 from flask_babel import _
+from app.api.common.generate_paircode import gen_paircode
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 from ..schema.input_schema import DeviceRegistrationSchema
-from ..assets.error_handlers import custom_json_response, custom_paircode_response
-from ..assets.response import *
-from ..common.generate_paircode import gen_paircode
 from ..models.owner import Owner
 from ..models.devices import Devices
 from ..models.imeis import Imei
 from ..models.pairing_codes import Pairing_Codes
+from app.api.assets.error_handlers import custom_paircode_response
 
 
 # noinspection PyBroadException,PyUnusedLocal
@@ -52,63 +52,50 @@ class DeviceRegistration(Resource):
     def post(**kwargs):
         """method to create device registration request."""
         try:
-
-            chk_duplicate = Devices.query.filter(Devices.serial_no == '{}'.format(kwargs['serial_no'])).first()
-            # to check if device is not already registered
-
-            if chk_duplicate:
-
-                return custom_json_response(_("Device with same Serial number already exists"),
-                                            status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
-                                            mimetype=MIME_TYPES.get('JSON'))
+            chk_owner_id = Owner.query.filter(Owner.contact == '{}'.format(kwargs['contact_no'])).first()
+            if not chk_owner_id:
+                add_owner = Owner(contact=kwargs['contact_no'])
+                db.session.add(add_owner)
+                db.session.flush()
+                owner_id = add_owner.id
             else:
-                chk_owner_id = Owner.query.filter(Owner.contact == '{}'.format(kwargs['contact_no'])).first()
-                if not chk_owner_id:
-                    add_owner = Owner(contact=kwargs['contact_no'])
-                    db.session.add(add_owner)
-                    db.session.flush()
-                    owner_id = add_owner.id
-                else:
-                    owner_id = chk_owner_id.id
+                owner_id = chk_owner_id.id
+            add_device = Devices(model=kwargs['model'],
+                                 brand=kwargs['brand'],
+                                 serial_no=kwargs['serial_no'].strip(),
+                                 mac=kwargs['mac'].strip(),
+                                 rat=kwargs['rat'].strip(','),
+                                 owner_id=owner_id)
 
-                add_device = Devices(model=kwargs['model'],
-                                     brand=kwargs['brand'],
-                                     serial_no=kwargs['serial_no'],
-                                     mac=kwargs['mac'],
-                                     rat=kwargs['rat'].strip(','),
-                                     owner_id=owner_id)
+            db.session.add(add_device)
+            db.session.flush()
+            for i in kwargs['imei']:
+                add_imei = Imei(imei=i,
+                                device_id=add_device.id)
 
-                db.session.add(add_device)
+                db.session.add(add_imei)
                 db.session.flush()
+            pair_code = gen_paircode()
+            add_paircode = Pairing_Codes(pair_code=pair_code,
+                                         is_active=True,
+                                         device_id=add_device.id)
+            db.session.add(add_paircode)
+            db.session.flush()
+            db.session.commit()
 
-                for i in kwargs['imei']:
-                    add_imei = Imei(imei=i,
-                                    device_id=add_device.id)
+            message = _("Device has been registered with Authority. Your Activation Pair-Code is %(pc)s",
+                        pc=pair_code)
+            chg_msisdn = '0' + kwargs['contact_no'][2:]
 
-                    db.session.add(add_imei)
-                    db.session.flush()
+            payload = {'username': conf['kannel_username'], 'password': conf['kannel_password'],
+                       'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': chg_msisdn,
+                       'text': message}
 
-                pair_code = gen_paircode()
-                add_paircode = Pairing_Codes(pair_code=pair_code,
-                                             is_active=True,
-                                             device_id=add_device.id)
+            requests.get(conf['kannel_sms'], params=payload)
 
-                db.session.add(add_paircode)
-                db.session.flush()
-                db.session.commit()
-
-                message = _("Device has been registered with Authority. Your Activation Pair-Code is %(pc)s",
-                            pc=pair_code)
-
-                payload = {'username': conf['kannel_username'], 'password': conf['kannel_password'],
-                           'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': kwargs['contact_no'],
-                           'text': message}
-
-                requests.get(conf['kannel_sms'], params=payload)
-
-                return custom_paircode_response(_("Device's information has been successfully loaded"),
-                                                pair_code, status=STATUS_CODES.get('OK'),
-                                                mimetype=MIME_TYPES.get('JSON'))
+            return custom_paircode_response(_("Device's information has been successfully loaded"),
+                                            pair_code, status=STATUS_CODES.get('OK'),
+                                            mimetype=MIME_TYPES.get('JSON'))
 
         except Exception as e:
             db.session.rollback()       # pragma: no cover

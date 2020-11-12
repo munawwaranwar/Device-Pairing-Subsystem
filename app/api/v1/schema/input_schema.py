@@ -29,12 +29,14 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 """
 
 from marshmallow import Schema, fields
-from ..common.validations import Validations
+from app.api.common.validations import Validations
 
 
 class FirstPairSchema(Schema):
     """Marshmallow schema for first-pair creation request."""
 
+    class Meta:
+        strict = True
     pair_code = fields.String(required=True, validate=Validations.validate_paircode)
     sender_no = fields.String(required=True, validate=Validations.validate_msisdn)
     operator = fields.String(required=True, validate=Validations.validate_operator)
@@ -48,6 +50,8 @@ class FirstPairSchema(Schema):
 class AdditionalPairSchema(Schema):
     """Marshmallow schema for Secondary-Pairs creation request."""
 
+    class Meta:
+        strict = True
     secondary_msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
     primary_msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
 
@@ -60,6 +64,8 @@ class AdditionalPairSchema(Schema):
 class DeviceRegistrationSchema(Schema):
     """Marshmallow schema for Device Registration request."""
 
+    class Meta:
+        strict = True
     contact_no = fields.String(required=True, validate=Validations.validate_msisdn)
     model = fields.String(required=True, validate=Validations.validate_model)
     brand = fields.String(required=True, validate=Validations.validate_brand)
@@ -77,6 +83,8 @@ class DeviceRegistrationSchema(Schema):
 class AddPairConfirmSchema(Schema):
     """Marshmallow schema for Secondary-Pairs confirmation request."""
 
+    class Meta:
+        strict = True
     secondary_msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
     primary_msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
     operator = fields.String(required=True, validate=Validations.validate_operator)
@@ -91,6 +99,8 @@ class AddPairConfirmSchema(Schema):
 class RelAllPairsSchema(Schema):
     """Marshmallow schema for all-pairs release request."""
 
+    class Meta:
+        strict = True
     primary_msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
 
     @property
@@ -102,6 +112,8 @@ class RelAllPairsSchema(Schema):
 class SimChangeSchema(Schema):
     """Marshmallow schema for SIM Change request."""
 
+    class Meta:
+        strict = True
     msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
     operator = fields.String(required=True, validate=Validations.validate_operator)
 
@@ -114,6 +126,8 @@ class SimChangeSchema(Schema):
 class VfyPaircodeSchema(Schema):
     """Marshmallow schema for PairCode verification request."""
 
+    class Meta:
+        strict = True
     pair_code = fields.String(required=True, validate=Validations.validate_paircode)
     imei = fields.String(required=True, validate=Validations.validate_single_imei)
 
@@ -126,6 +140,8 @@ class VfyPaircodeSchema(Schema):
 class DeviceSearchSchema(Schema):
     """Marshmallow schema for device searching request."""
 
+    class Meta:
+        strict = True
     start = fields.String(required=True, validate=Validations.validate_start_limit)
     limit = fields.String(required=True, validate=Validations.validate_start_limit)
     contact = fields.String(required=False, validate=Validations.validate_msisdn)
@@ -142,6 +158,8 @@ class DeviceSearchSchema(Schema):
 class MnoHomePageSchema(Schema):
     """Marshmallow schema for MNO's Home page request."""
 
+    class Meta:
+        strict = True
     start = fields.String(required=True, validate=Validations.validate_start_limit)
     limit = fields.String(required=True, validate=Validations.validate_start_limit)
     operator = fields.String(required=True, validate=Validations.validate_operator)
@@ -155,6 +173,8 @@ class MnoHomePageSchema(Schema):
 class SingleImsiSchema(Schema):
     """Marshmallow schema for Single IMSI upload request."""
 
+    class Meta:
+        strict = True
     msisdn = fields.String(required=True, validate=Validations.validate_msisdn)
     operator = fields.String(required=True, validate=Validations.validate_operator)
     imsi = fields.String(required=True, validate=Validations.validate_imsi)
@@ -168,6 +188,8 @@ class SingleImsiSchema(Schema):
 class BulkDownloadSchema(Schema):
     """Marshmallow schema for Bulk MSISDN download request."""
 
+    class Meta:
+        strict = True
     operator = fields.String(required=True, validate=Validations.validate_operator)
 
     @property
@@ -179,6 +201,8 @@ class BulkDownloadSchema(Schema):
 class BulkUploadSchema(Schema):
     """Marshmallow schema for Bulk MSISDN download request."""
 
+    class Meta:
+        strict = True
     file = fields.String(required=False)
     operator = fields.String(required=True, validate=Validations.validate_operator)
 
@@ -191,6 +215,8 @@ class BulkUploadSchema(Schema):
 class ErrorFileSchema(Schema):
     """Marshmallow schema for downloading error files."""
 
+    class Meta:
+        strict = True
     url = fields.String(required=True)
 
     @property

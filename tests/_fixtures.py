@@ -28,20 +28,18 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import json
 import copy
 import pytest
 import shutil
 from testing.postgresql import Postgresql
 from tests._helpers import *
-from app.api.v1.common.lazy_text_encoder import JSON_Encoder
 
 
 @pytest.yield_fixture(scope='session')
 def app(tmpdir_factory):
     """Method to create an app for testing."""
     # need to import this late as it might have side effects
-    from app import app as app_, db
+    from app import app as app_
 
     # need to save old configurations of the app
     # to restore them later upon tear down

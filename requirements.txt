@@ -54,3 +54,4 @@ flask-babel==0.12.2
 speaklater==1.3
 flask_restful==0.3.7
 werkzeug==0.16.0
+

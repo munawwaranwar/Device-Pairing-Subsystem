@@ -33,19 +33,25 @@ from flask_babel import _
 from time import strftime
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import AdditionalPairSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal,DuplicatedCode
 class ReleaseSinglePair(Resource):
     """Flask resource to delete Single-Pair."""
 
-    @staticmethod
     @use_kwargs(AdditionalPairSchema().fields_dict, locations=['json'])
-    def delete(**kwargs):
+    def delete(self, **kwargs):
+        """method to call static-method to delete/release a single pair"""
+
+        rst = self.del_sngl_pair(kwargs)
+        return rst
+
+    @staticmethod
+    def del_sngl_pair(kwargs):
         """method to delete/release a single pair"""
 
         try:
@@ -111,7 +117,7 @@ class ReleaseSinglePair(Resource):
             return custom_text_response(rtn_msg, status=STATUS_CODES.get('OK'), mimetype=MIME_TYPES.get('TEXT'))
 
         except Exception as e:
-            db.session.rollback()           # pragma: no cover
+            db.session.rollback()      # pragma: no cover
 
         finally:
             db.session.close()

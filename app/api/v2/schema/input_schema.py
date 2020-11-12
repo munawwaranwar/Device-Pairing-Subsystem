@@ -28,42 +28,19 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-# noinspection PyUnresolvedReferences
-from .assets.error_handlers import *
-from flask_restful import Api
-from app import app
-from .resources.paircode_generation import PairCode
-from .resources.device_registration import DeviceRegistration
-from .resources.first_pair import FirstPair
-from .resources.additional_pairs import AdditionalPairs
-from .resources.additional_pairs_confirm import AdditionalPairsConfirmation
-from .resources.rel_single_pair import ReleaseSinglePair
-from .resources.rel_all_pairs import ReleaseAllPairs
-from .resources.sim_change import SimChange
-from .resources.verify_paircode import VerifyPairCode
-from .resources.find_pairs import FindPairs
-from .resources.device_search import DeviceSearch
-from .resources.mno_home_page import MnoHomePage
-from .resources.single_imsi_upload import SingleImsiUpload
-from .resources.bulk_msisdn_download import BulkMsisdnDownload
-from .resources.bulk_imsi_upload import BulkImsiUpload
-from .resources.download_error_file import DownloadErrorFile
+from marshmallow import Schema, fields
+from app.api.common.validations import Validations
 
-api = Api(app, prefix='/api/v1')
 
-api.add_resource(PairCode, '/paircode')
-api.add_resource(FirstPair, '/first-pair')
-api.add_resource(DeviceRegistration, '/device-reg')
-api.add_resource(AdditionalPairs, '/secondary-pairs')
-api.add_resource(AdditionalPairsConfirmation, '/secondary-confirm')
-api.add_resource(ReleaseSinglePair, '/rel-single-pair')
-api.add_resource(ReleaseAllPairs, '/rel-all-pairs')
-api.add_resource(SimChange, '/sim-change')
-api.add_resource(VerifyPairCode, '/verify-paircode')
-api.add_resource(FindPairs, '/find-pairs')
-api.add_resource(DeviceSearch, '/device-search')
-api.add_resource(MnoHomePage, '/mno-home-page')
-api.add_resource(SingleImsiUpload, '/single-imsi-upload')
-api.add_resource(BulkMsisdnDownload, '/bulk-msisdn-download')
-api.add_resource(BulkImsiUpload, '/bulk-imsi-upload')
-api.add_resource(DownloadErrorFile, '/download-error-file')
+class USSDSchema(Schema):
+    """Marshmallow schema for DPS-USSD input parameters."""
+
+    class Meta:
+        strict = True
+    sender_no = fields.String(required=True, validate=Validations.validate_msisdn)
+    operator = fields.String(required=True, validate=Validations.validate_operator)
+    time = fields.String(required=True)
+    receiver = fields.String(required=True)
+    case = fields.String(required=True, validate=Validations.validate_case)
+    technology = fields.String(required=True, validate=Validations.validate_technology)
+    msg_text = fields.String(required=True)

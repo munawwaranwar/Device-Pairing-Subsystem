@@ -30,10 +30,10 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 
 
 from flask_babel import _
-from ..assets.response import *
 from flask_restful import Resource
-from ..common.generate_paircode import gen_paircode
-from ..assets.error_handlers import custom_paircode_response
+from app.api.common.generate_paircode import gen_paircode
+from app.api.assets.error_handlers import custom_paircode_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 class PairCode(Resource):

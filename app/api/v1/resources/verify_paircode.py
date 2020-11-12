@@ -33,19 +33,25 @@ from flask_babel import _
 from flask_restful import Resource
 from flask_apispec import use_kwargs
 from ..models.imeis import Imei
-from ..assets.response import *
 from ..models.pairing_codes import Pairing_Codes
 from ..schema.input_schema import VfyPaircodeSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 # noinspection PyUnusedLocal
 class VerifyPairCode(Resource):
     """Flask resource to verify paircode."""
 
-    @staticmethod
     @use_kwargs(VfyPaircodeSchema().fields_dict, locations=['querystring'])
-    def get(**kwargs):
+    def get(self, **kwargs):
+        """method to call static-method to verify paircodes"""
+
+        rst = self.verify_pair_code(kwargs)
+        return rst
+
+    @staticmethod
+    def verify_pair_code(kwargs):
         """method to verify paircode"""
 
         try:

@@ -34,20 +34,26 @@ from time import strftime
 from app import db, conf
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import AdditionalPairSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 # noinspection PyComparisonWithNone,PyUnboundLocalVariable,DuplicatedCode,PyUnusedLocal
 class AdditionalPairs(Resource):
     """Flask resource for creation of Secondary-Pairs."""
 
-    @staticmethod
     @use_kwargs(AdditionalPairSchema().fields_dict, locations=['json'])
-    def post(**kwargs):
-        """method to create Secondary/Additional pairs"""
+    def post(self, **kwargs):
+        """method to call static-method to create secondary-pairs"""
+
+        rst = self.sec_pair_creation(kwargs)
+        return rst
+
+    @staticmethod
+    def sec_pair_creation(kwargs):
+        """method to create additional/Secondary pair"""
 
         try:
             chk_primary = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(kwargs['primary_msisdn']),

@@ -34,22 +34,28 @@ from flask_babel import _
 from time import strftime
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.imeis import Imei
 from ..models.pairings import Pairing
 from ..models.pairing_codes import Pairing_Codes
-from ..common.generate_paircode import gen_paircode
+from app.api.common.generate_paircode import gen_paircode
 from ..schema.input_schema import RelAllPairsSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 # noinspection PyUnboundLocalVariable,PyUnusedLocal
 class ReleaseAllPairs(Resource):
     """Flask resource to delete All-Pairs."""
 
-    @staticmethod
     @use_kwargs(RelAllPairsSchema().fields_dict, locations=['json'])
-    def delete(**kwargs):
+    def delete(self, **kwargs):
+        """method to call static-method to delete/release All-Pairs"""
+
+        rst = self.del_all_pairs(kwargs)
+        return rst
+
+    @staticmethod
+    def del_all_pairs(kwargs):
         """method to delete/release All-Pairs"""
 
         try:

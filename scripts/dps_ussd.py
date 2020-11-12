@@ -27,55 +27,66 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
-
-from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
-import yaml
 import sys
-from flask_cors import CORS
-from flask_babel import Babel
-from app.api.common.lazy_text_encoder import JSON_Encoder
+import json
+import requests
+from urllib.parse import unquote
 
 
-app = Flask(__name__)
-CORS(app)
-app.j_encoder = JSON_Encoder()
-babel = Babel(app)
+def main(argv):
 
-try:
-    with open('config.yml', 'r') as yaml_file:
-        global_config = yaml.safe_load(yaml_file)
-except Exception as e:  # pragma: no cover
-    app.logger.error('Exception encountered during loading the config file')
-    app.logger.exception(e)
-    sys.exit(1)
+    msisdn = "+923040519543x"
+    # msisdn = argv[0]
+    receiver = 8483
+    # receiver = argv[1]
+    time = 123
+    # time = argv[2]
+    smsc_id = "zongx"
+    # smsc_id = argv[3]
+    # msg_data = "USSD,11,923201746577"
+    msg_data = "USSD,11"
 
-conf = global_config['global']
+    # msg_data = unquote(argv[4])
+    # msg_data = msg_data.strip('+')
 
+    technology = msg_data.split(',')[0]
+    sender_no = validations(msisdn)
+    scenario = case_search(int(msg_data.split(',')[1]))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = '''postgresql://{}:{}@{}/{}'''.format(conf['dbusername'], conf['dbpassword'],
-                                                                              conf['dbhost'], conf['dbname'])
+    headers = {'content-type': 'application/json'}
+    payload = {"sender_no": sender_no, "receiver": receiver, "time": time, "operator": smsc_id, "case": scenario,
+               "technology": technology, "msg_text": msg_data}
+    response = requests.get(url="http://127.0.0.1:5000/api/v2/dps-ussd", params=payload, headers=headers)
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_POOL_SIZE'] = int(conf['pool_size'])
-app.config['SQLALCHEMY_POOL_RECYCLE'] = int(conf['pool_recycle'])
-app.config['SQLALCHEMY_MAX_OVERFLOW'] = int(conf['overflow_size'])
-app.config['SQLALCHEMY_POOL_TIMEOUT'] = int(conf['pool_timeout'])
-app.config['DPS_DOWNLOADS'] = conf['Download_Path']
-app.config['DPS_UPLOADS'] = conf['Upload_Path']
-app.config['BABEL_DEFAULT_LOCALE'] = conf['supported_languages']['default_language']
-app.config['SUPPORTED_LANGUAGES'] = conf['supported_languages']
-
-db = SQLAlchemy()
-db.init_app(app)
+    print(response.content.decode())
 
 
-from app.api.common.database import connect
-pg_connt = connect()
+def validations(sender_no):
+    if sender_no[0:3] == '%2B':
+        sender_no = sender_no[3:]
+    elif sender_no[0:3] == '009':
+        sender_no = sender_no[2:]
+    elif sender_no[0:3] == '+92':
+        sender_no = sender_no[1:]
+    elif sender_no[0:2] == '03':
+        sender_no = '92' + sender_no[1:]
 
-from app.api.routes import *
+    return sender_no
 
 
-@babel.localeselector
-def get_locale():
-    return request.accept_languages.best_match(app.config['SUPPORTED_LANGUAGES'])
+def case_search(menu_code):
+
+    case = ""
+    if menu_code == 11: case = "first_pair"
+    elif menu_code == 21: case = "additional_pair"
+    elif menu_code == 31: case = "del_single_pair"
+    elif menu_code == 4: case = "del_all_pairs"
+    elif menu_code == 5: case = "sim_change"
+    elif menu_code == 611: case = "verify_pair"
+    elif menu_code == 7: case = "find_pair"
+
+    return case
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

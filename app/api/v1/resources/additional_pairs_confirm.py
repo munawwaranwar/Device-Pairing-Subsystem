@@ -37,8 +37,8 @@ from flask_restful import Resource
 from flask_apispec import use_kwargs
 from ..models.pairings import Pairing
 from ..schema.input_schema import AddPairConfirmSchema
-from ..assets.error_handlers import custom_text_response
-from ..assets.response import *
+from app.api.assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal
@@ -113,7 +113,7 @@ class AdditionalPairsConfirmation(Resource):
 
             if cnfm_sms:
 
-                chg_msisdn = '0' + kwargs['secondary_msisdn'][2:]
+                chg_msisdn = '0' + kwargs['primary_msisdn'][2:]
 
                 payload = {'username': conf['kannel_username'], 'password': conf['kannel_password'],
                            'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': chg_msisdn,
