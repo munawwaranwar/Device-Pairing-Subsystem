@@ -52,6 +52,7 @@ class DeviceRegistration(Resource):
     def post(**kwargs):
         """method to create device registration request."""
         try:
+
             chk_owner_id = Owner.query.filter(Owner.contact == '{}'.format(kwargs['contact_no'])).first()
             if not chk_owner_id:
                 add_owner = Owner(contact=kwargs['contact_no'])
