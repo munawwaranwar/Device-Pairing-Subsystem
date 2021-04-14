@@ -115,6 +115,7 @@ def test_imei_index(db, session):
 def test_pairing_indexes(db, session):
     """Verify that the Pairing model works correctly."""
 
+    device_index = False
     with db.engine.connect() as conn:
         Pairing.create_index(conn)
 

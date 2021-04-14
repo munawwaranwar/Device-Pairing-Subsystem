@@ -35,7 +35,7 @@ from time import strftime
 class Pairing(db.Model):
     """ Class to create Db Table pairing """
 
-    id = db.Column(db.BigInteger, primary_key=True, autoincrement=False)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     primary_id = db.Column(db.BigInteger)
     msisdn = db.Column(db.String(20))
     imsi = db.Column(db.String(20))
@@ -43,9 +43,9 @@ class Pairing(db.Model):
     creation_date = db.Column(db.DateTime, default=strftime("%Y-%m-%d %H:%M:%S"))
     end_date = db.Column(db.Date)
     updated_at = db.Column(db.DateTime)
-    operator_name = db.Column(db.String(20))
+    operator_name = db.Column(db.String(100))
     add_pair_status = db.Column(db.Boolean)
-    change_type = db.Column(db.String(20))
+    change_type = db.Column(db.String(50))
     export_status = db.Column(db.Boolean)
     old_imsi = db.Column(db.String(20))
 

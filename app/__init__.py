@@ -31,19 +31,16 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 import yaml
-import json
 import sys
 from flask_cors import CORS
-from flask import Response
 from flask_babel import Babel
-from app.api.v1.common.lazy_text_encoder import JSON_Encoder
+from app.api.common.lazy_text_encoder import JSON_Encoder
 
 
 app = Flask(__name__)
 CORS(app)
 app.j_encoder = JSON_Encoder()
 babel = Babel(app)
-
 
 try:
     with open('config.yml', 'r') as yaml_file:
@@ -52,7 +49,6 @@ except Exception as e:  # pragma: no cover
     app.logger.error('Exception encountered during loading the config file')
     app.logger.exception(e)
     sys.exit(1)
-# global_config = yaml.safe_load(open("config.yml"))
 
 conf = global_config['global']
 
@@ -74,27 +70,10 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
-from app.api.v1.views import api
-app.register_blueprint(api, url_prefix='/api/v1')
-
-
-@app.errorhandler(400)
-def handle_400(err):
-    return Response(json.dumps({"Error": "Bad Request"}), status=400, mimetype='application/json')
-
-
-@app.errorhandler(405)
-def handle_405(err):
-    return Response(json.dumps({"Error": "Method not Allowed"}), status=405, mimetype='application/json')
-
-
-@app.errorhandler(404)
-def handle_405(err):
-    return Response(json.dumps({"Error": "Not Found"}), status=404, mimetype='application/json')
-
-
-from app.api.v1.common.database import connect
+from app.api.common.database import connect
 pg_connt = connect()
+
+from app.api.routes import *
 
 
 @babel.localeselector

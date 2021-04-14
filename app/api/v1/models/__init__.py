@@ -29,8 +29,6 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 """
 
 
-from flask_sqlalchemy import declarative_base
-
 __all__ = ['owner', 'devices', 'imeis', 'pairing_codes', 'pairings']
 
 from app.api.v1.models import *

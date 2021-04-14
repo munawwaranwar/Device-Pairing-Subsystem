@@ -28,7 +28,7 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-
+from app import conf
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 # noinspection PyProtectedMember
@@ -36,68 +36,86 @@ from tests._helpers import *
 from sqlalchemy import text
 
 
-REL_SINGLE_API = 'api/v1/rel-single'
+REL_SINGLE_API = 'api/v1/rel-single-pair'
 HEADERS = {'Content-Type': "application/json"}
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
-def test_rel_single_pair_validations_wrong_sender_no(flask_app, db):
-    """ Verify that rel-single api doesn't accept invalid primary and secondary numbers """
-    sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
+# noinspection PyUnusedLocal,PyShadowingNamesl,PyShadowingNames
+def test_rel_single_pair_validations_wrong_primary_msisdn(flask_app, db):
+    """ Verify that rel-single api doesn't accept invalid primary Mobile numbers """
+
+    sender_no = ['9230028460937724', '92321417g9C21', '92345@769#564&8', '923004', '']
     for val in sender_no:
-        payload_1 = {"Sender_No": val, "MSISDN": "923003294857"}
-        rslt_1 = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload_1))
-        payload_2 = {"Sender_No": "923003294857", "MSISDN": val}
-        rslt_2 = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload_2))
-        assert rslt_1.data == b"Primary MSISDN format is not correct"
-        assert rslt_2.data == b"Secondary MSISDN format is not correct"
+        payload_1 = {"primary_msisdn": val, "secondary_msisdn": "923003294857"}
+        rslt = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload_1))
+        data = json.loads(rslt.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['primary_msisdn'][0] == "MSISDN format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['primary_msisdn'][0] == "El formato MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['primary_msisdn'][0] == "Format MSISDN tidak benar"
+
+        print("primary_msisdn :", val, "\n msg : ", data['message']['primary_msisdn'][0])
+
+
+# noinspection PyUnusedLocal,PyShadowingNamesl,PyShadowingNames
+def test_rel_single_pair_validations_wrong_secondary_msisdn(flask_app, db):
+    """ Verify that rel-single api doesn't accept invalid Secondary Mobile numbers """
+
+    sender_no = ['9230028460937724', '92321417g9C21', '92345@769#564&8', '923004', '']
+    for val in sender_no:
+        payload_2 = {"primary_msisdn": "923003294857", "secondary_msisdn": val}
+        rslt = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload_2))
+        data = json.loads(rslt.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['secondary_msisdn'][0] == "MSISDN format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['secondary_msisdn'][0] == "El formato MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['secondary_msisdn'][0] == "Format MSISDN tidak benar"
+
+        print("secondary_msisdn :", val, "\n msg : ", data['message']['secondary_msisdn'][0])
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_single_pair_validations_valid_sender_no(flask_app, db):
     """ Verify that rel-single api only accepts valid primary & secondary numbers """
     sender_no = '923458179437'
-    payload = {"Sender_No": sender_no, "MSISDN": sender_no}
+    payload = {"primary_msisdn": sender_no, "secondary_msisdn": sender_no}
     rslt = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
-    assert not rslt.data == b"Sender MSISDN format is not correct"
-    assert not rslt.data == b"Secondary MSISDN format is not correct"
+    print(rslt.data)
+    data = json.loads(rslt.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert not rslt.data == b"Sender MSISDN format is not correct"
+        assert not rslt.data == b"Secondary MSISDN format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not rslt.data == "El formato MSISDN no es correcto"
+        assert not rslt.data == "Format MSISDN tidak benar"
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
 def test_rel_single_pair_missing_parameters(flask_app, db):
     """ Verify that rel-single api prompts when any parameter is missing """
     payload = [
-        {"Sender_No": "", "MSISDN": "923458179437"},
-        {"MSISDN": "923458179437"},
-        {"Sender_No": "923225782404", "MSISDN": ""},
-        {"Sender_No": "923225782404"}
+        {"secondary_msisdn": "923458179437"},
+        {"primary_msisdn": "923225782404"}
     ]
-    for val in range(0, 4):
+    for val in range(0, 2):
         result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload[val]))
+        print(result.data)
+        data = json.loads(result.data.decode('utf-8'))
         if val == 0:
-            assert result.data == b"Sender number is missing in SMS"
+            assert data['message']['primary_msisdn'][0] == "Missing data for required field."
         elif val == 1:
-            assert result.data == b"Sender number is missing in SMS"
-        elif val == 2:
-            assert result.data == b"Secondary number is missing in SMS"
-        elif val == 3:
-            assert result.data == b"Secondary number is missing in SMS"
-
-
-# noinspection PyShadowingNames,PyUnusedLocal
-def test_rel_single_pair_error_400_wrong_api(flask_app, db):
-    """ Verify that rel-single api prompts when Error-400 is occurred """
-    payload = {"Sender_No": "923225782404", "MSISDN": "923458179437"}
-    result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=payload)
-    print(result.data)
-    assert result.status_code == 400
+            assert data['message']['secondary_msisdn'][0] == "Missing data for required field."
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
 def test_rel_single_pair_error_404_wrong_api(flask_app, db):
     """ Verify that rel-single api prompts when Error-400 is occurred """
     tmp_api = 'api/v1/rellll-singleeeee'
-    payload = {"Sender_No": "923225782404", "MSISDN": "923458179437"}
+    payload = {"primary_msisdn": "923225782404", "secondary_msisdn": "923458179437"}
     result = flask_app.delete(tmp_api, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.status_code == 404
@@ -105,29 +123,41 @@ def test_rel_single_pair_error_404_wrong_api(flask_app, db):
 
 # noinspection PyShadowingNames,PyUnusedLocal
 def test_rel_single_pair_error_405_method_not_allowed(flask_app, db):
-    """ Verify that add-confirm api prompts when Error-405 occurrs """
+    """ Verify that add-confirm api prompts when Error-405 occurs """
     res1 = flask_app.get(REL_SINGLE_API)
     assert res1.status_code == 405
+    print("\nHTTP-Method : GET \n msg : ", res1.data)
     res2 = flask_app.post(REL_SINGLE_API)
     assert res2.status_code == 405
+    print("HTTP-Method : POST \n msg : ", res2.data)
     res3 = flask_app.put(REL_SINGLE_API)
     assert res3.status_code == 405
+    print("HTTP-Method : PUT \n msg : ", res3.data)
     res4 = flask_app.patch(REL_SINGLE_API)
     assert res4.status_code == 405
+    print("HTTP-Method : PATCH \n msg : ", res4.data)
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
 def test_rel_single_pair_happy_case_unconfirmed_pair(flask_app, db, session):
     """ Verify that rel-single api successfully deletes unconfirmed secondary pair """
+
     complete_db_insertion(session, db, 211, '923036830442', 211, 'Find-X', 'OPPO', '5RT1qazbh', '3G,4G',
                           'EirnagYD', 211, '889270911982467')
     first_pair_db_insertion(session, db, 212, '923460192939', 'telenor', 211)
     add_pair_db_insertion(session, db, 213, 212, '923115840917', 211)
 
-    payload = {"Sender_No": "923460192939", "MSISDN": "923115840917"}
+    payload = {"primary_msisdn": "923460192939", "secondary_msisdn": "923115840917"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert result.data == b"Deletion request is successfully registered. Pair will be removed in next 24 to 48 hours"
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Deletion request is successful. Pair will be removed in next 24 to 48 hours"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "La solicitud de eliminación se realizó correctamente. El par se eliminará en las próximas 24 " \
+                       "a 48 horas."
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Permintaan penghapusan berhasil. Pasangan akan dihapus dalam 24 hingga 48 jam ke depan"
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
@@ -139,10 +169,17 @@ def test_rel_single_pair_happy_case_confirmed_pair(flask_app, db, session):
     add_pair_db_insertion(session, db, 215, 214, '923125840917', 212)
     add_pair_confrm_db_insertion(session, db, '923125840917', 214, 'zong')
 
-    payload = {"Sender_No": "923145406911", "MSISDN": "923125840917"}
+    payload = {"primary_msisdn": "923145406911", "secondary_msisdn": "923125840917"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert result.data == b"Deletion request is successfully registered. Pair will be removed in next 24 to 48 hours"
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Deletion request is successful. Pair will be removed in next 24 to 48 hours"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "La solicitud de eliminación se realizó correctamente. El par se eliminará en las próximas 24 " \
+                       "a 48 horas."
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Permintaan penghapusan berhasil. Pasangan akan dihapus dalam 24 hingga 48 jam ke depan"
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
@@ -153,10 +190,17 @@ def test_rel_single_pair_functionality_wrong_primary_msisdn(flask_app, db, sessi
     first_pair_db_insertion(session, db, 216, '923158191645', 'zong', 213)
     add_pair_db_insertion(session, db, 217, 216, '923125840917', 213)
 
-    payload = {"Sender_No": "923156667777", "MSISDN": "923125840917"}
+    payload = {"primary_msisdn": "923156667777", "secondary_msisdn": "923125840917"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
+    data = json.loads(result.data.decode('utf-8'))
     print(result.data)
-    assert result.data == b"Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "El MSISDN primario no realiza la solicitud o el número que se va a eliminar pertenece al " \
+                       "par primario"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Permintaan tidak dibuat oleh Primary-MSISDN atau nomor yang akan dihapus milik pasangan primer"
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
@@ -167,10 +211,16 @@ def test_rel_single_pair_functionality_wrong_secondary_msisdn(flask_app, db, ses
     first_pair_db_insertion(session, db, 218, '923338791465', 'ufone', 214)
     add_pair_db_insertion(session, db, 219, 218, '923125840917', 214)
 
-    payload = {"Sender_No": "923338791465", "MSISDN": "923137848888"}
+    payload = {"primary_msisdn": "923338791465", "secondary_msisdn": "923137848888"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
+    data = json.loads(result.data.decode('utf-8'))
     print(result.data)
-    assert result.data == b"MSISDN (923137848888) is not Paired with the device"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "MSISDN 923137848888 is not Paired with the device"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "MSISDN 923137848888 no está emparejado con el dispositivo"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "MSISDN 923137848888 tidak dipasangkan dengan perangkat"
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
@@ -182,13 +232,20 @@ def test_rel_single_pair_functionality_delete_primary_msisdn(flask_app, db, sess
     first_pair_db_insertion(session, db, 220, '923216754889', 'warid', 215)
     add_pair_db_insertion(session, db, 221, 220, '923125840917', 215)
 
-    payload = {"Sender_No": "923216754889", "MSISDN": "923216754889"}
+    payload = {"primary_msisdn": "923216754889", "secondary_msisdn": "923216754889"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
+    data = json.loads(result.data.decode('utf-8'))
     print(result.data)
-    assert result.data == b"Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair"
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Request is not made by Primary-MSISDN or number-to-be-deleted belongs to primary pair"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "El MSISDN primario no realiza la solicitud o el número que se va a eliminar pertenece al " \
+                       "par primario"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Permintaan tidak dibuat oleh Primary-MSISDN atau nomor yang akan dihapus milik pasangan primer"
 
 
-# noinspection PyShadowingNames,PyUnusedLocal
+# noinspection PyShadowingNames,PyUnusedLocal,PyPep8Naming,SqlDialectInspection
 def test_rel_single_pair_deletion_before_export_to_PairList(flask_app, db, session):
     """ Verify the behaviour of rel-single api when secondary pair is not exported to
         Pair-List at the time of deletion """
@@ -201,7 +258,7 @@ def test_rel_single_pair_deletion_before_export_to_PairList(flask_app, db, sessi
     session.execute(text("""UPDATE public.pairing SET imsi = '410015678987223', change_type = 'add', 
                             export_status = false, add_pair_status = true WHERE msisdn = '923018144773';"""))
 
-    payload = {"Sender_No": "923145892117", "MSISDN": "923018144773"}
+    payload = {"primary_msisdn": "923145892117", "secondary_msisdn": "923018144773"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     q1 = session.execute(text("""SELECT * FROM public.pairing WHERE msisdn = '923018144773'; """)).fetchone()
@@ -212,7 +269,7 @@ def test_rel_single_pair_deletion_before_export_to_PairList(flask_app, db, sessi
     assert q1.old_imsi is None
 
 
-# noinspection PyShadowingNames,PyUnusedLocal
+# noinspection PyShadowingNames,PyUnusedLocal,PyPep8Naming,SqlDialectInspection
 def test_rel_single_pair_deletion_after_export_to_PairList(flask_app, db, session):
     """ Verify the behaviour of rel-single api when secondary pair is already exported to
         Pair-List at the time of deletion """
@@ -225,7 +282,7 @@ def test_rel_single_pair_deletion_after_export_to_PairList(flask_app, db, sessio
     session.execute(text("""UPDATE public.pairing SET imsi = '410029803775223', change_type = 'add', 
                             export_status = true, add_pair_status = true WHERE msisdn = '923479091924';"""))
 
-    payload = {"Sender_No": "923138834564", "MSISDN": "923479091924"}
+    payload = {"primary_msisdn": "923138834564", "secondary_msisdn": "923479091924"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 
@@ -237,7 +294,7 @@ def test_rel_single_pair_deletion_after_export_to_PairList(flask_app, db, sessio
     assert not q1.export_status
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_single_pair_exported_sim_changed_deleted_before_new_imsi(flask_app, db, session):
     """ Verify the behaviour of rel-single api for special case where secondary pair is exported once and after
         that SIM-Change is requested but before MNO provides new IMSI, Pair is deleted"""
@@ -250,7 +307,7 @@ def test_rel_single_pair_exported_sim_changed_deleted_before_new_imsi(flask_app,
     session.execute(text("""UPDATE public.pairing SET old_imsi = '410079703451431', change_type = null,
                                     export_status = null, add_pair_status = true WHERE msisdn = '923337457869';"""))
 
-    payload = {"Sender_No": "923339125125", "MSISDN": "923337457869"}
+    payload = {"primary_msisdn": "923339125125", "secondary_msisdn": "923337457869"}
     result = flask_app.delete(REL_SINGLE_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 

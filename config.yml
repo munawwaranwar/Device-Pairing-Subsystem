@@ -31,7 +31,7 @@
 # DRS global configurations
 global:
 
-  # maimum allowed Secondary pairs with one Primary MSISDN
+  # maximum allowed Secondary pairs with one Primary MSISDN
   pair_limit: 4
 
   # Length of pair-Code
@@ -40,12 +40,24 @@ global:
   # No of IMEIs per device
   imeis_per_device: 5
 
+  validation_regex:
+    msisdn: '^923[0-9]{9}$'
+    paircode: '^[a-zA-Z0-9]{8}$'
+    imei: '^[A-F0-9]{14,16}$'
+    imsi: '\d{15}'
+    mno: '^.{1,50}$'
+    start_limit: '\d+'
+    serial_no: '^\S{1,100}$'
+    mac: '^([0-9A-F]{2,4}[.:-]){3,7}([0-9A-F]{2,4})$'
+    rat: '^(2G|3G|4G|5G)[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?$'
+    date: '^((19|20)\d{2})\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$'
+    email: '^[a-zA-Z0-9\x2D\x2E\x5F]+@[a-zA-Z0-9_]+?\.[a-zA-Z]{2,3}$'
+
   # DataBase Parameters
   dbname: 'dps'
   dbusername: 'postgres'
   dbpassword: 'sms003'
   dbhost: '192.168.100.69'
-
 
   # SQL_ALCHEMY Parameters
   pool_size: 100
@@ -53,26 +65,45 @@ global:
   pool_recycle: 10
   overflow_size: 275
 
+  # File extensions allowed for bulk uploads
+  allowed_extensions: ['csv', 'txt']
+
+  # Technologies allowed to communicate with Kannel
+  allowed_technologies: ['SMS', 'USSD']
+
+  # DPS cases to be handled
+  dps_cases: [ "first_pair", "additional_pair", "del_single_pair", "del_all_pairs", "sim_change", "verify_pair",
+               "find_pair" ]
+
   # Operators related parameters
   CC: '92'
   MNO_1: 'jazz'
   MNO_2: 'telenor'
   MNO_3: 'ufone'
   MNO_4: 'zong'
-  MNO_5: 'warid'
+  MNO_5: 'Huawei'
+  MNO_6: 'huawei'
 
-  # URLS
+  # Mobile Operator Names & Numbers
+  num_of_mnos: 6
+  MNO_Names: ["jazz", "telenor", "ufone", "zong", "Huawei", "huawei"]
+
+  # Kannel related parameters
   kannel_sms: 'http://192.168.100.70:13013/cgi-bin/sendsms'
+  kannel_username: 'tester'
+  kannel_password: 'foobar'
+  kannel_smsc: 'at'
+  kannel_shortcode: '03029847788'
 
   # Pair-List generation Path
-  pairlist_path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/pairing_lists'
+  pairlist_path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/pairing_lists'
 
   # System Paths for files
-  Download_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/downloads'
-  Upload_Path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/uploads'
+  Download_Path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/downloads'
+  Upload_Path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/uploads'
 
   # path for test-documents
-  test_doc_path: '/home/munawar/PycharmProjects/Device-Pairing-Subsystem/tests/unittest_data/sample_files/'
+  test_doc_path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem//tests/unittest_data/sample_files/'
 
   # SMS Texts
   # Additional-Pair Messages
@@ -105,6 +136,6 @@ global:
       case_comment: '^(?! )[\x21-\x7E\s]{1,1000}(?<! )$'
       full_name: '^(?! )[A-Za-z\s]{1,1000}(?<! )$'
       address: '^(?! )[A-Za-z0-9\x23\x2F\x2D\x40\x5F\x5C\s]{1,1000}(?<! )$'
-      brand: '^(?! )[A-Za-z0-9\x2D\x26\s]{1,1000}(?<! )$'
-      model_name: '^(?! )[A-Za-z0-9\x27\x2D\x28\x29\s]{1,1000}(?<! )$'
+      brand: '^(?! )[A-Za-z0-9\x2D\x26\s]{1,100}(?<! )$'
+      model_name: '^(?! )[A-Za-z0-9\x27\x2D\x28\x29\s]{1,100}(?<! )$'
       description: '^(?! )[\x21-\x7E\s]{1,1000}(?<! )$'

@@ -28,9 +28,10 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from sqlalchemy import text # pragma: no cover
+from sqlalchemy import text     # pragma: no cover
 
 
+# noinspection SqlDialectInspection,PyUnusedLocal
 class Views:        # pragma: no cover
     """Class for creating/migrating views into the database."""
 

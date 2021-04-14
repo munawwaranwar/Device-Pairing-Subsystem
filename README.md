@@ -18,7 +18,18 @@ Redistribution and use in source and binary forms, with or without modification,
 * Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 * This notice may not be removed or altered from any source distribution.
 
-NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY
+THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+
+## DPS-Device Pairing Subsystem
+Device Pairing Subsystem is a part of the Device Identification, Registration and Blocking (DIRBS) System.
+The main purpose of DPS is to facilitate the pairing of users’ devices with their SIMs (IMSIs) over the SMS.
 
 
 ## Documentation
@@ -40,7 +51,7 @@ This repository contains code for **DPS** part of the **DIRBS**. It contains
 
 ## Prerequisites
 In order to run a development environment, [Python 3.0+](https://www.python.org/download/releases/3.0/) and
-[Postgresql10](https://www.postgresql.org/about/news/1786/) we assume that these are installed.
+[Postgresql10](https://www.postgresql.org/about/news/1786/) are assumed to be already installed.
 
 We also assume that this repo is cloned from Github onto the local computer, it is assumed that
 all commands mentioned in this guide are run from root directory of the project and inside
@@ -90,10 +101,14 @@ To Upgrade already installed database:
 python manage.py db upgrade
 ```
 
-
 To generate full pairing-list for DIRBS Core:
 ```bash
-python scripts/pairlist_generation.py
+python scripts/pairlist_gen_complete.py
+```
+
+To generate delta pairing-list for DIRBS Core:
+```bash
+python scripts/pairlist_gen_delta.py
 ```
 
 To delete un-confirmed pairs to clean-up main DB:
@@ -106,3 +121,20 @@ To run unit and regression tests:
 pytest -v -s
 ```
 
+To enable different languages & activate their translations from English
+```bash
+pybabel extract -F babel.cfg -k _l -o messages.pot .
+pybabel init -i messages.pot -d app/translations -l <language-code>
+```
+e.g to translate in Spanish 
+```bash
+pybabel init -i messages.pot -d app/translations -l es
+```
+Finally to compile the language
+```bash
+pybabel compile -d app/translations
+```
+To update any translation after compilation
+```bash
+pybabel update -i messages.pot -d app/translations -l es
+```

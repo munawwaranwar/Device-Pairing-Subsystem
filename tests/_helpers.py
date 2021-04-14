@@ -116,103 +116,79 @@ def add_pair_confrm_db_insertion(session, db, t_sec_no, t_primary_id, t_mno):
         db.session.commit()
 
 
-def athty_input_payload(cc, sn, model, brand, serial_no, rat, imei, mac=None, cond=0):
-    if cond == 0:
+def athty_input_payload(sn, model, brand, serial_no, rat, imei, mac=None, cond=0):
+    if cond == 0:       # all parameters present
         data = {
-            "CONTACT": {
-                        "CC": cc,
-                        "SN": sn
-                    },
-            "MODEL": model,
-            "BRAND": brand,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "RAT": rat,
-            "IMEI": imei
+            "contact_no": sn,
+            "model": model,
+            "brand": brand,
+            "serial_no": serial_no,
+            "mac": mac,
+            "rat": rat,
+            "imei": imei
             }
-    elif cond == 1:
+    elif cond == 1:     # contact_no is missing
         data = {
-            "CONTACT": {
-                    "SN": sn
-            },
-            "MODEL": model,
-            "BRAND": brand,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "RAT": rat,
-            "IMEI": imei
+            "model": model,
+            "brand": brand,
+            "serial_no": serial_no,
+            "mac": mac,
+            "rat": rat,
+            "imei": imei
         }
-    elif cond == 2:
+    elif cond == 2:     # model is missing
         data = {
-            "CONTACT": {
-                "CC": cc
-            },
-            "MODEL": model,
-            "BRAND": brand,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "RAT": rat,
-            "IMEI": imei
+            "contact_no": sn,
+            "brand": brand,
+            "serial_no": serial_no,
+            "mac": mac,
+            "rat": rat,
+            "imei": imei
         }
-    elif cond == 3:
+    elif cond == 3:     # brand is missing
         data = {
-            "CONTACT": {
-                "CC": cc,
-                "SN": sn
-            },
-            "BRAND": brand,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "RAT": rat,
-            "IMEI": imei
+            "contact_no": sn,
+            "model": model,
+            "serial_no": serial_no,
+            "mac": mac,
+            "rat": rat,
+            "imei": imei
         }
-    elif cond == 4:
+    elif cond == 4:     # serial_no is missing
         data = {
-            "CONTACT": {
-                "CC": cc,
-                "SN": sn
-            },
-            "MODEL": model,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "RAT": rat,
-            "IMEI": imei
+            "contact_no": sn,
+            "model": model,
+            "brand": brand,
+            "mac": mac,
+            "rat": rat,
+            "imei": imei
         }
-    elif cond == 5:
+    elif cond == 5:     # rat is missing
         data = {
-            "CONTACT": {
-                "CC": cc,
-                "SN": sn
-            },
-            "MODEL": model,
-            "BRAND": brand,
-            "MAC": mac,
-            "RAT": rat,
-            "IMEI": imei
+            "contact_no": sn,
+            "model": model,
+            "brand": brand,
+            "serial_no": serial_no,
+            "mac": mac,
+            "imei": imei
         }
-    elif cond == 6:
+    elif cond == 6:     # imei is missing
         data = {
-            "CONTACT": {
-                "CC": cc,
-                "SN": sn
-            },
-            "MODEL": model,
-            "BRAND": brand,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "IMEI": imei
+            "contact_no": sn,
+            "model": model,
+            "brand": brand,
+            "serial_no": serial_no,
+            "mac": mac,
+            "rat": rat,
         }
-    elif cond == 7:
+    elif cond == 7:     # mac is missing
         data = {
-            "CONTACT": {
-                "CC": cc,
-                "SN": sn
-            },
-            "MODEL": model,
-            "BRAND": brand,
-            "Serial_No": serial_no,
-            "MAC": mac,
-            "RAT": rat
+            "contact_no": sn,
+            "model": model,
+            "brand": brand,
+            "serial_no": serial_no,
+            "rat": rat,
+            "imei": imei
         }
     return data
 
@@ -240,96 +216,47 @@ def athty_search_db_insertion(session, db, t_owner_id, t_contact, t_device_id, t
 
 
 def athty_search_payload(start, limit, t_imei, t_mac, t_serial, t_contact, cond=0):
+    url = 'api/v1/device-search'
     if cond == 0:
-            data = {
-                "start": start,
-                "limit": limit,
-                "search_args": {
-                    "MAC": t_mac,
-                    "CONTACT": t_contact,
-                    "Serial_No": t_serial,
-                    "IMEI": t_imei
-                }
-        }
-    elif cond == 1:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "MAC": t_mac,
-                "CONTACT": t_contact,
-                "Serial_No": t_serial
-            }
-        }
-    elif cond == 2:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "MAC": t_mac,
-                "CONTACT": t_contact,
-                "IMEI": t_imei
-            }
-        }
-    elif cond == 3:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "MAC": t_mac,
-                "Serial_No": t_serial,
-                "IMEI": t_imei
-            }
-        }
-    elif cond == 4:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "CONTACT": t_contact,
-                "Serial_No": t_serial,
-                "IMEI": t_imei
-            }
-        }
-    elif cond == 5:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "MAC": t_mac
-            }
-        }
-    elif cond == 6:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "CONTACT": t_contact
-            }
-        }
-    elif cond == 7:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "Serial_No": t_serial
-            }
-        }
-    elif cond == 8:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-                "IMEI": t_imei
-            }
-        }
+        data = '{api}?start={st}&limit={lt}&contact={msisdn}&imei={imei}&mac={mac}&serial_no={sno}'. \
+            format(api=url, st=start, lt=limit, msisdn=t_contact, imei=t_imei, mac=t_mac, sno=t_serial)
+
+    elif cond == 1:     # contact is missing
+        data = '{api}?start={st}&limit={lt}&imei={imei}&mac={mac}&serial_no={sno}'.\
+                format(api=url, st=start, lt=limit, imei=t_imei, mac=t_mac, sno=t_serial)
+
+    elif cond == 2:     # imei is missing
+        data = '{api}?start={st}&limit={lt}&contact={msisdn}&mac={mac}&serial_no={sno}'. \
+            format(api=url, st=start, lt=limit, msisdn=t_contact, mac=t_mac, sno=t_serial)
+
+    elif cond == 3:     # mac is missing
+        data = '{api}?start={st}&limit={lt}&contact={msisdn}&imei={imei}&serial_no={sno}'. \
+            format(api=url, st=start, lt=limit, msisdn=t_contact, imei=t_imei, sno=t_serial)
+
+    elif cond == 4:     # serial_no is missinf
+        data = '{api}?start={st}&limit={lt}&contact={msisdn}&imei={imei}&mac={mac}'. \
+            format(api=url, st=start, lt=limit, msisdn=t_contact, imei=t_imei, mac=t_mac)
+
+    elif cond == 5:     # searching through MAC only
+        data = '{api}?start={st}&limit={lt}&mac={mac}'.\
+            format(api=url, st=start, lt=limit, mac=t_mac)
+
+    elif cond == 6:     # searching through CONTACT only
+        data = '{api}?start={st}&limit={lt}&contact={msisdn}'. \
+            format(api=url, st=start, lt=limit, msisdn=t_contact)
+
+    elif cond == 7:     # searching through Serial_No only
+        data = '{api}?start={st}&limit={lt}&serial_no={sno}'. \
+            format(api=url, st=start, lt=limit, sno=t_serial)
+
+    elif cond == 8:     # searching through IMEI only
+        data = '{api}?start={st}&limit={lt}&imei={imei}'. \
+            format(api=url, st=start, lt=limit, imei=t_imei)
+
     elif cond == 9:
-        data = {
-            "start": start,
-            "limit": limit,
-            "search_args": {
-            }
-        }
+        data = '{api}?start={st}&limit={lt}'. \
+            format(api=url, st=start, lt=limit)
+
     elif cond == 10:
         data = {
             "start": start,
@@ -344,55 +271,28 @@ def athty_search_payload(start, limit, t_imei, t_mac, t_serial, t_contact, cond=
     return data
 
 
-def mno_imsi_upload(cc, sn, mno, imsi, cond=0):
+def mno_imsi_upload(sn, mno, imsi, cond=0):
+
     if cond == 0:
         data = {
-            "MSISDN": {
-                        "CC": cc,
-                        "SN": sn
-                    },
-            "mno": mno,
-            "IMSI": imsi
+            "msisdn": sn,
+            "operator": mno,
+            "imsi": imsi
             }
-    elif cond == 1:
+    elif cond == 1:     # MSISDN is missing
         data = {
-            "MSISDN": {
-                        "SN": sn
-                    },
-            "mno": mno,
-            "IMSI": imsi
+            "operator": mno,
+            "imsi": imsi
             }
-    elif cond == 2:
+    elif cond == 2:     # Operator is missing
         data = {
-            "MSISDN": {
-                        "CC": cc
-                    },
-            "mno": mno,
-            "IMSI": imsi
+            "msisdn": sn,
+            "imsi": imsi
             }
-    elif cond == 3:
+    elif cond == 3:     # IMSI is missing
         data = {
-            "MSISDN": {
-                "CC": cc,
-                "SN": sn
-            },
-            "IMSI": imsi
+            "msisdn": sn,
+            "operator": mno
         }
-    elif cond == 4:
-        data = {
-            "MSISDN": {
-                "CC": cc,
-                "SN": sn
-            },
-            "mno": mno
-        }
-    elif cond == 5:
-        data = {
-            "": {
-                "CC": cc,
-                "SN": sn
-            },
-            "mno": mno,
-            "IMSI": imsi
-        }
+
     return data

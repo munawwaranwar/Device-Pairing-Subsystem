@@ -34,7 +34,7 @@ from app import db
 class Owner(db.Model):
     """ Class to create Db Table owner """
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     contact = db.Column(db.String(20))
 
     devices = db.relationship('Devices', backref='owner', lazy='dynamic')

@@ -35,53 +35,60 @@ from tests._fixtures import *
 from tests._helpers import *
 from app import conf
 
-REL_ALL_API = 'api/v1/rel-all'
+
+REL_ALL_API = 'api/v1/rel-all-pairs'
 HEADERS = {'Content-Type': "application/json"}
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_validation_wrong_sender_no(flask_app, db):
     """ Verify that rel-all api doesn't accept invalid primary """
-    sender_no = ['924006171951', '9230028460937724', '92321417g9C21', '92345@769#564&8', '923004']
+    sender_no = ['9230028460937724', '92321417g9C21', '92345@769#564&8', '923004', '']
     for val in sender_no:
-        payload = {"Sender_No": val}
+        payload = {"primary_msisdn": val}
         rslt = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
-        assert rslt.data == b"Primary MSISDN format is not correct"
+        print("\nprimary_msisdn :", val, "\n", rslt.data)
+        data = json.loads(rslt.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert data['message']['primary_msisdn'][0] == "MSISDN format is not correct"
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert data['message']['primary_msisdn'][0] == "El formato MSISDN no es correcto"
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert data['message']['primary_msisdn'][0] == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_validations_valid_sender_no(flask_app, db):
-    """ Verify that rel-all api only accepts valid primary & secondary numbers """
-    payload = {"Sender_No": "923458179437"}
+    """ Verify that rel-all api only accepts valid primary number """
+
+    payload = {"primary_msisdn": "923458179437"}
     rslt = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
-    assert not rslt.data == b"Primary MSISDN format is not correct"
+    print(rslt.data)
+    data = json.loads(rslt.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert not data == "MSISDN format is not correct"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not data == "El formato MSISDN no es correcto"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert not data == "Format MSISDN tidak benar"
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_missing_parameters(flask_app, db):
     """ Verify that rel-all api prompts when any parameter is missing """
-    payload_1 = {"Sender_No": ""}
+
     payload_2 = {}
-    rslt_1 = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload_1))
-    rslt_2 = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload_2))
-    assert rslt_1.data == b"Sender number is missing in SMS"
-    assert rslt_2.data == b"Sender number is missing in SMS"
-
-
-# noinspection PyUnusedLocal,PyShadowingNames
-def test_rel_all_pairs_error_400_bad_request(flask_app, db):
-    """ Verify that rel-all api prompts when Error-400 is occurred """
-    payload = {"Sender_No": "923225782404"}
-    result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=payload)
-    print(result.data)
-    assert result.status_code == 400
+    rslt = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload_2))
+    print(rslt.data)
+    data = json.loads(rslt.data.decode('utf-8'))
+    assert data['message']['primary_msisdn'][0] == "Missing data for required field."
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_error_404_wrong_api(flask_app, db):
     """ Verify that rel-all api prompts when Error-404 is occurred """
     tmp_api = 'api/v1/relll-@llll'
-    payload = {"Sender_No": "923225782404"}
+    payload = {"primary_msisdn": "923225782404"}
     result = flask_app.delete(tmp_api, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     assert result.status_code == 404
@@ -92,24 +99,35 @@ def test_rel_all_pairs_error_405_method_not_allowed(flask_app, db):
     """ Verify that rel-all api prompts when Error-405 is occurred """
     res1 = flask_app.get(REL_ALL_API)
     assert res1.status_code == 405
+    print("\nHTTP-Method : GET \n msg : ", res1.data)
     res2 = flask_app.post(REL_ALL_API)
     assert res2.status_code == 405
+    print("HTTP-Method : POST \n msg : ", res2.data)
     res3 = flask_app.put(REL_ALL_API)
     assert res3.status_code == 405
+    print("HTTP-Method : PUT \n msg : ", res3.data)
     res4 = flask_app.patch(REL_ALL_API)
     assert res4.status_code == 405
+    print("HTTP-Method : PATCH \n msg : ", res4.data)
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
 def test_rel_all_pairs_happy_case_without_sec_pairs(flask_app, db, session):
-    """ Verify that rel-all api deletes primary-pair incase no secondary pair exists """
+    """ Verify that rel-all api deletes primary-pair in-case no secondary pair exists """
+
     complete_db_insertion(session, db, 311, '923036830442', 311, 'Find-X', 'OPPO', '5RT1qazbh', '3G,4G',
                           'EiBuagYD', 311, '889270911982467')
     first_pair_db_insertion(session, db, 312, '923460192939', 'telenor', 311)
-    payload = {"Sender_No": "923460192939"}
+    payload = {"primary_msisdn": "923460192939"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert "Release All-Pairs request is registered. New Pair Code is" in data
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert "La solicitud de liberación de todos los pares está registrada. El nuevo código de par" in data
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert "Permintaan Rilis Semua Pasangan terdaftar. Kode Pasangan" in data
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -120,10 +138,16 @@ def test_rel_all_pairs_happy_case_with_unconfirmed_sec_pair(flask_app, db, sessi
     first_pair_db_insertion(session, db, 313, '923145406911', 'zong', 312)
     add_pair_db_insertion(session, db, 314, 313, '923125840917', 312)
 
-    payload = {"Sender_No": "923145406911"}
+    payload = {"primary_msisdn": "923145406911"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert "Release All-Pairs request is registered. New Pair Code is" in data
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert "La solicitud de liberación de todos los pares está registrada. El nuevo código de par" in data
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert "Permintaan Rilis Semua Pasangan terdaftar. Kode Pasangan" in data
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -135,10 +159,16 @@ def test_rel_all_pairs_happy_case_with_confirmed_sec_pair(flask_app, db, session
     add_pair_db_insertion(session, db, 316, 315, '923125840917', 313)
     add_pair_confrm_db_insertion(session, db, '923125840917', 315, 'zong')
 
-    payload = {"Sender_No": "923158191645"}
+    payload = {"primary_msisdn": "923158191645"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert "Release All-Pairs request is registered. New Pair Code is" in data
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert "La solicitud de liberación de todos los pares está registrada. El nuevo código de par" in data
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert "Permintaan Rilis Semua Pasangan terdaftar. Kode Pasangan" in data
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -153,10 +183,16 @@ def test_rel_all_pairs_happy_case_with_maximum_sec_pairs(flask_app, db, session)
         add_pair_db_insertion(session, db, sec_id, 317, sec_pairs[msisdn], 314)
         sec_id += 1
 
-    payload = {"Sender_No": "923338791465"}
+    payload = {"primary_msisdn": "923338791465"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert "Release All-Pairs request is registered. New Pair Code is" in data
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert "La solicitud de liberación de todos los pares está registrada. El nuevo código de par" in data
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert "Permintaan Rilis Semua Pasangan terdaftar. Kode Pasangan" in data
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -167,35 +203,53 @@ def test_rel_all_pairs_functionality_wrong_primary_msisdn(flask_app, db, session
     first_pair_db_insertion(session, db, 330, '923216754889', 'warid', 315)
     add_pair_db_insertion(session, db, 331, 330, '923125840917', 315)
 
-    payload = {"Sender_No": "923216744444"}
+    payload = {"primary_msisdn": "923216744444"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
-    assert result.data == b"Release-All request not made by Primary-MSISDN"
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert data == "Release-All request not made by Primary-MSISDN"
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert data == "Solicitud Release-All no realizada por MSISDN primario"
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert data == "Rilis-Semua permintaan tidak dibuat oleh Primary-MSISDN"
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_pairs_functionality_repetitive_requests(flask_app, db, session):
     """ Verify that rel-all api detects wrong primary-pair """
     complete_db_insertion(session, db, 316, '923079924476', 316, 'LUMIA ', 'NOKIA', 'S2w434a7hW', '2G,3G',
                           '4eue5SaB', 316, '871022394555554')
 
     first_pair_db_insertion(session, db, 332, '923145892007', 'zong', 316)
-    session.execute(text("""UPDATE public.pairing_codes SET is_active = false WHERE pair_code = '4eue5NaB';"""))
+    session.execute(text("""UPDATE public.pairing_codes SET is_active = false WHERE pair_code = '4eue5SaB';"""))
 
     add_pair_db_insertion(session, db, 333, 332, '923008162773', 316)
 
-    payload = {"Sender_No": "923145892007"}
+    payload = {"primary_msisdn": "923145892007"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
-    print(result.data)
-    assert b"Release All-Pairs request is registered. New Pair Code is" in result.data
+    print("\n", result.data)
+    data = json.loads(result.data.decode('utf-8'))
+    if conf['supported_languages']['default_language'] == 'en':
+        assert "Release All-Pairs request is registered. New Pair Code is" in data
+    elif conf['supported_languages']['default_language'] == 'es':
+        assert "La solicitud de liberación de todos los pares está registrada. El nuevo código de par" in data
+    elif conf['supported_languages']['default_language'] == 'id':
+        assert "Permintaan Rilis Semua Pasangan terdaftar. Kode Pasangan" in data
 
     for i in range(0, 3):
-        result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
-        print(result.data)
-        assert b"Release-All request is already registered" in result.data
+        res = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
+        print(res.data)
+        data = json.loads(res.data.decode('utf-8'))
+        if conf['supported_languages']['default_language'] == 'en':
+            assert "Release-All request is already registered and will be implemented within 24-48 hours" in data
+        elif conf['supported_languages']['default_language'] == 'es':
+            assert "La solicitud Release-All ya está registrada y se implementará dentro de las 24-48 horas" in data
+        elif conf['supported_languages']['default_language'] == 'id':
+            assert "Rilis-Semua permintaan sudah terdaftar dan akan diimplementasikan dalam waktu 24-48 jam" in data
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_primary_without_secondary_deletion_before_export(flask_app, db, session):
     """ Verify the behaviour of rel-all api when there is only primary-pair (having no secondary pairs) which is
         not exported to Pair-List at the time of deletion"""
@@ -205,18 +259,18 @@ def test_rel_all_primary_without_secondary_deletion_before_export(flask_app, db,
     first_pair_db_insertion(session, db, 335, '923155432109', 'zong', 317)
 
     session.execute(text("""UPDATE public.pairing SET imsi = '410079201640338' WHERE msisdn = '923155432109';"""))
-    payload = {"Sender_No": "923155432109"}
+    payload = {"primary_msisdn": "923155432109"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923155432109'; """)).fetchone()
-    print("change_type = {}  export_status = {}".format(qry.change_type, qry.export_status))
+    print("change_type = {} \nexport_status = {}".format(qry.change_type, qry.export_status))
     assert qry.change_type is None
     assert qry.export_status is None
     assert qry.old_imsi is None
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_primary_without_secondary_deletion_after_export(flask_app, db, session):
     """ Verify the behaviour of rel-all api when there is only primary-pair (having no secondary pairs) which is
         already exported to Pair-List at the time of deletion"""
@@ -226,17 +280,17 @@ def test_rel_all_primary_without_secondary_deletion_after_export(flask_app, db, 
     first_pair_db_insertion(session, db, 338, '923339259256', 'ufone', 319)
     session.execute(text("""UPDATE public.pairing SET imsi = '410038861640906', change_type = 'add', 
                             export_status = true WHERE msisdn = '923339259256';"""))
-    payload = {"Sender_No": "923339259256"}
+    payload = {"primary_msisdn": "923339259256"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 
     qry = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923339259256'; """)).fetchone()
-    print("change_type = {}  export_status = {}".format(qry.change_type, qry.export_status))
+    print("change_type = {} \nexport_status = {}".format(qry.change_type, qry.export_status))
     assert qry.change_type == 'remove'
     assert not qry.export_status
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_primary_without_secondary_pair_exported_sim_changed_deleted_before_new_imsi(flask_app, db, session):
     """ Verify the behaviour of rel-all api for special case where only primary pair (having no secondary pair) is
         exported once and after that SIM-Change is requested but before MNO provides new IMSI, Pair is deleted"""
@@ -246,7 +300,7 @@ def test_rel_all_primary_without_secondary_pair_exported_sim_changed_deleted_bef
     first_pair_db_insertion(session, db, 339, '923065454649', 'jazz', 320)
     session.execute(text("""UPDATE public.pairing SET old_imsi = '410076561643648', change_type = null, 
                                 export_status = null WHERE msisdn = '923065454649';"""))
-    payload = {"Sender_No": "923065454649"}
+    payload = {"primary_msisdn": "923065454649"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 
@@ -259,7 +313,7 @@ def test_rel_all_primary_without_secondary_pair_exported_sim_changed_deleted_bef
     assert not qry.old_imsi
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_primary_with_secondary_deletion_before_export(flask_app, db, session):
     """ Verify the behaviour of rel-all api when there is a primary-pair with secondary pairs and are
         not exported to Pair-List at the time of deletion"""
@@ -271,14 +325,14 @@ def test_rel_all_primary_with_secondary_deletion_before_export(flask_app, db, se
 
     session.execute(text("""UPDATE public.pairing SET imsi = '410019876543210', change_type = 'add', 
                             export_status = false, add_pair_status = true WHERE msisdn = '923028432506';"""))
-    payload = {"Sender_No": "923457819043"}
+    payload = {"primary_msisdn": "923457819043"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
     q1 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923457819043'; """)).fetchone()
     q2 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923028432506'; """)).fetchone()
-    print("-----Primary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+    print("\n-----Primary-Pair-----\nend_date = {} \nchange_type = {} \nexport_status = {}".
           format(q1.end_date, q1.change_type, q1.export_status))
-    print("-----Secondary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+    print("\n-----Secondary-Pair-----\nend_date = {} \nchange_type = {} \nexport_status = {}".
           format(q1.end_date, q1.change_type, q1.export_status))
     assert q1.change_type is None
     assert q1.export_status is None
@@ -288,7 +342,7 @@ def test_rel_all_primary_with_secondary_deletion_before_export(flask_app, db, se
     assert q2.old_imsi is None
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_primary_with_secondary_deletion_after_export(flask_app, db, session):
     """ Verify the behaviour of rel-all api when there is a primary-pair with secondary pairs and are
         already exported to Pair-List at the time of deletion"""
@@ -303,15 +357,15 @@ def test_rel_all_primary_with_secondary_deletion_after_export(flask_app, db, ses
 
     session.execute(text("""UPDATE public.pairing SET imsi = '410089872245710', change_type = 'add',
                             export_status = true, add_pair_status = true WHERE msisdn = '923121564222';"""))
-    payload = {"Sender_No": "923121564111"}
+    payload = {"primary_msisdn": "923121564111"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 
     q1 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923121564111'; """)).fetchone()
     q2 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923121564222'; """)).fetchone()
-    print("-----Primary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+    print("\n-----Primary-Pair-----\nend_date = {} \nchange_type = {} \nexport_status = {}".
           format(q1.end_date, q1.change_type, q1.export_status))
-    print("-----Secondary-Pair-----\nend_date = {}  change_type = {}  export_status = {}".
+    print("\n-----Secondary-Pair-----\nend_date = {} \nchange_type = {} \nexport_status = {}".
           format(q1.end_date, q1.change_type, q1.export_status))
     assert q1.change_type == 'remove'
     assert not q1.export_status
@@ -319,7 +373,7 @@ def test_rel_all_primary_with_secondary_deletion_after_export(flask_app, db, ses
     assert not q2.export_status
 
 
-# noinspection PyUnusedLocal,PyShadowingNames
+# noinspection PyUnusedLocal,PyShadowingNames,SqlDialectInspection
 def test_rel_all_primary_with_secondary_pair_exported_sim_changed_deleted_before_new_imsi(flask_app, db, session):
     """ Verify the behaviour of rel-all api for special case where primary pair with secondary pairs are
         exported once and after that SIM-Change is requested but before MNO provides new IMSI, Pair is deleted"""
@@ -335,16 +389,16 @@ def test_rel_all_primary_with_secondary_pair_exported_sim_changed_deleted_before
     session.execute(text("""UPDATE public.pairing SET old_imsi = '410074866996431', change_type = null,
                                 export_status = null, add_pair_status = true WHERE msisdn = '923007654321';"""))
 
-    payload = {"Sender_No": "923001234567"}
+    payload = {"primary_msisdn": "923001234567"}
     result = flask_app.delete(REL_ALL_API, headers=HEADERS, data=json.dumps(payload))
     print(result.data)
 
     q1 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923001234567'; """)).fetchone()
     q2 = session.execute(text("""SELECT * FROM pairing WHERE msisdn = '923007654321'; """)).fetchone()
 
-    print("-----Primary-Pair-----\nIMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
+    print("\n-----Primary-Pair-----\nIMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
           format(q1.imsi, q1.old_imsi, q1.change_type, q1.export_status))
-    print("-----Secondary-Pair-----\nIMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
+    print("\n-----Secondary-Pair-----\nIMSI = {}\nOLD_IMSI = {}\nchange_type = {}\nexport_status = {}".
           format(q2.imsi, q2.old_imsi, q2.change_type, q2.export_status))
 
     assert q1.change_type == 'remove'

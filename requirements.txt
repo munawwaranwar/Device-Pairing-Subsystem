@@ -28,6 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+marshmallow==2.19.5
 requests==2.22.0
 flask==1.0.2
 psycopg2==2.7.7
@@ -51,4 +52,6 @@ coverage==4.5.3
 Babel==2.7.0
 flask-babel==0.12.2
 speaklater==1.3
-werkzeug==0.15.4
+flask_restful==0.3.7
+werkzeug==0.16.0
+

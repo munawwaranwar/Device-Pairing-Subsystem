@@ -34,7 +34,7 @@ from app import db
 class Imei(db.Model):
     """ Class to create Db Table imei """
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     imei = db.Column(db.String(20))
 
     device_id = db.Column(db.BigInteger, db.ForeignKey('devices.id'))

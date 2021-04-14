@@ -34,12 +34,12 @@ from app import db
 class Devices(db.Model):
     """ Class to create Db Table devices """
 
-    id = db.Column(db.BigInteger, primary_key=True)
-    model = db.Column(db.String(1000))
-    brand = db.Column(db.String(1000))
-    serial_no = db.Column(db.String(1000))
-    mac = db.Column(db.String(50))
-    rat = db.Column(db.String(50))
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    model = db.Column(db.String(100))
+    brand = db.Column(db.String(100))
+    serial_no = db.Column(db.String(100))
+    mac = db.Column(db.String(100))
+    rat = db.Column(db.String(100))
 
     owner_id = db.Column(db.BigInteger, db.ForeignKey('owner.id'))
 

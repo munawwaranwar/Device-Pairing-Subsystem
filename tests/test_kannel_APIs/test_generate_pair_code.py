@@ -28,7 +28,6 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-
 # noinspection PyUnresolvedReferences,PyProtectedMember
 from tests._fixtures import *
 
@@ -44,10 +43,11 @@ def test_generate_paircode(flask_app, db):
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
-def test_base(flask_app, db):
-    """ Verify that paircode api generates correct pair-code """
+def test_validate_paircode_length(flask_app, db):
+    """ Verify that paircode api generates pair-code of length 8 characters only"""
 
-    url = 'api/v1/base'
+    url = 'api/v1/paircode'
     rslt = flask_app.get(url)
-    print(rslt.data)
-    assert rslt.status_code == 200
+    data = json.loads(rslt.data.decode('utf-8'))
+    print("\nPair-Code :", data['pair-code'])
+    assert len(data['pair-code']) == 8
