@@ -62,7 +62,7 @@ class Validations:
     @staticmethod
     def validate_brand(brand):
         """Validates Brand Name."""
-        match_brand = re.match(conf['regex'][conf['supported_languages']['default_language']]['model_name'], brand)
+        match_brand = re.match(conf['regex'][conf['supported_languages']['default_language']]['brand'], brand)
         if match_brand is None:
             raise ValidationError(_('Brand name is not correct'))
 

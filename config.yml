@@ -69,7 +69,7 @@ global:
   allowed_extensions: ['csv', 'txt']
 
   # Technologies allowed to communicate with Kannel
-  allowed_technologies: ['SMS', 'USSD']
+  allowed_technologies: ['SMS', 'sms', 'USSD', 'ussd']
 
   # DPS cases to be handled
   dps_cases: [ "first_pair", "additional_pair", "del_single_pair", "del_all_pairs", "sim_change", "verify_pair",
@@ -77,16 +77,20 @@ global:
 
   # Operators related parameters
   CC: '92'
-  MNO_1: 'jazz'
-  MNO_2: 'telenor'
-  MNO_3: 'ufone'
-  MNO_4: 'zong'
+  MNO_1: 'operator01'
+  MNO_2: 'operator02'
+  MNO_3: 'operator03'
+  MNO_4: 'operator04'
   MNO_5: 'Huawei'
   MNO_6: 'huawei'
 
   # Mobile Operator Names & Numbers
   num_of_mnos: 6
-  MNO_Names: ["jazz", "telenor", "ufone", "zong", "Huawei", "huawei"]
+  MNO_Names: ["operator01", "operator02", "operator03", "operator04", "Huawei", "huawei"]
+
+  # Jasmin related parameters
+#  jasmin_sms: 'http://192.168.100.41/sms/'
+  dns_sms: 'http://127.0.0.1:8000/sms/'
 
   # Kannel related parameters
   kannel_sms: 'http://192.168.100.70:13013/cgi-bin/sendsms'

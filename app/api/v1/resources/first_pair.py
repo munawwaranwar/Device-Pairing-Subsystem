@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -31,9 +31,9 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 from app import db
 from flask_babel import _
 from time import strftime
+from ..models.imeis import Imei
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..models.imeis import Imei
 from ..models.pairings import Pairing
 from ..models.pairing_codes import Pairing_Codes
 from ..schema.input_schema import FirstPairSchema
@@ -63,8 +63,8 @@ class FirstPair(Resource):
             if chk_pc:
 
                 chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(kwargs['sender_no'])) \
-                    .filter(Pairing.is_primary == True) \
-                    .filter(Pairing.end_date == None).first()
+                                           .filter(Pairing.is_primary == True) \
+                                           .filter(Pairing.end_date == None).first()
 
                 if not chk_primary:
                     chk_imei = Imei.query.filter(Imei.device_id == '{}'.format(chk_pc.device_id)).all()

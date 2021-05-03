@@ -28,19 +28,37 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from marshmallow import Schema, fields
-from app.api.common.validations import Validations
+import json
+import requests
+from app import conf
 
 
-class USSDSchema(Schema):
-    """Marshmallow schema for DPS-USSD input parameters."""
+class JasminAPIs:
+    """ Class to access Jamin APIs"""
 
-    class Meta:
-        strict = True
-    sender_no = fields.String(required=True, validate=Validations.validate_msisdn)
-    operator = fields.String(required=True, validate=Validations.validate_operator)
-    time = fields.String(required=True)
-    receiver = fields.String(required=True)
-    case = fields.String(required=True, validate=Validations.validate_case)
-    technology = fields.String(required=True, validate=Validations.validate_technology)
-    msg_text = fields.String(required=True)
+    @staticmethod
+    def jasmin_sms(*args):
+        """Calling Jasmin's SMS-API """
+
+        data = {}
+        if len(args) == 3:
+            data = {
+                "sms_to": args[0],
+                "sms_from": args[1],
+                "sms_content": args[2],
+                "subsystem": "DPS",
+            }
+        elif len(args) == 4:
+            data = {
+                "sms_to": args[0],
+                "sms_from": args[1],
+                "sms_content": args[2],
+                "operator": args[3],
+                "subsystem": "DPS",
+            }
+
+        URL = conf['dns_sms']
+        headers = {'content-type': 'application/json'}
+        response = requests.post(url=URL, data=json.dumps(data), headers=headers)
+        print(response.text)
+        return

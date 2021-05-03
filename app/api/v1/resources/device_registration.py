@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -28,22 +28,22 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-import requests
-from flask_restful import Resource
-from flask_apispec import use_kwargs
 from app import db, conf
 from flask_babel import _
-from app.api.common.generate_paircode import gen_paircode
-from app.api.assets.response import STATUS_CODES, MIME_TYPES
-from ..schema.input_schema import DeviceRegistrationSchema
-from ..models.owner import Owner
-from ..models.devices import Devices
 from ..models.imeis import Imei
+from ..models.owner import Owner
+from flask_restful import Resource
+from flask_apispec import use_kwargs
+from ..models.devices import Devices
 from ..models.pairing_codes import Pairing_Codes
+from app.api.common.jasmin_apis import JasminAPIs
+from app.api.common.generate_paircode import gen_paircode
+from ..schema.input_schema import DeviceRegistrationSchema
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 from app.api.assets.error_handlers import custom_paircode_response
 
 
-# noinspection PyBroadException,PyUnusedLocal
+# noinspection PyBroadException,PyUnusedLocal,PyUnresolvedReferences
 class DeviceRegistration(Resource):
     """Flask resource for Device Registration."""
 
@@ -84,6 +84,7 @@ class DeviceRegistration(Resource):
             db.session.flush()
             db.session.commit()
 
+            """ ****************** Kannel-Block replaced with Jasmin ******************
             message = _("Device has been registered with Authority. Your Activation Pair-Code is %(pc)s",
                         pc=pair_code)
             chg_msisdn = '0' + kwargs['contact_no'][2:]
@@ -93,6 +94,11 @@ class DeviceRegistration(Resource):
                        'text': message}
 
             requests.get(conf['kannel_sms'], params=payload)
+            """
+
+            message = _("Device has been registered with Authority. Your Activation Pair-Code is %(pc)s",
+                        pc=pair_code)
+            response = JasminAPIs.jasmin_sms(kwargs['contact_no'], conf['kannel_shortcode'], message)
 
             return custom_paircode_response(_("Device's information has been successfully loaded"),
                                             pair_code, status=STATUS_CODES.get('OK'),

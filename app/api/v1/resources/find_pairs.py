@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -34,8 +34,8 @@ from flask_restful import Resource
 from flask_apispec import use_kwargs
 from ..models.pairings import Pairing
 from ..schema.input_schema import RelAllPairsSchema
-from app.api.assets.error_handlers import custom_text_response
 from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal,DuplicatedCode
