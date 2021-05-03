@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -34,8 +34,8 @@ from flask_restful import Resource
 from flask_apispec import use_kwargs
 from ..models.pairings import Pairing
 from ..schema.input_schema import SimChangeSchema
-from app.api.assets.error_handlers import custom_text_response
 from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyUnusedLocal,PyComparisonWithNone
@@ -52,15 +52,14 @@ class SimChange(Resource):
     @staticmethod
     def sim_change_mnp(kwargs):
         """method to delete IMSI for SIM replacement"""
-        try:
 
+        try:
             chk_all = Pairing.query.filter(Pairing.msisdn == '{}'.format(kwargs['msisdn'])) \
                                    .filter(Pairing.end_date == None) \
                                    .filter(Pairing.imsi != None) \
                                    .filter(Pairing.add_pair_status == True).all()
 
             # checking conditions for SIM replacement
-
             if chk_all:
 
                 for q in chk_all:

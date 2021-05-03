@@ -48,7 +48,6 @@ from app.api.v1.resources.single_imsi_upload import SingleImsiUpload
 from app.api.v1.resources.bulk_msisdn_download import BulkMsisdnDownload
 from app.api.v1.resources.bulk_imsi_upload import BulkImsiUpload
 from app.api.v1.resources.download_error_file import DownloadErrorFile
-from app.api.v2.resources.test_api import TestApi
 from app.api.v2.resources.dps_ussd import DpsUssd
 
 
@@ -72,5 +71,4 @@ api.add_resource(BulkMsisdnDownload, '/bulk-msisdn-download')
 api.add_resource(BulkImsiUpload, '/bulk-imsi-upload')
 api.add_resource(DownloadErrorFile, '/download-error-file')
 
-api_v2.add_resource(TestApi, '/test-v2-api')
 api_v2.add_resource(DpsUssd, '/dps-ussd')

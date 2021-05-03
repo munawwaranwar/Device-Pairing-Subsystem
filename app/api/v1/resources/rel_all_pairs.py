@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -32,15 +32,15 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 from app import db
 from flask_babel import _
 from time import strftime
+from ..models.imeis import Imei
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..models.imeis import Imei
 from ..models.pairings import Pairing
 from ..models.pairing_codes import Pairing_Codes
-from app.api.common.generate_paircode import gen_paircode
 from ..schema.input_schema import RelAllPairsSchema
-from app.api.assets.error_handlers import custom_text_response
+from app.api.common.generate_paircode import gen_paircode
 from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyUnboundLocalVariable,PyUnusedLocal
@@ -84,18 +84,18 @@ class ReleaseAllPairs(Resource):
 
                         elif q1.export_status is False and (q1.change_type is None or q1.change_type == 'add'):
 
-                            # Condition to avoid exporting this pair to DIRBS-CORE
-
-                            q1.export_status = None  # pragma: no cover
-                            q1.change_type = None  # pragma: no cover
-                            q1.old_imsi = None  # pragma: no cover
+                            """ Condition to avoid exporting this pair to DIRBS-CORE """
+                            q1.export_status = None   # pragma: no cover
+                            q1.change_type = None     # pragma: no cover
+                            q1.old_imsi = None        # pragma: no cover
 
                         elif q1.imsi is None and q1.export_status is None \
                                 and q1.change_type is None and q1.old_imsi is not None:
 
-                            # Condition for case where pair(s) is exported once and after that SIM-Change is requested
-                            # but before MNO provides new IMSI, Pair is deleted.
-
+                            """ 
+                               Condition for case where pair(s) is exported once and after that SIM-Change is requested
+                               but before MNO provides new IMSI, Pair is deleted.
+                            """
                             q1.export_status = False
                             q1.change_type = "remove"
                             q1.imsi = q1.old_imsi
@@ -113,9 +113,10 @@ class ReleaseAllPairs(Resource):
                                 if q2.imsi is not None and q2.add_pair_status and q2.change_type == 'add' \
                                         and q2.export_status and q2.end_date is None:
 
-                                    # Condition checks only those pairs be exported as "removed" in pair-list
-                                    # which are added and already exported to DIRBS-CORE before removing
-
+                                    """
+                                        Condition checks only those pairs be exported as "removed" in pair-list
+                                        which are added and already exported to DIRBS-CORE before removing
+                                    """
                                     q2.export_status = False
                                     q2.change_type = 'remove'
 

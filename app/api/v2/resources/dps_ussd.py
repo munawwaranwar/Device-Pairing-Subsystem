@@ -2,7 +2,6 @@
 Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
 
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
 limitations in the disclaimer below) provided that the following conditions are met:
 
@@ -27,36 +26,34 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+
 from flask import request
 from flask_restful import Resource
-from flask_apispec import use_kwargs
 from marshmallow import ValidationError
 from app.api.common.validations import Validations
-from app.api.v2.schema.input_schema import USSDSchema
-from app.api.v1.schema.input_schema import VfyPaircodeSchema
 from app.api.v1.resources.find_pairs import FindPairs
 from app.api.v1.resources.first_pair import FirstPair
 from app.api.v1.resources.sim_change import SimChange
+from app.api.v2.schema.input_schema import USSDSchema
+from app.api.v1.schema.input_schema import VfyPaircodeSchema
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 from app.api.v1.resources.rel_all_pairs import ReleaseAllPairs
 from app.api.v1.resources.verify_paircode import VerifyPairCode
 from app.api.v1.resources.additional_pairs import AdditionalPairs
 from app.api.v1.resources.rel_single_pair import ReleaseSinglePair
-from app.api.assets.response import STATUS_CODES, MIME_TYPES
-from app.api.assets.error_handlers import custom_text_response
 
 
 class DpsUssd(Resource):
     """Flask Resource to access and handle USSD parameters"""
 
-    # @use_kwargs(USSDSchema(), locations=['querystring'])
     def get(self):
-
         kwargs = request.args
         try:
             USSDSchema().load(kwargs)
         except ValidationError as e:
             err = []
-            for v in (e.messages).values():
+            for v in e.messages.values():
                 err.append(v[0])
 
             return custom_text_response(err, status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
