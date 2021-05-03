@@ -50,6 +50,7 @@ class Validations:
         match_msisdn = re.match(conf['validation_regex']['msisdn'], msisdn)
         if match_msisdn is None:
             raise ValidationError(_('MSISDN format is not correct'))
+        return match_msisdn.string
 
     @staticmethod
     def validate_model(model):
@@ -61,7 +62,7 @@ class Validations:
     @staticmethod
     def validate_brand(brand):
         """Validates Brand Name."""
-        match_brand = re.match(conf['regex'][conf['supported_languages']['default_language']]['model_name'], brand)
+        match_brand = re.match(conf['regex'][conf['supported_languages']['default_language']]['brand'], brand)
         if match_brand is None:
             raise ValidationError(_('Brand name is not correct'))
 
@@ -74,7 +75,7 @@ class Validations:
 
     @staticmethod
     def validate_mac(mac):
-        """Validates MAC Name."""
+        """Validates MAC address."""
 
         if mac is not "" or not mac or mac is not None:
             match_mac = re.match(conf['validation_regex']['mac'], mac)
@@ -89,9 +90,9 @@ class Validations:
             raise ValidationError(_('RAT is not correct'))
 
     @staticmethod
-    def validate_operator(mno):
+    def validate_operator(operator):
         """Validates Operator Name."""
-        if mno not in conf['MNO_Names'] or (re.match(conf['validation_regex']['mno'], mno) is None):
+        if operator not in conf['MNO_Names']:
             raise ValidationError(_('Operator name is not correct'))
 
     @staticmethod
@@ -135,3 +136,17 @@ class Validations:
         match_imsi = re.fullmatch(conf['validation_regex']['imsi'], imsi)
         if match_imsi is None:
             raise ValidationError(_('IMSI is not correct'))
+
+    @staticmethod
+    def validate_case(case):
+        """ Validates proper API to be used for USSD """
+
+        if case not in conf['dps_cases']:
+            raise ValidationError(_('Case not found'))
+
+    @staticmethod
+    def validate_technology(tech):
+        """ Validates technology used"""
+
+        if tech not in conf['allowed_technologies']:
+            raise ValidationError(_('Requested technology is not supported'))

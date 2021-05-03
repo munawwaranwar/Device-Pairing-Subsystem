@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -32,25 +32,28 @@ from app import db
 from flask_babel import _
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import RelAllPairsSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
-# noinspection PyComparisonWithNone,PyUnusedLocal
+# noinspection PyComparisonWithNone,PyUnusedLocal,DuplicatedCode
 class FindPairs(Resource):
     """Flask resource to find secondary-pairs."""
 
-    @staticmethod
     @use_kwargs(RelAllPairsSchema().fields_dict, locations=['querystring'])
-    def get(**kwargs):
-        """method to find secondary-pairs"""
+    def get(self, **kwargs):
+        """method to call static-method to evaluate secondary-pairs"""
+
+        rst = self.find_pair_details(kwargs)
+        return rst
+
+    @staticmethod
+    def find_pair_details(kwargs):
+        """method to find secondary-pairs associated with provided primary-pair"""
 
         try:
-
-            pair_info = []
-            status_list = []
             msisdn_list = []
 
             chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(kwargs['primary_msisdn']),
@@ -58,42 +61,24 @@ class FindPairs(Resource):
                                                Pairing.end_date == None).first()
 
             # to check if request is made from primary-pair
-
             if chk_primary:
 
                 chk_sec = Pairing.query.filter(Pairing.primary_id == '{}'.format(chk_primary.id),
                                                Pairing.end_date == None).all()
-
-                for m in chk_sec:
-
-                    msisdn_list.append(m.msisdn)
-
-                    if m.add_pair_status:
-                        status_list.append('Confirmed Pair')
-
-                    else:
-                        status_list.append('Un-confirmed Pair')
-
-                for r in range(len(msisdn_list)):
-                    data = {
-                        "MSISDN": msisdn_list[r],
-                        "Status": status_list[r]
-                    }
-
-                    pair_info.append(data)
+                if chk_sec:
+                    for m in chk_sec:
+                        msisdn_list.append(int(m.msisdn))
+                    return msisdn_list
+                else:
+                    return custom_text_response(_("No Pair is associated with %(pm)s", pm=kwargs['primary_msisdn']),
+                                                status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
+                                                mimetype=MIME_TYPES.get('TEXT'))
             else:
                 return custom_text_response(_("%(pm)s is not registered as Primary-Pair", pm=kwargs['primary_msisdn']),
                                             status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
                                             mimetype=MIME_TYPES.get('TEXT'))
-
-            if pair_info:
-                return pair_info
-            else:
-                return custom_text_response(_("No Pair is associated with %(pm)s", pm=kwargs['primary_msisdn']),
-                                            status=STATUS_CODES.get('UNPROCESSABLE_ENTITY'),
-                                            mimetype=MIME_TYPES.get('TEXT'))
         except Exception as e:
-            db.session.rollback()       # pragma: no cover
+            db.session.rollback()  # pragma: no cover
 
         finally:
             db.session.close()

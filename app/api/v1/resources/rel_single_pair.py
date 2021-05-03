@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -33,19 +33,25 @@ from flask_babel import _
 from time import strftime
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import AdditionalPairSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal,DuplicatedCode
 class ReleaseSinglePair(Resource):
     """Flask resource to delete Single-Pair."""
 
-    @staticmethod
     @use_kwargs(AdditionalPairSchema().fields_dict, locations=['json'])
-    def delete(**kwargs):
+    def delete(self, **kwargs):
+        """method to call static-method to delete/release a single pair"""
+
+        rst = self.del_sngl_pair(kwargs)
+        return rst
+
+    @staticmethod
+    def del_sngl_pair(kwargs):
         """method to delete/release a single pair"""
 
         try:
@@ -73,17 +79,17 @@ class ReleaseSinglePair(Resource):
                         if num_exist.imsi is not None and num_exist.add_pair_status \
                                 and num_exist.change_type == 'add' and num_exist.export_status == True:
 
-                            # Condition checks only those pairs be exported as "removed" in pair-list
-                            # which are added and already exported to DIRBS-CORE before removing
-
+                            """
+                            Condition checks only those pairs be exported as "removed" in pair-list
+                            which are added and already exported to DIRBS-CORE before removing
+                            """
                             num_exist.export_status = False
                             num_exist.change_type = 'remove'
 
                         elif num_exist.export_status is False and \
                                 (num_exist.change_type is None or num_exist.change_type == 'add'):
 
-                            # Condition to avoid exporting this pair to DIRBS-CORE
-
+                            """ Condition to avoid exporting this pair to DIRBS-CORE """
                             num_exist.export_status = None
                             num_exist.change_type = None
                             num_exist.old_imsi = None
@@ -91,9 +97,10 @@ class ReleaseSinglePair(Resource):
                         elif num_exist.imsi is None and num_exist.export_status is None \
                                 and num_exist.change_type is None and num_exist.old_imsi is not None:
 
-                            # Condition for case where pair(s) is exported once and after that SIM-Change is requested
-                            # but before MNO provides new IMSI, Pair is deleted.
-
+                            """
+                            Condition for case where pair(s) is exported once and after that SIM-Change is requested
+                            but before MNO provides new IMSI, Pair is deleted.
+                            """
                             num_exist.export_status = False
                             num_exist.change_type = "remove"
                             num_exist.imsi = num_exist.old_imsi
@@ -111,7 +118,7 @@ class ReleaseSinglePair(Resource):
             return custom_text_response(rtn_msg, status=STATUS_CODES.get('OK'), mimetype=MIME_TYPES.get('TEXT'))
 
         except Exception as e:
-            db.session.rollback()           # pragma: no cover
+            db.session.rollback()      # pragma: no cover
 
         finally:
             db.session.close()

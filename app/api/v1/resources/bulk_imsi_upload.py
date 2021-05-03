@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -40,10 +40,10 @@ from app import conf, app, db
 from flask_restful import Resource
 from flask_apispec import use_kwargs
 from werkzeug.utils import secure_filename
-from ..assets.response import *
-from ..common.database import connect
+from app.api.common.database import connect
 from ..schema.input_schema import BulkUploadSchema
-from ..assets.error_handlers import custom_json_response, custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_json_response, custom_text_response
 
 
 UPLOAD_FOLDER = app.config['DPS_UPLOADS']
@@ -84,8 +84,11 @@ class BulkImsiUpload(Resource):
                         total_rows, total_columns = df.shape
 
                         if df.columns[0] == 'MSISDN' or df.columns[1] == 'IMSI':
+                            df['MSISDN'] = df['MSISDN'].str.strip()  # removing white spaces from Column 'MSISDN'
+                            df['IMSI'] = df['IMSI'].str.strip()      # removing white spaces from Column 'IMSI'
 
                             df_dup = df[df.duplicated(['IMSI'], keep='first')]
+                                    # to check duplicated IMSIs
 
                             if df_dup.empty:
 

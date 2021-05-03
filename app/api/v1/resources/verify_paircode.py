@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -30,40 +30,42 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 
 from app import db
 from flask_babel import _
+from ..models.imeis import Imei
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..models.imeis import Imei
-from ..assets.response import *
 from ..models.pairing_codes import Pairing_Codes
 from ..schema.input_schema import VfyPaircodeSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyUnusedLocal
 class VerifyPairCode(Resource):
     """Flask resource to verify paircode."""
 
-    @staticmethod
     @use_kwargs(VfyPaircodeSchema().fields_dict, locations=['querystring'])
-    def get(**kwargs):
+    def get(self, **kwargs):
+        """method to call static-method to verify paircodes"""
+
+        rst = self.verify_pair_code(kwargs)
+        return rst
+
+    @staticmethod
+    def verify_pair_code(kwargs):
         """method to verify paircode"""
 
         try:
-
+            # checking pair-code's validity
             chk_pc = Pairing_Codes.query.filter(Pairing_Codes.pair_code == '{}'.format(kwargs['pair_code']),
                                                 Pairing_Codes.is_active == True).first()
 
-            # checking pair-code's validity
-
             if chk_pc:
 
+                # verify that IMEI is related to that pair-code
                 chk_imei = Imei.query.filter(Imei.imei == '{}'.format(kwargs['imei']),
                                              Imei.device_id == '{}'.format(chk_pc.device_id)).all()
 
-                # verify that IMEI is related to that pair-code
-
                 if chk_imei:
-
                     return custom_text_response(_("Pair-Code %(pc)s is active & associated with provided IMEI",
                                                 pc=kwargs['pair_code']),
                                                 status=STATUS_CODES.get('OK'),

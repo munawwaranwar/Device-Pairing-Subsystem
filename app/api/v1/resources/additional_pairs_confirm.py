@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -29,16 +29,16 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 """
 
 
-import requests
 from app import db, conf
 from time import strftime
 from flask_babel import _
 from flask_restful import Resource
 from flask_apispec import use_kwargs
 from ..models.pairings import Pairing
+from app.api.common.jasmin_apis import JasminAPIs
 from ..schema.input_schema import AddPairConfirmSchema
-from ..assets.error_handlers import custom_text_response
-from ..assets.response import *
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal
@@ -55,8 +55,8 @@ class AdditionalPairsConfirmation(Resource):
             cnfm_sms = False
 
             chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(kwargs['primary_msisdn'])) \
-                .filter(Pairing.is_primary == True) \
-                .filter(Pairing.end_date == None).all()
+                                       .filter(Pairing.is_primary == True) \
+                                       .filter(Pairing.end_date == None).all()
 
             if chk_primary:
 
@@ -113,13 +113,18 @@ class AdditionalPairsConfirmation(Resource):
 
             if cnfm_sms:
 
-                chg_msisdn = '0' + kwargs['secondary_msisdn'][2:]
+                """ ****************** Kannel-Block replaced with Jasmin ******************
+                chg_msisdn = '0' + kwargs['primary_msisdn'][2:]
 
                 payload = {'username': conf['kannel_username'], 'password': conf['kannel_password'],
                            'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': chg_msisdn,
                            'text': rtn_msg}
 
                 requests.get(conf['kannel_sms'], params=payload)
+                """
+
+                response = JasminAPIs.jasmin_sms(kwargs['secondary_msisdn'], conf['kannel_shortcode'],
+                                                 rtn_msg, kwargs['operator'])
 
                 cnfm_sms = False
 

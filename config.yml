@@ -41,13 +41,13 @@ global:
   imeis_per_device: 5
 
   validation_regex:
-    msisdn: '^\+?[0-9]{11,15}$'
+    msisdn: '^923[0-9]{9}$'
     paircode: '^[a-zA-Z0-9]{8}$'
     imei: '^[A-F0-9]{14,16}$'
     imsi: '\d{15}'
     mno: '^.{1,50}$'
     start_limit: '\d+'
-    serial_no: '^[0-9a-zA-Z]{1,100}$'
+    serial_no: '^\S{1,100}$'
     mac: '^([0-9A-F]{2,4}[.:-]){3,7}([0-9A-F]{2,4})$'
     rat: '^(2G|3G|4G|5G)[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?[,]?(2G|3G|4G|5G)?$'
     date: '^((19|20)\d{2})\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$'
@@ -65,27 +65,39 @@ global:
   pool_recycle: 10
   overflow_size: 275
 
-  # File extensions allowed for duplication list
+  # File extensions allowed for bulk uploads
   allowed_extensions: ['csv', 'txt']
+
+  # Technologies allowed to communicate with Kannel
+  allowed_technologies: ['SMS', 'sms', 'USSD', 'ussd']
+
+  # DPS cases to be handled
+  dps_cases: [ "first_pair", "additional_pair", "del_single_pair", "del_all_pairs", "sim_change", "verify_pair",
+               "find_pair" ]
 
   # Operators related parameters
   CC: '92'
-  MNO_1: 'jazz'
-  MNO_2: 'telenor'
-  MNO_3: 'ufone'
-  MNO_4: 'zong'
-  MNO_5: 'warid'
+  MNO_1: 'operator01'
+  MNO_2: 'operator02'
+  MNO_3: 'operator03'
+  MNO_4: 'operator04'
+  MNO_5: 'Huawei'
+  MNO_6: 'huawei'
 
   # Mobile Operator Names & Numbers
-  num_of_mnos: 5
-  MNO_Names: ["jazz", "telenor", "ufone", "zong", "warid"]
+  num_of_mnos: 6
+  MNO_Names: ["operator01", "operator02", "operator03", "operator04", "Huawei", "huawei"]
+
+  # Jasmin related parameters
+#  jasmin_sms: 'http://192.168.100.41/sms/'
+  dns_sms: 'http://127.0.0.1:8000/sms/'
 
   # Kannel related parameters
   kannel_sms: 'http://192.168.100.70:13013/cgi-bin/sendsms'
   kannel_username: 'tester'
   kannel_password: 'foobar'
   kannel_smsc: 'at'
-  kannel_shortcode: '7787'
+  kannel_shortcode: '03029847788'
 
   # Pair-List generation Path
   pairlist_path: '/home/munawar/PycharmProjects/DPS-v2.0/Device-Pairing-Subsystem/pairing_lists'

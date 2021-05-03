@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -34,10 +34,10 @@ from random import choice
 from flask_babel import _
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import MnoHomePageSchema
-from ..assets.error_handlers import custom_text_response, custom_json_response
+from app.api.assets.error_handlers import custom_text_response, custom_json_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal

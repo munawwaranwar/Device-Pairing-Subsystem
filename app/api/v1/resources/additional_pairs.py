@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -27,6 +27,7 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
 """
+import json
 
 import requests
 from flask_babel import _
@@ -34,20 +35,26 @@ from time import strftime
 from app import db, conf
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import AdditionalPairSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.common.jasmin_apis import JasminAPIs
 
-
-# noinspection PyComparisonWithNone,PyUnboundLocalVariable,DuplicatedCode,PyUnusedLocal
+# noinspection PyComparisonWithNone,PyUnboundLocalVariable,DuplicatedCode,PyUnusedLocal,PyUnresolvedReferences,PyTypeChecker
 class AdditionalPairs(Resource):
     """Flask resource for creation of Secondary-Pairs."""
 
-    @staticmethod
     @use_kwargs(AdditionalPairSchema().fields_dict, locations=['json'])
-    def post(**kwargs):
-        """method to create Secondary/Additional pairs"""
+    def post(self, **kwargs):
+        """method to call static-method to create secondary-pairs"""
+
+        rst = self.sec_pair_creation(kwargs)
+        return rst
+
+    @staticmethod
+    def sec_pair_creation(kwargs):
+        """method to create additional/Secondary pair"""
 
         try:
             chk_primary = Pairing.query.filter(db.and_(Pairing.msisdn == '{}'.format(kwargs['primary_msisdn']),
@@ -132,6 +139,7 @@ class AdditionalPairs(Resource):
 
             if cnfm_sms:
 
+                """ ****************** Kannel-Block replaced with Jasmin ******************
                 chg_msisdn = '0' + kwargs['secondary_msisdn'][2:]
 
                 message = "CONFIRM [{}]\nPlease reply with Yes/No space {}".format(kwargs['primary_msisdn'],
@@ -141,7 +149,12 @@ class AdditionalPairs(Resource):
                            'smsc': conf['kannel_smsc'], 'from': conf['kannel_shortcode'], 'to': chg_msisdn,
                            'text': message}
 
-                requests.get(conf['kannel_sms'], params=payload)
+                # requests.get(conf['kannel_sms'], params=payload)
+                """
+
+                message = "CONFIRM [{}]\nPlease reply with Yes/No space {}".format(kwargs['primary_msisdn'],
+                                                                                   kwargs['primary_msisdn'])
+                response = JasminAPIs.jasmin_sms(kwargs['secondary_msisdn'], conf['kannel_shortcode'], message)
 
                 cnfm_sms = False        # pragma: no cover
 

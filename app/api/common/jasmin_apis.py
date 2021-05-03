@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -28,54 +28,37 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
  POSSIBILITY OF SUCH DAMAGE.
 """
 
-from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
-import yaml
-import sys
-from flask_cors import CORS
-from flask_babel import Babel
-from app.api.common.lazy_text_encoder import JSON_Encoder
+import json
+import requests
+from app import conf
 
 
-app = Flask(__name__)
-CORS(app)
-app.j_encoder = JSON_Encoder()
-babel = Babel(app)
+class JasminAPIs:
+    """ Class to access Jamin APIs"""
 
-try:
-    with open('config.yml', 'r') as yaml_file:
-        global_config = yaml.safe_load(yaml_file)
-except Exception as e:  # pragma: no cover
-    app.logger.error('Exception encountered during loading the config file')
-    app.logger.exception(e)
-    sys.exit(1)
+    @staticmethod
+    def jasmin_sms(*args):
+        """Calling Jasmin's SMS-API """
 
-conf = global_config['global']
+        data = {}
+        if len(args) == 3:
+            data = {
+                "sms_to": args[0],
+                "sms_from": args[1],
+                "sms_content": args[2],
+                "subsystem": "DPS",
+            }
+        elif len(args) == 4:
+            data = {
+                "sms_to": args[0],
+                "sms_from": args[1],
+                "sms_content": args[2],
+                "operator": args[3],
+                "subsystem": "DPS",
+            }
 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = '''postgresql://{}:{}@{}/{}'''.format(conf['dbusername'], conf['dbpassword'],
-                                                                              conf['dbhost'], conf['dbname'])
-
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_POOL_SIZE'] = int(conf['pool_size'])
-app.config['SQLALCHEMY_POOL_RECYCLE'] = int(conf['pool_recycle'])
-app.config['SQLALCHEMY_MAX_OVERFLOW'] = int(conf['overflow_size'])
-app.config['SQLALCHEMY_POOL_TIMEOUT'] = int(conf['pool_timeout'])
-app.config['DPS_DOWNLOADS'] = conf['Download_Path']
-app.config['DPS_UPLOADS'] = conf['Upload_Path']
-app.config['BABEL_DEFAULT_LOCALE'] = conf['supported_languages']['default_language']
-app.config['SUPPORTED_LANGUAGES'] = conf['supported_languages']
-
-db = SQLAlchemy()
-db.init_app(app)
-
-
-from app.api.common.database import connect
-pg_connt = connect()
-
-from app.api.routes import *
-
-
-@babel.localeselector
-def get_locale():
-    return request.accept_languages.best_match(app.config['SUPPORTED_LANGUAGES'])
+        URL = conf['dns_sms']
+        headers = {'content-type': 'application/json'}
+        response = requests.post(url=URL, data=json.dumps(data), headers=headers)
+        print(response.text)
+        return

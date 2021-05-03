@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -31,23 +31,29 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 from app import db
 from flask_babel import _
 from time import strftime
+from ..models.imeis import Imei
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
-from ..models.imeis import Imei
 from ..models.pairings import Pairing
 from ..models.pairing_codes import Pairing_Codes
 from ..schema.input_schema import FirstPairSchema
-from ..assets.error_handlers import custom_text_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_text_response
 
 
 # noinspection PyComparisonWithNone,PyBroadException,PyUnusedLocal
 class FirstPair(Resource):
     """Flask resource for creation of First-Pair."""
 
-    @staticmethod
     @use_kwargs(FirstPairSchema().fields_dict, locations=['json'])
-    def post(**kwargs):
+    def post(self, **kwargs):
+        """method to call static-method to create primary-pairs"""
+
+        rst = self.first_pair_creation(kwargs)
+        return rst
+
+    @staticmethod
+    def first_pair_creation(kwargs):
         """method to create primary/first pair"""
 
         try:
@@ -57,8 +63,8 @@ class FirstPair(Resource):
             if chk_pc:
 
                 chk_primary = Pairing.query.filter(Pairing.msisdn == '{}'.format(kwargs['sender_no'])) \
-                    .filter(Pairing.is_primary == True) \
-                    .filter(Pairing.end_date == None).first()
+                                           .filter(Pairing.is_primary == True) \
+                                           .filter(Pairing.end_date == None).first()
 
                 if not chk_primary:
                     chk_imei = Imei.query.filter(Imei.device_id == '{}'.format(chk_pc.device_id)).all()

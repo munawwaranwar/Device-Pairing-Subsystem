@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
 
@@ -33,10 +33,10 @@ from time import strftime
 from flask_babel import _
 from flask_restful import Resource
 from flask_apispec import use_kwargs
-from ..assets.response import *
 from ..models.pairings import Pairing
 from ..schema.input_schema import SingleImsiSchema
-from ..assets.error_handlers import custom_json_response
+from app.api.assets.response import STATUS_CODES, MIME_TYPES
+from app.api.assets.error_handlers import custom_json_response
 
 
 # noinspection PyComparisonWithNone,PyUnusedLocal
@@ -49,7 +49,6 @@ class SingleImsiUpload(Resource):
         """method to upload single IMSI"""
 
         try:
-
             chk_imsi = Pairing.query.filter(Pairing.imsi == '{}'.format(kwargs['imsi']),
                                             Pairing.end_date == None).first()
             if chk_imsi:

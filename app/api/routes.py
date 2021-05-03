@@ -29,27 +29,30 @@ THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRAN
 """
 
 # noinspection PyUnresolvedReferences
-from .assets.error_handlers import *
+from app.api.assets import *
 from flask_restful import Api
 from app import app
-from .resources.paircode_generation import PairCode
-from .resources.device_registration import DeviceRegistration
-from .resources.first_pair import FirstPair
-from .resources.additional_pairs import AdditionalPairs
-from .resources.additional_pairs_confirm import AdditionalPairsConfirmation
-from .resources.rel_single_pair import ReleaseSinglePair
-from .resources.rel_all_pairs import ReleaseAllPairs
-from .resources.sim_change import SimChange
-from .resources.verify_paircode import VerifyPairCode
-from .resources.find_pairs import FindPairs
-from .resources.device_search import DeviceSearch
-from .resources.mno_home_page import MnoHomePage
-from .resources.single_imsi_upload import SingleImsiUpload
-from .resources.bulk_msisdn_download import BulkMsisdnDownload
-from .resources.bulk_imsi_upload import BulkImsiUpload
-from .resources.download_error_file import DownloadErrorFile
+from app.api.v1.resources.paircode_generation import PairCode
+from app.api.v1.resources.device_registration import DeviceRegistration
+from app.api.v1.resources.first_pair import FirstPair
+from app.api.v1.resources.additional_pairs import AdditionalPairs
+from app.api.v1.resources.additional_pairs_confirm import AdditionalPairsConfirmation
+from app.api.v1.resources.rel_single_pair import ReleaseSinglePair
+from app.api.v1.resources.rel_all_pairs import ReleaseAllPairs
+from app.api.v1.resources.sim_change import SimChange
+from app.api.v1.resources.verify_paircode import VerifyPairCode
+from app.api.v1.resources.find_pairs import FindPairs
+from app.api.v1.resources.device_search import DeviceSearch
+from app.api.v1.resources.mno_home_page import MnoHomePage
+from app.api.v1.resources.single_imsi_upload import SingleImsiUpload
+from app.api.v1.resources.bulk_msisdn_download import BulkMsisdnDownload
+from app.api.v1.resources.bulk_imsi_upload import BulkImsiUpload
+from app.api.v1.resources.download_error_file import DownloadErrorFile
+from app.api.v2.resources.dps_ussd import DpsUssd
+
 
 api = Api(app, prefix='/api/v1')
+api_v2 = Api(app, prefix='/api/v2')
 
 api.add_resource(PairCode, '/paircode')
 api.add_resource(FirstPair, '/first-pair')
@@ -67,3 +70,5 @@ api.add_resource(SingleImsiUpload, '/single-imsi-upload')
 api.add_resource(BulkMsisdnDownload, '/bulk-msisdn-download')
 api.add_resource(BulkImsiUpload, '/bulk-imsi-upload')
 api.add_resource(DownloadErrorFile, '/download-error-file')
+
+api_v2.add_resource(DpsUssd, '/dps-ussd')
