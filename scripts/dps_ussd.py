@@ -44,7 +44,7 @@ def main(argv):
     smsc_id = "zongx"
     # smsc_id = argv[3]
     # msg_data = "USSD,11,923201746577"
-    msg_data = "USSD,11"
+    msg_data = "USSD,11,p0o9i8u7"
 
     # msg_data = unquote(argv[4])
     # msg_data = msg_data.strip('+')
