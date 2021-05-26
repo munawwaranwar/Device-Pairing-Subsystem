@@ -1,4 +1,3 @@
-# jasmin_dps.py
 import json
 import requests
 from time import strftime
@@ -8,13 +7,11 @@ app = Flask(__name__)
 
 ERROR_MSG = "Incorrect Message Format. Please send HELP to 8787"
 ERROR_SPACES = "Incorrect Message Format. Please check the White spaces in the SMS."
-ERROR_TECH = "SMS Format is incorrect"
-# noinspection HttpUrlsUsage
-DPS_URL = "http://192.168.100.52/api/v1/"
+ERROR_TECH = "Incorrect Technology specified"
 ERROR_MSISDN = "Sender Number is not correct, please specify number in correct format"
 
 
-# noinspection PyUnusedLocal,HttpUrlsUsage,DuplicatedCode
+# noinspection PyUnusedLocal,HttpUrlsUsage
 @app.route('/dps-jasmin', methods=['POST'])
 def main():
 
@@ -37,8 +34,8 @@ def main():
 
         # Extracting parameters from API
         # kwargs = request.data.decode()
-        # kwargs = request.get_json(force=True)
-        kwargs = request.values
+        # kwargs = request.values
+        kwargs = request.get_json(force=True)
 
         # MSISDN Validation
         sender_no = msisdn_validation(kwargs['from'])
@@ -153,18 +150,16 @@ def main():
         elif white_spaces == 0:
 
             technology = sms_text.split(',')[0]
+            dps_case = case_search(int(sms_text.split(',')[1]))
+            ussd_time = strftime("%Y-%m-%d %H:%M:%S")
 
             if technology in keywords['dps_ussd']:
 
-                dps_case = case_search(int(sms_text.split(',')[1]))
-                ussd_time = strftime("%Y-%m-%d %H:%M:%S")
-
-                URL = DPS_URL + "dps-ussd"
                 headers = {'content-type': 'application/json'}
                 payload = {"sender_no": sender_no, "receiver": receiver, "time": ussd_time, "operator": operator,
                            "case": dps_case, "technology": technology, "msg_text": sms_text}
 
-                response = requests.get(url=URL,
+                response = requests.get(url="http://192.168.100.248/api/v2/dps-ussd",
                                         params=payload,
                                         headers=headers)
 
@@ -190,10 +185,9 @@ def first_pair(paircode, sender_no, operator):
 
     if len(paircode) == 8:
 
-        URL = DPS_URL + "first-pair"
         headers = {'content-type': 'application/json'}
         data = {"sender_no": sender_no, "operator": operator, "pair_code": paircode}
-        response = requests.post(url=URL,
+        response = requests.post(url="http://192.168.100.248/api/v1/first-pair",
                                  data=json.dumps(data),
                                  headers=headers)
         result = response.json()
@@ -215,11 +209,9 @@ def add_pairs(primary_msisdn, secondary_msisdn):
         if secondary_msisdn.isdigit():
 
             msisdn = msisdn_validation(secondary_msisdn)
-
-            URL = DPS_URL + "secondary-pairs"
             headers = {'content-type': 'application/json'}
             data = {"primary_msisdn": primary_msisdn, "secondary_msisdn": msisdn}
-            response = requests.post(url=URL,
+            response = requests.post(url="http://192.168.100.248/api/v1/secondary-pairs",
                                      data=json.dumps(data),
                                      headers=headers)
             result = response.json()
@@ -243,14 +235,12 @@ def confirm_pair(primary_msisdn, secondary_msisdn, operator, confirm):
         if primary_msisdn.isdigit():
 
             msisdn = msisdn_validation(primary_msisdn)
-
-            URL = DPS_URL + "secondary-confirm"
             headers = {'content-type': 'application/json'}
 
             data = {"primary_msisdn": msisdn, "secondary_msisdn": secondary_msisdn,
                     "operator": operator, "confirm": confirm}
 
-            response = requests.post(url=URL,
+            response = requests.post(url="http://192.168.100.248/api/v1/secondary-confirm",
                                      data=json.dumps(data),
                                      headers=headers)
             result = response.json()
@@ -274,9 +264,7 @@ def release_pair(primary_msisdn, secondary_msisdn):
     if secondary_msisdn in ["ALL", "all", "All"]:
 
         data = {"primary_msisdn": primary_msisdn}
-        URL = DPS_URL + "rel-all-pairs"
-
-        response = requests.delete(url=URL,
+        response = requests.delete(url="http://192.168.100.248/api/v1/rel-all-pairs",
                                    data=json.dumps(data),
                                    headers=headers)
         return response.text
@@ -285,8 +273,7 @@ def release_pair(primary_msisdn, secondary_msisdn):
             if secondary_msisdn.isdigit():
                 msisdn = msisdn_validation(secondary_msisdn)
                 data = {"primary_msisdn": primary_msisdn, "secondary_msisdn": msisdn}
-                URL = DPS_URL + "rel-single-pair"
-                response = requests.delete(url=URL,
+                response = requests.delete(url="http://192.168.100.248/api/v1/rel-single-pair",
                                            data=json.dumps(data),
                                            headers=headers)
                 return response.text
@@ -303,9 +290,7 @@ def sim_change(msisdn, operator, key):
     if key in ['CHANGE', 'change', 'Change']:
         headers = {'content-type': 'application/json'}
         data = {"msisdn": msisdn, "operator": operator}
-        URL = DPS_URL + "sim-change"
-
-        response = requests.delete(url=URL,
+        response = requests.delete(url="http://192.168.100.248/api/v1/sim-change",
                                    data=json.dumps(data),
                                    headers=headers)
         return response.text
@@ -319,9 +304,7 @@ def find_pairs(primary_msisdn, key):
 
     if key in ['PAIRS', 'pairs', 'Pairs']:
         params = {"primary_msisdn": primary_msisdn}
-        URL = DPS_URL + "find-pairs"
-
-        response = requests.get(url=URL, params=params)
+        response = requests.get(url="http://192.168.100.248/api/v1/find-pairs", params=params)
         result = response.text.replace('[', '')
         result = result.replace(']', '')
 
@@ -337,8 +320,7 @@ def verify_paircode(paircode, imei):
     if len(paircode) == 8:
         if 14 <= len(imei) <= 16:
             params = {"pair_code": paircode, "imei": imei}
-            URL = DPS_URL + "verify-paircode"
-            response = requests.get(url=URL, params=params)
+            response = requests.get(url="http://192.168.100.248/api/v1/verify-paircode", params=params)
 
             result = response.json()
 
@@ -352,7 +334,6 @@ def verify_paircode(paircode, imei):
         return "Pair-Code is not correct. Plz specify correct Pair-Code"
 
 
-# noinspection DuplicatedCode
 def msisdn_validation(sender_no):
     """Function to modify Sender's MSISDN to DPS accepted format. """
 
@@ -386,7 +367,7 @@ def dns_sms(*args):
     """Function to call DNS SMS-API."""
 
     # url = "http://192.168.100.40:8080/secure/send"
-    URL = "http://192.168.100.53/sms/"
+    URL = "http://127.0.0.1:8000/sms/"
 
     data = {}
     if len(args) == 3:
@@ -426,4 +407,4 @@ def case_search(menu_code):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
