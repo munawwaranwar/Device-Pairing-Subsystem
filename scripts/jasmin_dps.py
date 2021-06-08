@@ -1,4 +1,36 @@
+"""
+Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted (subject to the
+limitations in the disclaimer below) provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of Qualcomm Technologies, Inc. nor the names of its contributors may be used to endorse or promote
+products derived from this software without specific prior written permission.
+* The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+If you use this software in a product, an acknowledgment is required by displaying the trademark/log as per the details
+provided here: https://www.qualcomm.com/documents/dirbs-logo-and-brand-guidelines
+* Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+* This notice may not be removed or altered from any source distribution.
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE. THIS SOFTWARE IS PROVIDED BY
+THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+"""
+
+
 # jasmin_dps.py
+
 import json
 import requests
 from time import strftime
@@ -9,12 +41,11 @@ app = Flask(__name__)
 ERROR_MSG = "Incorrect Message Format. Please send HELP to 8787"
 ERROR_SPACES = "Incorrect Message Format. Please check the White spaces in the SMS."
 ERROR_TECH = "SMS Format is incorrect"
-# noinspection HttpUrlsUsage
 DPS_URL = "http://192.168.100.52/api/v1/"
 ERROR_MSISDN = "Sender Number is not correct, please specify number in correct format"
 
 
-# noinspection PyUnusedLocal,HttpUrlsUsage,DuplicatedCode
+# noinspection PyUnusedLocal,HttpUrlsUsage
 @app.route('/dps-jasmin', methods=['POST'])
 def main():
 
@@ -37,8 +68,8 @@ def main():
 
         # Extracting parameters from API
         # kwargs = request.data.decode()
-        # kwargs = request.get_json(force=True)
         kwargs = request.values
+        # kwargs = request.get_json(force=True)
 
         # MSISDN Validation
         sender_no = msisdn_validation(kwargs['from'])
@@ -136,7 +167,6 @@ def main():
 
             if key in keywords['verify_pair']:
                 vp_response = verify_paircode(pair_code, imei)
-                print(type(vp_response), vp_response)
 
                 # Calling Jasmin SMS Rest API to send Release-Pair APIs' response back to sender via SMS
                 # jasmin_sms(sender_no, kwargs['to'], vp_response)
@@ -279,6 +309,7 @@ def release_pair(primary_msisdn, secondary_msisdn):
         response = requests.delete(url=URL,
                                    data=json.dumps(data),
                                    headers=headers)
+
         return response.text
     else:
         if 10 < len(secondary_msisdn) < 16:
@@ -286,6 +317,7 @@ def release_pair(primary_msisdn, secondary_msisdn):
                 msisdn = msisdn_validation(secondary_msisdn)
                 data = {"primary_msisdn": primary_msisdn, "secondary_msisdn": msisdn}
                 URL = DPS_URL + "rel-single-pair"
+
                 response = requests.delete(url=URL,
                                            data=json.dumps(data),
                                            headers=headers)
@@ -319,13 +351,18 @@ def find_pairs(primary_msisdn, key):
 
     if key in ['PAIRS', 'pairs', 'Pairs']:
         params = {"primary_msisdn": primary_msisdn}
+        headers = {'content-type': 'application/json'}
         URL = DPS_URL + "find-pairs"
 
-        response = requests.get(url=URL, params=params)
-        result = response.text.replace('[', '')
-        result = result.replace(']', '')
+        response = requests.get(url=URL, headers=headers, data=json.dumps(params))
 
-        return result
+        result = response.json()
+        if isinstance(result, dict):
+            return "Primary MSISDN is not correct"
+        else:
+            result = response.text.replace('[', '')
+            result = result.replace(']', '')
+            return result
     else:
         return ERROR_MSG
 
@@ -337,13 +374,15 @@ def verify_paircode(paircode, imei):
     if len(paircode) == 8:
         if 14 <= len(imei) <= 16:
             params = {"pair_code": paircode, "imei": imei}
+            headers = {'content-type': 'application/json'}
             URL = DPS_URL + "verify-paircode"
-            response = requests.get(url=URL, params=params)
+            # response = requests.get(url=URL, params=params)
+            response = requests.request("GET", URL, headers=headers, data=json.dumps(params))
 
             result = response.json()
 
             if isinstance(result, dict):
-                return result['message'][list(result['message'].keys())[0]][0]
+                return result['message']['json']['imei'][0]
             else:
                 return response.text
         else:
@@ -352,7 +391,6 @@ def verify_paircode(paircode, imei):
         return "Pair-Code is not correct. Plz specify correct Pair-Code"
 
 
-# noinspection DuplicatedCode
 def msisdn_validation(sender_no):
     """Function to modify Sender's MSISDN to DPS accepted format. """
 
@@ -426,4 +464,4 @@ def case_search(menu_code):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port='5000', debug=True)
