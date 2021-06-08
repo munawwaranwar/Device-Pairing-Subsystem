@@ -4,7 +4,6 @@
 ![Image of DIRBS Logo](https://avatars0.githubusercontent.com/u/42587891?s=100&v=4)
 
 # DPS-Device Pairing Subsystem
-## License
 Copyright (c) 2018-2021 Qualcomm Technologies, Inc.
 
 All rights reserved.
